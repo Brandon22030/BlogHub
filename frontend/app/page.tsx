@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { Header } from "@/components/header";
+import { NavBar } from "@/components/navBar";
 
 export default function Home() {
   return (
     <>
-      <Header/>
+      <NavBar/>
     </>
   );
 }

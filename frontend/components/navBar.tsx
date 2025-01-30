@@ -3,8 +3,9 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react"; // Assurez-vous d'avoir lucide-react installé.
 import Image from "next/image";
 import Link from "next/link";
+import SearchAvatar from "./search&avatar";
 
-export function Header() {
+export function NavBar() {
   const [activeMenu, setActiveMenu] = useState(null);
 
   const toggleMenu = (menu) => {
@@ -29,8 +30,8 @@ export function Header() {
   ];
 
   return (
-    <nav className="">
-      <div className="container mx-auto px-4 py-3 gap-[68px] flex items-center">
+    <nav className="flex items-center">
+      <div className="container mx-auto gap-[50px] flex items-center">
         <Image
           className=""
           src="/logo.svg"
@@ -39,13 +40,13 @@ export function Header() {
           height={48}
           priority
         />
-        <ul className="flex space-x-6">
+        <ul className="flex">
           {menus.map((menu, index) => (
             <li key={index} className="relative">
               <button className="items-center gap-2 px-3 rounded-lg transition-colors duration-300 group">
                 <div
                   onClick={() => toggleMenu(index)}
-                  className="flex items-center gap-2 text-lg font-bold"
+                  className="flex items-center gap-1 font-semibold"
                 >
                   {menu.name}
                   {menu.submenus ? (
@@ -85,6 +86,11 @@ export function Header() {
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Second part with search bar & avatar */}
+      <div>
+        <SearchAvatar />
       </div>
     </nav>
   );
