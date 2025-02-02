@@ -9,13 +9,57 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState([]);
 
-    setTimeout(() => {
-      router.push("/");
-    }, 3500);
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    setErrors([]);
+
+    const token = ""
+
+    if (localStorage.getItem("token")) {
+      const token = localStorage.getItem("token");
+    } else{
+      const token = localStorage.setItem("token", )
+    }
+
+    try {
+      const res = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Envoi du token dans l'en-tête
+        },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Redirige l'utilisateur vers le dashboard ou la page d'accueil
+        setIsLoading(true);
+        setTimeout(() => {
+          router.push("/");
+        }, 3500);
+      } else {
+        if (Array.isArray(data.message)) {
+          setErrors(data.message);
+        } else {
+          setErrors(["Identifiants incorrects."]);
+        }
+      }
+    } catch (error) {
+      setErrors(["Erreur lors de la connexion au serveur."]);
+    }
   };
 
   return (
@@ -28,6 +72,15 @@ export default function Login() {
             <h1 className="text-2xl font-bold text-center mb-4 text-[#FC4308]">
               Connexion
             </h1>
+
+            {errors.length > 0 && (
+              <div className="mb-4 p-2 bg-red-200 text-red-800 rounded">
+                {errors.map((err, index) => (
+                  <p key={index}>{err}</p>
+                ))}
+              </div>
+            )}
+
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
                 <label
@@ -38,6 +91,8 @@ export default function Login() {
                 </label>
                 <input
                   type="email"
+                  onChange={handleChange}
+                  name="email"
                   id="email"
                   className="mt-2 block text-black py-[.5rem] px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Votre email"
@@ -54,11 +109,13 @@ export default function Login() {
                 </label>
                 <input
                   type="password"
+                  name="password"
+                  onChange={handleChange}
                   id="password"
                   className="mt-2 block text-black py-[.5rem] px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Votre mot de passe"
                   required
-                />
+                />{" "}
               </div>
 
               <button
