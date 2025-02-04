@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader } from "@/components/loading";
+import Cookies from "js-cookie";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,27 +25,25 @@ export default function Login() {
 
     setErrors([]);
 
-    const token = ""
-
-    if (localStorage.getItem("token")) {
-      const token = localStorage.getItem("token");
-    } else{
-      const token = localStorage.setItem("token", )
-    }
-
     try {
       const res = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Envoi du token dans l'en-tête
         },
+        credentials: "include",
+
         body: JSON.stringify({ email: form.email, password: form.password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
+        Cookies.set("token", String(data.access_token), {
+          expires: 7,
+        });
+        // localStorage.setItem("token", data.access_token);
+
         // Redirige l'utilisateur vers le dashboard ou la page d'accueil
         setIsLoading(true);
         setTimeout(() => {
@@ -54,6 +53,7 @@ export default function Login() {
         if (Array.isArray(data.message)) {
           setErrors(data.message);
         } else {
+          console.log(data.message);
           setErrors(["Identifiants incorrects."]);
         }
       }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader } from "@/components/loading";
+import Cookies from "js-cookie";
 
 export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,28 +40,38 @@ export default function SignUp() {
       const res = await fetch("http://localhost:3001/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.access_token);
+        // Cookies.set("token", String(data.access_token), {
+        //   expires: 7,
+        // });
+        // // loc alStorage.setItem("token", data.access_token);
 
-        console.log("Inscription réussie : ", data);
+        // console.log("Token stocké :", Cookies.get("token"));
+
+        // console.log("Inscription réussie : ", data);
 
         setIsLoading(true);
         setTimeout(() => {
           router.push("/login");
         }, 3500);
       } else {
-        if (Array.isArray(data.message)) {
-          setErrors(data.message); // Stocke les erreurs retournées par le backend
+        if (data.message) {
+          setErrors(
+            Array.isArray(data.message) ? data.message : [data.message]
+          );
         } else {
           setErrors(["Une erreur est survenue."]);
         }
       }
     } catch (error) {
+      console.error("Erreur lors de la requête :", error);
+
       setErrors(["Erreur lors de la connexion au serveur."]);
     }
   };

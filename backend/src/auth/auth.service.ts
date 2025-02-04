@@ -36,7 +36,11 @@ export class AuthService {
       throw new Error('Le mot de passe est incorrect!!!');
     }
 
-    return this.authenticateUser({ userId: existingUser.id });
+    return this.authenticateUser({
+      userId: existingUser.id,
+      userName: existingUser.name,
+      userEmail: existingUser.email,
+    });
   }
 
   // REGISTER;
@@ -68,7 +72,11 @@ export class AuthService {
       },
     });
 
-    return this.authenticateUser({ userId: createdUser.id });
+    return this.authenticateUser({
+      userId: createdUser.id,
+      userName: createdUser.name,
+      userEmail: createdUser.email,
+    });
   }
 
   private async hashPassword({ password }: { password: string }) {
@@ -89,8 +97,8 @@ export class AuthService {
     return isPasswordValid;
   }
 
-  private authenticateUser({ userId }: UserPayload) {
-    const payload: UserPayload = { userId };
+  private authenticateUser({ userId, userName, userEmail }: UserPayload) {
+    const payload: UserPayload = { userId, userName, userEmail };
     return {
       access_token: this.jwtService.sign(payload),
     };

@@ -11,22 +11,39 @@ import { ChevronDown, ChevronUp } from "lucide-react"; // Assurez-vous d'avoir l
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCliqued, setIsCliqued] = useState(false);
+  const [user, setUser] = useState(null);
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Supprime le token du stockage local
+    Cookies.remove("token");
     router.push("/login"); // Redirige vers la page de connexion
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login"); // Redirige si l'utilisateur n'est pas authentifié
-    }
+    const fetchUserProfile = async () => {
+      const token = Cookies.get("token");
+      if (!token) {
+        router.push("/login"); // Redirige si l'utilisateur n'est pas authentifié
+      }
+      const res = await fetch("http://localhost:3001/user/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      }
+    };
+
+    fetchUserProfile();
   }, []);
 
   return (
@@ -55,7 +72,12 @@ export default function SearchAvatar() {
           height={48}
           className="w-10 h-10 rounded-md object-cover"
         />
-        <span className="font-semibold">User name</span>
+        {user ? (
+          <span className="font-semibold">{user.name}</span>
+        ) : (
+          <span className="font-semibold">Chargement...</span>
+        )}
+        {/* <span className="font-semibold">{user.name}</span> */}
 
         {/* Bouton du menu */}
         <button onClick={() => setIsOpen(!isOpen)} className="transition">
@@ -78,7 +100,10 @@ export default function SearchAvatar() {
             <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
               Profil
             </li>
-            <li onClick={handleLogout} className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+            <li
+              onClick={handleLogout}
+              className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+            >
               Logout
             </li>
           </ul>

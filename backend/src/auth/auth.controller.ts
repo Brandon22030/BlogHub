@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  UseGuards,
-  Get,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RequestWithUser } from './jwt.strategy';
@@ -22,17 +14,8 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() authBody: LogUserDto, @Res() res: Response) {
-    const { acces_token } = await this.authService.login({ authBody });
-
-    res.cookie('auth_token', access_token, {
-      httpOnly: true, // Empêche l'accès par JavaScript (protège contre XSS)
-      secure: process.env.NODE_ENV === 'production', // Active uniquement en HTTPS en production
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000, // Expiration : 30 jours
-    });
-
-    return res.json({ message: 'Connexion réussie' });
+  async login(@Body() authBody: LogUserDto) {
+    return await this.authService.login({ authBody });
   }
 
   @Post('register')
@@ -40,11 +23,13 @@ export class AuthController {
     return await this.authService.register({ registerBody });
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async authenticatedUser(@Req() req: RequestWithUser) {
-    return await this.userService.getUser({
-      userId: req.user.userId,
-    });
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('profile')
+  // getProfile(@Req() req: RequestWithUser) {
+  //   return {
+  //     id: req.user.userId,
+  //     name: req.user.userName,
+  //     email: req.user.userEmail,
+  //   };
+  // }
 }
