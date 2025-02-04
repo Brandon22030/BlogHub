@@ -30,7 +30,7 @@ export function NavBar() {
   ];
 
   return (
-    <nav className="flex items-center">
+    <nav className="relative flex items-center z-20">
       <div className="container mx-auto gap-[50px] flex items-center">
         <Image
           className=""
@@ -71,7 +71,7 @@ export function NavBar() {
                     activeMenu === index ? "max-h-96" : "max-h-0"
                   }`}
                 >
-                  {menu.submenus.map((submenu, subIndex) => (
+                  {menu.submenus?.map((submenu, subIndex) => (
                     <li key={subIndex}>
                       <a
                         href="#"
