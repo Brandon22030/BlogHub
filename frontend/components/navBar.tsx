@@ -4,34 +4,65 @@ import { ChevronDown, ChevronUp } from "lucide-react"; // Assurez-vous d'avoir l
 import Image from "next/image";
 import Link from "next/link";
 import SearchAvatar from "./search&avatar";
+import Mega_categories from "./mega_categories";
+import { motion, AnimatePresence } from "framer-motion";
+import Pages from "./pages";
+import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export function NavBar() {
   const [activeMenu, setActiveMenu] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const toggleMenu = (menu) => {
-    setActiveMenu((prev) => (prev === menu ? null : menu));
+  const toggleMenu = (id) => {
+    setActiveMenu((prev) => (prev === id ? null : id));
   };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = Cookies.get("token");
+
+      const res = await fetch("http://localhost:3001/user/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const menus = [
     {
+      id: 0,
       name: "Categories",
-      submenus: ["Sous-menu 1", "Sous-menu 2", "Sous-menu 3"],
+      submenus: Mega_categories,
     },
     {
+      id: 1,
       name: "Pages",
-      submenus: ["Sous-menu A", "Sous-menu B", "Sous-menu C"],
+      submenus: Pages,
     },
     {
+      id: 2,
       name: "Contact us",
+      submenus: null,
     },
     {
+      id: 3,
       name: "About Us",
+      submenus: null,
     },
   ];
 
   return (
-    <nav className="relative flex items-center z-20">
-      <div className="container mx-auto gap-[50px] flex items-center">
+    <nav className="relative flex w-full items-center z-20">
+      <div className="container w-[50%] mx-auto gap-[50px] flex items-center">
         <Image
           className=""
           src="/logo.svg"
@@ -40,48 +71,52 @@ export function NavBar() {
           height={48}
           priority
         />
-        <ul className="flex">
-          {menus.map((menu, index) => (
-            <li key={index} className="relative">
-              <button className="items-center gap-2 px-3 rounded-lg transition-colors duration-300 group">
+        <ul className="flex w-full">
+          {menus.map((menu) => (
+            <li key={menu.id} className="relative w-full">
+              <button className="items-center rounded-lg transition-colors duration-300">
                 <div
-                  onClick={() => toggleMenu(index)}
-                  className="flex items-center gap-1 font-semibold"
+                  onClick={() => toggleMenu(menu.id)}
+                  className="flex items-center pr-4 font-semibold"
                 >
                   {menu.name}
-                  {menu.submenus ? (
-                    activeMenu === index ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )
-                  ) : (
-                    ""
+                  {menu.submenus && (
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-300 ${
+                        activeMenu === menu.id ? "rotate-180" : "rotate-0"
+                      }`}
+                    />
                   )}
                 </div>
                 <div
                   className={`h-[.2rem] rounded-lg w-[1.5rem] group-hover:bg-[#FC4308] transition-colors duration-500 ${
-                    activeMenu === index ? "bg-[#FC4308]" : ""
+                    activeMenu === menu.id ? "bg-[#FC4308]" : ""
                   }`}
                 ></div>
               </button>
-              {activeMenu === index && (
-                <ul
-                  className={`absolute left-0 mt-2 w-40 bg-gray-700 rounded-lg shadow-lg overflow-hidden transition-[max-height] duration-500 ease-in-out ${
-                    activeMenu === index ? "max-h-96" : "max-h-0"
-                  }`}
+              {menu.submenus && activeMenu === menu.id && (
+                <div
+                  className={`top-10 absolute z-20  ${
+                    menu.id === 0 && user
+                    ? "-left-60 w-[75rem]"
+                    : menu.id === 0 && !user
+                      ? "-left-80 w-[75rem]"
+                      : ""
+                  } `}
                 >
-                  {menu.submenus?.map((submenu, subIndex) => (
-                    <li key={subIndex}>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 hover:bg-gray-600 rounded-lg transition-colors duration-300"
-                      >
-                        {submenu}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                  {/* <div className="absolute inset-0 bg-black opacity-40 shadow-2xl rounded-lg pointer-events-none"></div> */}
+                  <AnimatePresence>
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }} // Applique la transition de disparition
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="relative"
+                    >
+                      <menu.submenus />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               )}
             </li>
           ))}
@@ -89,7 +124,7 @@ export function NavBar() {
       </div>
 
       {/* Second part with search bar & avatar */}
-      <div>
+      <div className="">
         <SearchAvatar />
       </div>
     </nav>

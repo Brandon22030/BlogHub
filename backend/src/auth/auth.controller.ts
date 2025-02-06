@@ -23,13 +23,9 @@ export class AuthController {
     return await this.authService.register({ registerBody });
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Get('profile')
-  // getProfile(@Req() req: RequestWithUser) {
-  //   return {
-  //     id: req.user.userId,
-  //     name: req.user.userName,
-  //     email: req.user.userEmail,
-  //   };
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Req() req: RequestWithUser) {
+    return req.user;
+  }
 }

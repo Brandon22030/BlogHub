@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { ArticlesModule } from './articles/articles.module';
+// import { ArticlesModule } from './articles/articles.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -12,7 +12,7 @@ import { PrismaModule } from './prisma/prisma.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ArticlesModule,
+    // ArticlesModule,
     PrismaModule
   ],
   controllers: [],

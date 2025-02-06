@@ -5,7 +5,6 @@ export function Loader() {
     <>
       <div className="flex flex-col items-center justify-center">
         <div
-        // className="animate-blink animation-delay-300"
         >
           <Image
             className=""
