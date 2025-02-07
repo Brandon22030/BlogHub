@@ -32,7 +32,7 @@ export default function Pages() {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
 
   return (
-    <div className="flex gap-8 p-3 bg-white rounded-xl shadow-lg transition">
+    <div className="flex gap-8 p-3 bg-white w-64 rounded-xl shadow-lg transition">
       {/* Partie principale */}
       <div className="">
         {categories.map((category) => (

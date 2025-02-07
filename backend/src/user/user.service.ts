@@ -11,6 +11,7 @@ export class UserService {
         id: true,
         name: true,
         email: true,
+        imageUrl: true,
       },
     });
     return users;
@@ -25,6 +26,7 @@ export class UserService {
         id: true,
         name: true,
         email: true,
+        imageUrl: true,
       },
     });
     return users;

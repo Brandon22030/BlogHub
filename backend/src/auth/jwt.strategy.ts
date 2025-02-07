@@ -7,6 +7,7 @@ export type UserPayload = {
   userId: string;
   userName: string;
   userEmail: string;
+  // userImage: string;
 };
 
 export interface RequestWithUser extends Request {

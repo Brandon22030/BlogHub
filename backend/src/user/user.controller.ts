@@ -39,6 +39,7 @@ export class UserController {
       id: req.user.userId,
       name: req.user.userName,
       email: req.user.userEmail,
+      // imageUrl: req.user.userImage
     };
   }
 }

@@ -12,8 +12,8 @@ export default function NotFound() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen text-white">
-      <div className="h-[15rem]">
+    <div className="flex flex-col items-center justify-center w-full text-white scrollbar-hide">
+      <div className="">
         <Image
           className=""
           src="/logo.svg"

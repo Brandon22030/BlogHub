@@ -3,22 +3,18 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
-export default function Home_Categories() {
-  const categories = [
-    { name: "Food", image: "/food.svg" },
-    { name: "Animal", image: "/animal.svg" },
-    { name: "Car", image: "/car.svg" },
-    { name: "Sport", image: "/sport.svg" },
-    { name: "Music", image: "/music.svg" },
-    { name: "Technology", image: "/techno.svg" },
-    { name: "Abstract", image: "/abstract.svg" },
-    { name: "Anime", image: "/anime.png" },
-    { name: "Games", image: "/game.jpg" },
-  ];
+const fetchCategories = async () => {
+  const res = await fetch("http://localhost:3001/categories");
+  if (!res.ok) throw new Error("Failed to fetch categories");
+  return res.json();
+};
 
+export default function Home_Categories() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(true);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +31,18 @@ export default function Home_Categories() {
       handleScroll();
     }
 
+    async function loadCategories() {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadCategories();
     return () => {
       if (scrollContainer) {
         scrollContainer.removeEventListener("scroll", handleScroll);
@@ -42,8 +50,26 @@ export default function Home_Categories() {
     };
   }, []);
 
+  if (loading)
+    return (
+      <>
+        <div
+          role="status"
+          className="relative bg-[#F5F5F5] mt-[45px] rounded-lg w-full p-6"
+        >
+          <div className=" w-full flex space-x-[24px] px-4 justify-between items-start animate-pulse">
+            <div className="bg-gray-300 relative group overflow-hidden rounded-xl shadow-lg w-[200px] h-[60px]"></div>
+            <div className="bg-gray-300 relative group overflow-hidden rounded-xl shadow-lg w-[200px] h-[60px]"></div>
+            <div className="bg-gray-300 relative group overflow-hidden rounded-xl shadow-lg w-[200px] h-[60px]"></div>
+            <div className="bg-gray-300 relative group overflow-hidden rounded-xl shadow-lg w-[200px] h-[60px]"></div>
+            <div className="bg-gray-300 relative group overflow-hidden rounded-xl shadow-lg w-[200px] h-[60px]"></div>
+          </div>
+        </div>
+      </>
+    );
+
   return (
-    <div className="relative bg-[#F5F5F5] rounded-lg w-full p-6">
+    <div className="relative mt-[45px]  bg-[#F5F5F5] rounded-lg w-full p-6">
       {/* Effets flous FIXES en dehors du scroll */}
       {showLeftShadow && (
         <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>
@@ -65,7 +91,7 @@ export default function Home_Categories() {
             {/* Image */}
             <div className="w-[200px] h-[60px] overflow-hidden">
               <Image
-                src={category.image}
+                src={category.imageUrl}
                 alt={category.name}
                 width={200}
                 height={150}
