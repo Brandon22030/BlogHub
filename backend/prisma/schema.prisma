@@ -38,6 +38,7 @@ model Article {
   categoryId String    @db.ObjectId
   views      Int       @default(0)
   likes      Int       @default(0)
+  status     ArticleStatus @default(DRAFT)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
@@ -63,4 +64,9 @@ model Category {
 enum Role {
   USER
   ADMIN
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
 }

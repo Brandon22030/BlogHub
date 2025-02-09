@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { FaSearch, FaEllipsisV, FaBookmark } from "react-icons/fa";
-import { ChevronDown, ChevronUp } from "lucide-react"; // Assurez-vous d'avoir lucide-react installé.
+import { FaSearch, FaEllipsisV } from "react-icons/fa";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,6 @@ export default function SearchAvatar() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
-  // Fonction pour récupérer l'utilisateur
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = Cookies.get("token");
@@ -23,9 +23,7 @@ export default function SearchAvatar() {
 
       const res = await fetch("http://localhost:3001/user/profile", {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.ok) {
@@ -37,13 +35,11 @@ export default function SearchAvatar() {
     fetchUserProfile();
   }, []);
 
-  // Fonction pour gérer la déconnexion
   const handleLogout = useCallback(() => {
     Cookies.remove("token");
     router.push("/login");
   }, [router]);
 
-  // Fonction pour fermer le menu en cliquant en dehors
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -57,11 +53,15 @@ export default function SearchAvatar() {
     };
   }, []);
 
+  const menuItems = [
+    { label: "Profil", href: "/profile", onClick: null },
+    { label: "Logout", href: "#", onClick: handleLogout },
+  ];
+
   return (
     <div>
       {user ? (
         <div className="container flex items-center w-[31rem] justify-between">
-          {/* Barre de recherche */}
           <div className="relative flex items-center flex-1 max-w-lg mx-4 bg-gray-100 rounded-lg">
             <button className="p-2">
               <FaEllipsisV className="text-black" />
@@ -74,9 +74,7 @@ export default function SearchAvatar() {
             <FaSearch className="absolute right-3 text-black" />
           </div>
 
-          {/* Profil utilisateur */}
           <div ref={menuRef} className="relative flex items-center gap-2">
-            {/* Avatar utilisateur */}
             <Image
               src="/avatar.png"
               alt="User"
@@ -92,7 +90,6 @@ export default function SearchAvatar() {
               {user.name}
             </span>
 
-            {/* Chevron qui change en fonction de l'état du menu */}
             <button onClick={() => setIsOpen(!isOpen)} className="transition">
               {isOpen ? (
                 <ChevronUp size={20} className="text-black" />
@@ -101,29 +98,37 @@ export default function SearchAvatar() {
               )}
             </button>
 
-            {/* Menu déroulant */}
             <div
-              className={`absolute right-0 top-full mt-2 w-40 bg-white shadow-md rounded-lg border border-gray-200 transition-all duration-300 ease-in-out ${
+              className={`absolute right-0 top-full mt-2 w-40 bg-white shadow-md p-3 rounded-lg border border-gray-200 transition-all duration-300 ease-in-out ${
                 isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
               } origin-top`}
             >
-              <ul className="flex flex-col">
-                <Link href="/profile">
-                  <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-                    Profil
-                  </li>
-                </Link>
-                <li
-                  onClick={handleLogout}
-                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+              <AnimatePresence>
+                <motion.ul
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  className="font-bold text-lg borderp-0 items-center gap-1 rounded-lg transition-all flex flex-col"
                 >
-                  Logout
-                </li>
-              </ul>
+                  {menuItems.map((item, index) => (
+                    
+                    <li
+                      key={index}
+                      onClick={item.onClick || undefined}
+                      className="px-4 py-2 m-0 rounded-lg w-full text-center hover:bg-[#FC4308] hover:text-white transition-all cursor-pointer"
+                    >
+                      {item.href !== "#" ? (
+                        <Link href={item.href}>{item.label}</Link>
+                      ) : (
+                        item.label
+                      )}
+                    </li>
+                  ))}
+                </motion.ul>
+              </AnimatePresence>
             </div>
           </div>
 
-          {/* Icône signet */}
           <button className="p-2" onClick={() => setIsCliqued(!isCliqued)}>
             <Image
               src={isCliqued ? "/signet_open.svg" : "/signet.svg"}

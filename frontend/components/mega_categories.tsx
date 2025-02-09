@@ -87,7 +87,7 @@ export default function Mega_categories() {
 
 
   return (
-    <div className="flex gap-8 p-3 bg-white rounded-xl shadow-lg transition">
+    <div className="flex gap-8 p-3 bg-white rounded-xl shadow-md border-gray-200 transition">
       {/* Partie principale */}
       <div className="grid grid-cols-3 gap-6 w-full">
         {categories.map((category) => (

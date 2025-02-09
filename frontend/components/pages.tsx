@@ -39,7 +39,7 @@ export default function Pages() {
           <Link href={category.slug} key={category.id}>
             <div
               key={category.id}
-              className={`flex items-start hover:bg-[#F81539] text-[#3E3232]  hover:text-white gap-4 p-3 rounded-xl transition-all ${
+              className={`flex items-start hover:bg-[#FC4308] text-[#3E3232]  hover:text-white gap-4 p-3 rounded-xl transition-all ${
                 activeCategory === category.id ? "bg-red-100" : "bg-transparent"
               }`}
             >
@@ -51,11 +51,11 @@ export default function Pages() {
                   transition={{ duration: 0.2, delay: category.id * 0.1 }}
                   className={`font-bold text-lg  flex items-center gap-1 px-2 py-1 rounded-lg transition-all ${
                     activeCategory === category.id
-                      ? "border-b-4 text-[#F81539]"
+                      ? "border-b-4 text-[#FC4308]"
                       : "border-transparent"
                   }`}
                 >
-                  <span className="bg-[#F81539] text-xl w-1.5 h-3 rounded-full"></span>{" "}
+                  <span className="bg-[#FC4308] text-xl w-1.5 h-3 rounded-full"></span>{" "}
                   {category.title}
                 </motion.div>
               </div>

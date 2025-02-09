@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import DashboardMenu from "@/components/dash";
 import Marked from "@/components/dashboard/marked";
-import SendPost from "@/components/dashboard/sendPost";
+import Send from "@/components/dashboard/send";
 import MyPosts from "@/components/dashboard/myPosts";
 
 export default function Profile() {
@@ -23,7 +23,7 @@ export default function Profile() {
       case "marked":
         return <Marked />;
       case "create":
-        return <SendPost />;
+        return <Send />;
       case "posts":
         return <MyPosts />;
       default:
@@ -127,7 +127,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+              <div className="mt-11">
                 {renderTab()}
               </div>
             </div>
