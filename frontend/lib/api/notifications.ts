@@ -1,9 +1,9 @@
-import { Notification } from '../../types/notification';
-import { api } from './api';
+import { Notification } from "../../types/notification";
+import { api } from "./api";
 
 export const notificationsApi = {
   getNotifications: async (): Promise<Notification[]> => {
-    const response = await api.get('/notifications');
+    const response = await api.get("/notifications");
     return response.data;
   },
 
@@ -13,6 +13,6 @@ export const notificationsApi = {
   },
 
   markAllAsRead: async (): Promise<void> => {
-    await api.post('/notifications/read-all');
+    await api.post("/notifications/read-all");
   },
 };

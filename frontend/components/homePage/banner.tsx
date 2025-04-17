@@ -45,13 +45,13 @@ export default function BlogSection() {
 
   const handlePrev = () => {
     setCurrentIndex((prev) =>
-      prev === 0 ? carouselCards.length - 1 : prev - 1
+      prev === 0 ? carouselCards.length - 1 : prev - 1,
     );
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) =>
-      prev === carouselCards.length - 1 ? 0 : prev + 1
+      prev === carouselCards.length - 1 ? 0 : prev + 1,
     );
   };
 

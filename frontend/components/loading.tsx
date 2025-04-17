@@ -4,8 +4,7 @@ export function Loader() {
   return (
     <>
       <div className="flex flex-col items-center justify-center">
-        <div
-        >
+        <div>
           <Image
             className=""
             src="/logo.svg"

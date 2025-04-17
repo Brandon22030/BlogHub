@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-
 const categories = [
   {
     id: 1,
@@ -83,8 +82,6 @@ const categories = [
 
 export default function Mega_categories() {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
-
-
 
   return (
     <div className="flex gap-8 p-3 bg-white rounded-xl shadow-md border-gray-200 transition">

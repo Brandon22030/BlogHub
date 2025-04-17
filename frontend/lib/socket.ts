@@ -1,5 +1,5 @@
-import { io, Socket } from 'socket.io-client';
-import { NotificationType } from '../types/notification';
+import { io, Socket } from "socket.io-client";
+import { NotificationType } from "../types/notification";
 
 interface ServerToClientEvents {
   notification: (data: {
@@ -18,20 +18,20 @@ let socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
 
 export const initializeSocket = (token: string) => {
   if (!socket) {
-    socket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000', {
+    socket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000", {
       auth: { token },
     });
 
-    socket.on('connect', () => {
-      console.log('Connected to notification server');
+    socket.on("connect", () => {
+      console.log("Connected to notification server");
     });
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from notification server');
+    socket.on("disconnect", () => {
+      console.log("Disconnected from notification server");
     });
 
-    socket.on('connect_error', (error: Error) => {
-      console.error('Socket connection error:', error);
+    socket.on("connect_error", (error: Error) => {
+      console.error("Socket connection error:", error);
     });
   }
 

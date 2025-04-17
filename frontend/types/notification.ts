@@ -1,9 +1,9 @@
 export enum NotificationType {
-  COMMENT = 'COMMENT',
-  REPLY = 'REPLY',
-  LIKE = 'LIKE',
-  MENTION = 'MENTION',
-  FOLLOW = 'FOLLOW',
+  COMMENT = "COMMENT",
+  REPLY = "REPLY",
+  LIKE = "LIKE",
+  MENTION = "MENTION",
+  FOLLOW = "FOLLOW",
 }
 
 export interface Notification {

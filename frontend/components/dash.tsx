@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 
@@ -22,8 +22,8 @@ export default function DashboardMenu() {
             {tab === "favoris"
               ? "Favoris"
               : tab === "create"
-              ? "Créer un post"
-              : "Mes posts"}
+                ? "Créer un post"
+                : "Mes posts"}
           </button>
         ))}
       </div>

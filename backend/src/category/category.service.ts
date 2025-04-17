@@ -3,9 +3,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CategoryService {
-    constructor(private readonly prisma: PrismaService){}
+  constructor(private readonly prisma: PrismaService) {}
 
-    async getAllCategories() {
-        return this.prisma.category.findMany();
-    }
+  async getAllCategories() {
+    return this.prisma.category.findMany();
+  }
 }

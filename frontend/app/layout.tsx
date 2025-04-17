@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   description: "Your Favorite Blog Website",
 };
 
+import { UserProvider } from "@/context/UserContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,10 +36,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Si tu veux ajouter des éléments globaux comme des breadcrumbs, tu peux les inclure ici */}
-        {/* <Breadcrumbs /> */}
-        {children} {/* Affiche une seule fois les enfants */}
-        <Footer /> {/* Le footer après les enfants */}
+        <UserProvider>
+          {/* Si tu veux ajouter des éléments globaux comme des breadcrumbs, tu peux les inclure ici */}
+          {/* <Breadcrumbs /> */}
+          {children} {/* Affiche une seule fois les enfants */}
+          <Footer /> {/* Le footer après les enfants */}
+        </UserProvider>
       </body>
     </html>
   );

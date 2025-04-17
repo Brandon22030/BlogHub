@@ -12,8 +12,8 @@ export default function NewPosts() {
         <div className="hover:scale-105 transition-transform cursor-pointer p-2 flex text-[#3E3232] rounded-lg items-center justify-center bg-[#F5F5F5] space-x-2">
           <p className="text-xs">Show All</p>
           <button
-          // onClick={handleNext}
-          className="text-xs"
+            // onClick={handleNext}
+            className="text-xs"
           >
             <FaChevronRight />
           </button>

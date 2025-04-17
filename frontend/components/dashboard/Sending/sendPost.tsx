@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import { SendPulse } from "./send";
-
 export default function SendPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -11,17 +10,19 @@ export default function SendPost() {
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [preview, setPreview] = useState(false);
+  const [thePreview, setThePreview] = useState(null);
   const [status, setStatus] = useState("DRAFT");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const router = useRouter();
 
+  const editorRef = useRef(null);
+
+  const token = Cookies.get("token");
+
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const token = Cookies.get("token");
-      const editorRef = useRef(null);
-
       if (!token) return;
 
       const res = await fetch("http://localhost:3001/user/profile", {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useUser } from "@/context/UserContext";
 import { FaSearch, FaEllipsisV } from "react-icons/fa";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
@@ -12,28 +13,9 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCliqued, setIsCliqued] = useState(false);
-  const [user, setUser] = useState<{ name: string } | null>(null);
+  const { user } = useUser();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      const token = Cookies.get("token");
-      if (!token) return;
-
-      const res = await fetch("http://localhost:3001/user/profile", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
 
   const handleLogout = useCallback(() => {
     Cookies.remove("token");
@@ -78,7 +60,13 @@ export default function SearchAvatar() {
 
           <div ref={menuRef} className="relative flex items-center gap-2">
             <Image
-              src="/avatar.png"
+              src={
+                user?.userImage
+                  ? user.userImage.startsWith("/uploads/")
+                    ? `http://localhost:3001${user.userImage}`
+                    : user.userImage
+                  : "/avatar.png"
+              }
               alt="User"
               width={48}
               height={48}
@@ -89,7 +77,7 @@ export default function SearchAvatar() {
               className="font-semibold cursor-pointer text-black"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {user.name}
+              {user?.userName}
             </span>
 
             <button onClick={() => setIsOpen(!isOpen)} className="transition">

@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import BellIcon from '@heroicons/react/24/outline';
-import { useNotifications } from '../../hooks/useNotifications';
-import NotificationList from './NotificationList';
+import { useState } from "react";
+import BellIcon from "@heroicons/react/24/outline";
+import { useNotifications } from "../../hooks/useNotifications";
+import NotificationList from "./NotificationList";
 
 export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +16,7 @@ export default function NotificationBell() {
         <BellIcon className="h-6 w-6" />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-            {unreadCount > 9 ? '9+' : unreadCount}
+            {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>

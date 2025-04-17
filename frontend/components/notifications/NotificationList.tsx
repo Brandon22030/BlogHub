@@ -1,7 +1,7 @@
-import { useRouter } from 'next/router';
-import { useNotifications } from '../../hooks/useNotifications';
-import { formatDistanceToNow } from 'date-fns';
-import { Notification } from '../../types/notification';
+import { useRouter } from "next/router";
+import { useNotifications } from "../../hooks/useNotifications";
+import { formatDistanceToNow } from "date-fns";
+import { Notification } from "../../types/notification";
 
 interface NotificationListProps {
   onClose: () => void;
@@ -9,7 +9,8 @@ interface NotificationListProps {
 
 export default function NotificationList({ onClose }: NotificationListProps) {
   const router = useRouter();
-  const { notifications, loading, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, loading, markAsRead, markAllAsRead } =
+    useNotifications();
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.read) {
@@ -41,9 +42,7 @@ export default function NotificationList({ onClose }: NotificationListProps) {
 
   if (notifications.length === 0) {
     return (
-      <div className="p-6 text-center text-gray-500">
-        No notifications yet
-      </div>
+      <div className="p-6 text-center text-gray-500">No notifications yet</div>
     );
   }
 
@@ -64,7 +63,7 @@ export default function NotificationList({ onClose }: NotificationListProps) {
             key={notification.id}
             onClick={() => handleNotificationClick(notification)}
             className={`cursor-pointer p-4 transition hover:bg-gray-50 ${
-              !notification.read ? 'bg-blue-50' : ''
+              !notification.read ? "bg-blue-50" : ""
             }`}
           >
             <div className="flex items-start space-x-3">

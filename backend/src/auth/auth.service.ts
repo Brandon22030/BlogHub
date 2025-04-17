@@ -64,7 +64,9 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new BadRequestException('Un compte existe déjà à cette adresse email !');
+      throw new BadRequestException(
+        'Un compte existe déjà à cette adresse email !',
+      );
     }
 
     const hashedPassword = await this.hashPassword({ password });
@@ -82,14 +84,15 @@ export class AuthService {
     // Générer le token de vérification
     const verificationToken = this.jwtService.sign(
       { email: createdUser.email },
-      { expiresIn: '24h' }
+      { expiresIn: '24h' },
     );
 
     // Envoi de l'email de vérification
     await this.sendVerificationEmail(createdUser.email, verificationToken);
 
     return {
-      message: 'Inscription réussie. Vérifiez votre email pour activer votre compte.',
+      message:
+        'Inscription réussie. Vérifiez votre email pour activer votre compte.',
     };
   }
 
@@ -170,7 +173,7 @@ export class AuthService {
 
       await this.prisma.user.update({
         where: { email: user.email },
-        data: { isVerified: true },
+        data: { isVerified: true, verificationToken: token },
       });
 
       return { message: 'Email vérifié avec succès.' };

@@ -10,7 +10,7 @@ import { Prisma } from '@prisma/client';
 export class ArticlesService {
   constructor(private readonly prisma: PrismaService) {}
 
-// Create an article
+  // Create an article
   async create(createArticleDto: CreateArticleDto, userId: string) {
     try {
       const article = await this.prisma.article.create({
@@ -49,7 +49,9 @@ export class ArticlesService {
           ],
         }),
         ...(category && { categoryId: category }),
-        ...(author && { author: { name: { contains: author, mode: 'insensitive' } } }),
+        ...(author && {
+          author: { name: { contains: author, mode: 'insensitive' } },
+        }),
       };
 
       // Get total count of matching articles
@@ -102,9 +104,7 @@ export class ArticlesService {
     }
   }
 
-
-
-// Read a specific article by ID
+  // Read a specific article by ID
   async findOne(id: string) {
     try {
       const article = await this.prisma.article.findUnique({
@@ -126,21 +126,21 @@ export class ArticlesService {
     }
   }
 
-// Update an article
+  // Update an article
   async update(id: string, updateArticleDto: CreateArticleDto, userId: string) {
     const article = await this.prisma.article.findUnique({ where: { id } });
     if (!article) {
       throw new HttpException('Article non trouvé', HttpStatus.NOT_FOUND);
     }
-  
-      // Check if the user is the author
+
+    // Check if the user is the author
     if (article.authorId !== userId) {
       throw new HttpException(
         "Vous n'avez pas la permission de modifier cet article",
         HttpStatus.FORBIDDEN,
       );
     }
-  
+
     try {
       return await this.prisma.article.update({
         where: { id },
@@ -159,5 +159,4 @@ export class ArticlesService {
       );
     }
   }
-  
 }

@@ -18,7 +18,7 @@ model User {
   email             String         @unique
   password          String
   name              String
-  imageUrl          String         @default("none")
+  imageUrl          String?
   role              Role           @default(USER)
   articles          Article[]
   comments          Comment[]

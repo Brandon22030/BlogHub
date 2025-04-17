@@ -78,7 +78,7 @@ export default function SendPost() {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
-      }
+      },
     );
     if (uploadResponse.ok) {
       const uploadData = await uploadResponse.json();

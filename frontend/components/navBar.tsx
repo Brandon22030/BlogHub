@@ -56,7 +56,7 @@ export function NavBar() {
       } catch (error) {
         console.error(
           "Erreur lors de la récupération de l'utilisateur :",
-          error
+          error,
         );
       }
     };
@@ -146,7 +146,7 @@ export function NavBar() {
 
       {/* Barre de recherche, Notifications & Avatar */}
       <div className="flex items-center gap-4">
-        {user && <NotificationBell />}
+        {/* {user && <NotificationBell />} */}
         <SearchAvatar />
       </div>
     </nav>

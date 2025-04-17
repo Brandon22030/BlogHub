@@ -64,7 +64,7 @@ export default function Login() {
       const data = await res.json();
       if (res.ok) {
         setMessage(data.message || "Connexion réussie.");
-        Cookies.set("token", data.token, { expires: 7 });
+        Cookies.set("token", data.access_token, { expires: 7 });
         setTimeout(() => {
           router.push("/");
         }, 2000);

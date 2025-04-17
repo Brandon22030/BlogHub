@@ -46,16 +46,22 @@ export default function NotFound() {
         .glitch {
           position: relative;
           color: black;
-          text-shadow: 2px 2px 0 #ff00ff, -2px -2px 0 #00ffff;
+          text-shadow:
+            2px 2px 0 #ff00ff,
+            -2px -2px 0 #00ffff;
           animation: glitch 0.8s infinite alternate;
         }
 
         @keyframes glitch {
           0% {
-            text-shadow: 2px 2px 0 #ff00ff, -2px -2px 0 #00ffff;
+            text-shadow:
+              2px 2px 0 #ff00ff,
+              -2px -2px 0 #00ffff;
           }
           100% {
-            text-shadow: -2px -2px 0 #ff00ff, 2px 2px 0 #00ffff;
+            text-shadow:
+              -2px -2px 0 #ff00ff,
+              2px 2px 0 #00ffff;
           }
         }
       `}</style>

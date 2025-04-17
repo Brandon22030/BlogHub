@@ -1,4 +1,3 @@
-
 import {
   Body,
   Controller,
@@ -37,7 +36,6 @@ export class AuthController {
   getProfile(@Req() req: RequestWithUser) {
     return req.user;
   }
-
 
   @Get('verify-email')
   async verifyEmail(@Query('token') token: string) {

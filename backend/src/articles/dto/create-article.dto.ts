@@ -20,5 +20,5 @@ export class CreateArticleDto {
 
   @IsEnum(ArticleStatus)
   @IsOptional()
-  status: ArticleStatus = ArticleStatus.DRAFT;  // Définir DRAFT comme valeur par défaut
+  status: ArticleStatus = ArticleStatus.DRAFT; // Définir DRAFT comme valeur par défaut
 }

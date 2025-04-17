@@ -71,7 +71,9 @@ export default function Newsletter() {
                     width={4}
                     height={4}
                   />
-                  <p className="font-semibold text-md text-black">Social Network</p>
+                  <p className="font-semibold text-md text-black">
+                    Social Network
+                  </p>
                 </div>
                 <div>
                   <SocialButtons />
@@ -93,7 +95,9 @@ export default function Newsletter() {
               Terms & Conditions
             </a>
           </div>
-          <div className="text-[#3E3232BF]">All Copyright (C) {new Date().getFullYear()} Reserved</div>
+          <div className="text-[#3E3232BF]">
+            All Copyright (C) {new Date().getFullYear()} Reserved
+          </div>
         </div>
       </div>
     </div>

@@ -60,7 +60,9 @@ export class NotificationsService {
   ): Promise<Notification | null> {
     try {
       // Vérifie que la notif appartient à l'utilisateur
-      const notif = await this.prisma.notification.findUnique({ where: { id: notificationId } });
+      const notif = await this.prisma.notification.findUnique({
+        where: { id: notificationId },
+      });
       if (!notif || notif.userId !== userId) {
         throw new Error('Notification not found or unauthorized');
       }
