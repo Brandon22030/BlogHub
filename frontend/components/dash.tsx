@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 
+/**
+ * DashboardMenu component for BlogHub.
+ * Provides a tabbed menu for navigating between favorites, post creation, and user's posts.
+ * @returns JSX.Element - The dashboard menu with dynamic content
+ */
 export default function DashboardMenu() {
+
   const [activeTab, setActiveTab] = useState("favoris");
 
   return (

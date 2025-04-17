@@ -1,5 +1,10 @@
 import Image from "next/image";
 
+/**
+ * NewComments component for BlogHub.
+ * Displays a section header for recent or highlighted comments.
+ * @returns JSX.Element - The new comments section
+ */
 export default function NewComments() {
   return (
     <div>

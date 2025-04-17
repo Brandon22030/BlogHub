@@ -10,6 +10,11 @@ import Cookies from "js-cookie";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
+/**
+ * SearchAvatar component for BlogHub.
+ * Renders the search bar and user avatar with a dropdown menu for profile and logout actions.
+ * @returns JSX.Element - The search bar and avatar dropdown
+ */
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCliqued, setIsCliqued] = useState(false);

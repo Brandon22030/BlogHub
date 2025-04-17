@@ -9,6 +9,11 @@ const fetchCategories = async () => {
   return res.json();
 };
 
+/**
+ * Home_Categories component for BlogHub.
+ * Fetches and displays a horizontally scrollable list of blog categories.
+ * @returns JSX.Element - The categories carousel section
+ */
 export default function Home_Categories() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftShadow, setShowLeftShadow] = useState(false);

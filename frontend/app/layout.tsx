@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-
+// import { usePathname } from "next/navigation";
+import ClientLayoutWrapper from "./ClientLayoutWrapper";
 import "./globals.css";
 import Breadcrumbs from "@/components/breadcrumbs";
 
@@ -34,13 +35,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <UserProvider>
           {/* Si tu veux ajouter des éléments globaux comme des breadcrumbs, tu peux les inclure ici */}
           {/* <Breadcrumbs /> */}
-          {children} {/* Affiche une seule fois les enfants */}
-          <Footer /> {/* Le footer après les enfants */}
+          <main >
+            <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+          </main>
         </UserProvider>
       </body>
     </html>

@@ -1,5 +1,10 @@
 import Image from "next/image";
 
+/**
+ * Loader component for BlogHub.
+ * Displays a loading animation with the app logo.
+ * @returns JSX.Element - The loading spinner and logo
+ */
 export function Loader() {
   return (
     <>

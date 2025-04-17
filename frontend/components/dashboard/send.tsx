@@ -2,6 +2,11 @@ import { useState } from "react";
 import SendPost from "./Sending/sendPost";
 import SendVideo from "./Sending/sendVideo";
 
+/**
+ * Send component for BlogHub dashboard.
+ * Provides a tabbed interface to switch between sending a post and sending a video.
+ * @returns JSX.Element - The send post/video tab section
+ */
 export default function Send() {
   const [activeTab, setActiveTab] = useState("sendPost");
 

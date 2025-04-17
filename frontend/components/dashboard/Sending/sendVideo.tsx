@@ -4,6 +4,11 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import { SendPulse } from "./send";
 
+/**
+ * SendVideo component for BlogHub dashboard.
+ * Provides a form for creating and submitting a new video post, including video upload and category selection.
+ * @returns JSX.Element - The video post creation form and logic
+ */
 export default function SendPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

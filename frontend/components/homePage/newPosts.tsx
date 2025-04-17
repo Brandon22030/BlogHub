@@ -1,7 +1,13 @@
 import Image from "next/image";
 import { FaChevronRight } from "react-icons/fa";
 
+/**
+ * NewPosts component for BlogHub.
+ * Displays a header with a title and a "Show All" button.
+ * @returns JSX.Element - Header section with new posts title and button
+ */
 export default function NewPosts() {
+  
   return (
     <div>
       <div className=" flex items-center mb-5 mt-16 justify-between">

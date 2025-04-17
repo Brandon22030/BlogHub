@@ -1,5 +1,10 @@
 import Image from "next/image";
 
+/**
+ * SendPulse component for BlogHub dashboard.
+ * Displays a skeleton UI for the send post form while loading.
+ * @returns JSX.Element - The loading skeleton for send post
+ */
 export const SendPulse = () => {
   return (
     <>
@@ -146,6 +151,11 @@ export const SendPulse = () => {
   );
 };
 
+/**
+ * LoadingMarked component for BlogHub dashboard.
+ * Displays a skeleton UI for loading marked/bookmarked posts.
+ * @returns JSX.Element - The loading skeleton for marked posts
+ */
 export const LoadingMarked = () => {
   return (
     <>

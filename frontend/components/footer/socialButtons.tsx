@@ -1,3 +1,8 @@
+/**
+ * SocialButtons component for BlogHub.
+ * Renders social media buttons for Instagram and Twitter.
+ * @returns JSX.Element - The social media buttons section
+ */
 export default function SocialButtons() {
   return (
     <div className="flex gap-4 items-center">

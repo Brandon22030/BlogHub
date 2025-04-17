@@ -1,7 +1,13 @@
 import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
+/**
+ * PopularPosts component for BlogHub.
+ * Displays a header with navigation buttons for popular posts.
+ * @returns JSX.Element - Header with navigation buttons
+ */
 export default function PopularPosts() {
+  
   return (
     <div>
       <div className="flex items-center mb-5 mt-16 justify-between">

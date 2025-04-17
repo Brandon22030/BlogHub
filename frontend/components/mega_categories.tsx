@@ -80,7 +80,13 @@ const categories = [
   },
 ];
 
-export default function Mega_categories() {
+/**
+ * Mega_Categories component for BlogHub.
+ * Displays a mega menu with categorized links and images for different blog topics.
+ * @returns JSX.Element - The mega categories menu
+ */
+export default function Mega_Categories() {
+
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
 
   return (

@@ -1,5 +1,10 @@
 import Image from "next/image";
 
+/**
+ * Follow component for BlogHub.
+ * Displays a section header for social media follow prompts.
+ * @returns JSX.Element - The follow section
+ */
 export default function Follow() {
   return (
     <div>

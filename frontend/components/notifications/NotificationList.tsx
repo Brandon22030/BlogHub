@@ -7,6 +7,12 @@ interface NotificationListProps {
   onClose: () => void;
 }
 
+/**
+ * NotificationList component for BlogHub.
+ * Displays a list of notifications, loading state, and handles navigation and marking as read.
+ * @param {NotificationListProps} props - The props for the notification list (onClose callback).
+ * @returns JSX.Element - The notifications dropdown list
+ */
 export default function NotificationList({ onClose }: NotificationListProps) {
   const router = useRouter();
   const { notifications, loading, markAsRead, markAllAsRead } =

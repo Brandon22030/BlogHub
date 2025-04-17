@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Image from "next/image";
@@ -24,35 +25,6 @@ export default function Profile() {
   const router = useRouter();
   const token = Cookies.get("token");
 
-  // useEffect(() => {
-  //   if (!token) {
-  //     router.push("/");
-  //     return;
-  //   }
-
-  //   const fetchUserProfile = async () => {
-  //     try {
-  //       const res = await fetch("http://localhost:3001/user/profile", {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       if (!res.ok)
-  //         throw new Error("Erreur lors de la récupération du profil.");
-  //       const data = await res.json();
-  //       // setUser(data);
-  //     } catch (err: any) {
-  //       setError(err.message || "Une erreur s'est produite.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchUserProfile();
-  // }, [token, router]);
-
   const renderTab = () => {
     switch (activeTab) {
       case "marked":
@@ -69,27 +41,6 @@ export default function Profile() {
         return <Marked />;
     }
   };
-
-  // const getProfileImage = (): string => {
-  //   if (
-  //     !user?.imageUrl ||
-  //     user.imageUrl === "none" ||
-  //     user.imageUrl.trim() === ""
-  //   ) {
-  //     return "/avatar.svg";
-  //   }
-  //   return user.imageUrl;
-  // };
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex min-h-screen items-center justify-center">
-  //       <span className="text-[#FC4308] font-bold text-lg">
-  //         Chargement du profil...
-  //       </span>
-  //     </div>
-  //   );
-  // }
 
   if (error) {
     return (
@@ -129,10 +80,10 @@ export default function Profile() {
             <Image
               className="rounded-xl container"
               src={
-                user?.userImage
-                  ? user.userImage.startsWith("/uploads/")
-                    ? `http://localhost:3001${user.userImage}`
-                    : user.userImage
+                user?.userImage || user?.imageUrl
+                  ? (user?.userImage || user?.imageUrl).startsWith("/uploads/")
+                    ? `http://localhost:3001${user?.userImage || user?.imageUrl}`
+                    : user?.userImage || user?.imageUrl
                   : "/avatar.png"
               }
               alt="profile"
@@ -164,12 +115,14 @@ export default function Profile() {
           </div>
 
           {/* Edit Profile */}
-          <div className="flex items-center gap-2 border-2 border-[#E6E6E6] py-3 px-4 rounded-xl cursor-pointer hover:bg-[#F81539] hover:bg-opacity-10 transition duration-300 ease-in-out">
-            <Image src="/edit.svg" alt="edit" width={20} height={20} />
-            <p className="text-[#F81539] font-semibold text-opacity-75">
-              Edit Profile
-            </p>
-          </div>
+          <Link href="/profile/edit">
+            <div className="flex items-center gap-2 border-2 border-[#E6E6E6] py-3 px-4 rounded-xl cursor-pointer hover:bg-[#F81539] hover:bg-opacity-10 transition duration-300 ease-in-out">
+              <Image src="/edit.svg" alt="edit" width={20} height={20} />
+              <p className="text-[#F81539] font-semibold text-opacity-75">
+                Edit Profile
+              </p>
+            </div>
+          </Link>
         </div>
       </div>
 

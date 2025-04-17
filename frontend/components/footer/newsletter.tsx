@@ -1,6 +1,11 @@
 import Image from "next/image";
 import SocialButtons from "./socialButtons";
 
+/**
+ * Newsletter component for BlogHub.
+ * Renders a newsletter and mega news section, with a subscription form and social links.
+ * @returns JSX.Element - The newsletter and info section
+ */
 export default function Newsletter() {
   return (
     <div className="bg-[#F5F5F5] pb-10 rounded-r-3xl w-[900px]">

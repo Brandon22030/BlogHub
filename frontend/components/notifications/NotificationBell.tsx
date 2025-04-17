@@ -3,6 +3,11 @@ import BellIcon from "@heroicons/react/24/outline";
 import { useNotifications } from "../../hooks/useNotifications";
 import NotificationList from "./NotificationList";
 
+/**
+ * NotificationBell component for BlogHub.
+ * Renders a notification bell icon with unread count and toggles the notification list.
+ * @returns JSX.Element - The notification bell and dropdown
+ */
 export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const { unreadCount } = useNotifications();

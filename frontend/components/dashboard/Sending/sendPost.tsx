@@ -3,6 +3,11 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import { SendPulse } from "./send";
+/**
+ * SendPost component for BlogHub dashboard.
+ * Provides a form for creating and submitting a new blog post, including image upload and category selection.
+ * @returns JSX.Element - The post creation form and logic
+ */
 export default function SendPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

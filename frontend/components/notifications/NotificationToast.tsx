@@ -5,6 +5,12 @@ interface NotificationToastProps {
   onClose: () => void;
 }
 
+/**
+ * NotificationToast component for BlogHub.
+ * Renders a toast notification with title, message, and close functionality.
+ * @param {NotificationToastProps} props - The props for the toast (title, message, visible, onClose).
+ * @returns JSX.Element - The notification toast popup
+ */
 export default function NotificationToast({
   title,
   message,
