@@ -5,38 +5,69 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader } from "@/components/loading";
 import Cookies from "js-cookie";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignUp() {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
 
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const router = useRouter();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.name) newErrors.name = "Le nom est requis.";
+
+    if (!form.email) {
+      newErrors.email = "L'email est requis.";
+    } else if (!form.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+      newErrors.email = "Adresse email invalide.";
+    }
+
+    if (!form.password) {
+      newErrors.password = "Le mot de passe est requis.";
+    } else if (form.password.length < 6) {
+      newErrors.password =
+        "Le mot de passe doit contenir au moins 6 caractères.";
+    } else if (!form.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)) {
+      newErrors.password =
+        "Le mot de passe doit contenir au moins une lettre et un chiffre.";
+    }
+
+    if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Les mots de passe ne correspondent pas.";
+    }
+
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors([]);
+    const formErrors = validateForm();
 
-    // Vérification du mot de passe
-    if (form.password !== form.confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
       return;
     }
 
-    setError("");
-
     try {
+      setIsLoading(true);
       const res = await fetch("http://localhost:3001/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,34 +78,30 @@ export default function SignUp() {
       const data = await res.json();
 
       if (res.ok) {
-        // Cookies.set("token", String(data.access_token), {
-        //   expires: 7,
-        // });
-        // // loc alStorage.setItem("token", data.access_token);
-
-        // console.log("Token stocké :", Cookies.get("token"));
-
-        // console.log("Inscription réussie : ", data);
-
-        setIsLoading(true);
-        setTimeout(() => {
-          router.push("/login");
-        }, 3500);
+        setMessage("Inscription réussie ! Veuillez vérifier votre e-mail.");
+        setTimeout(() => router.push("/login"), 3000);
+      } else if (data.message === "Cet email est déjà utilisé") {
+        setErrors({ email: "Cet email est déjà utilisé." });
+      } else if (data.message) {
+        const errObj = Array.isArray(data.message)
+          ? data.message.reduce((acc, msg) => {
+              const [field, msgText] = msg.split(":");
+              if (field && msgText) acc[field.trim()] = msgText.trim();
+              return acc;
+            }, {})
+          : { general: data.message };
+        setErrors(errObj);
       } else {
-        if (data.message) {
-          setErrors(
-            Array.isArray(data.message) ? data.message : [data.message]
-          );
-        } else {
-          setErrors(["Une erreur est survenue."]);
-        }
+        setError("Une erreur est survenue.");
       }
-    } catch (error) {
-      console.error("Erreur lors de la requête :", error);
-
-      setErrors(["Erreur lors de la connexion au serveur."]);
+    } catch (err) {
+      console.error("Erreur:", err);
+      setError("Erreur lors de la connexion au serveur.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="max-w-md w-full">
@@ -86,16 +113,22 @@ export default function SignUp() {
               Inscription
             </h1>
 
-            {errors.length > 0 && (
-              <div className="mb-4 p-2 bg-red-200 text-red-800 rounded">
-                {errors.map((err, index) => (
-                  <p key={index}>{err}</p>
-                ))}
-              </div>
+            {message && (
+              <p className="text-white bg-green-500 p-2 rounded-md mb-2 text-center text-sm">
+                {message}
+              </p>
+            )}
+            {error && (
+              <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
+            )}
+            {errors.general && (
+              <p className="text-red-500 mb-4 text-sm text-center">
+                {errors.general}
+              </p>
             )}
 
             <form className="space-y-4" onSubmit={handleSubmit}>
-              {" "}
+              {/* Nom */}
               <div>
                 <label
                   htmlFor="name"
@@ -105,16 +138,19 @@ export default function SignUp() {
                 </label>
                 <input
                   type="text"
-                  id="name"
-                  onChange={handleChange}
                   name="name"
-                  className="mt-2 block text-black py-[.5rem] px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  id="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className="mt-2 block text-black py-2 px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Votre nom"
                 />
                 {errors.name && (
-                  <p className="text-red-500">{errors.name[0]}</p>
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
                 )}
               </div>
+
+              {/* Email */}
               <div>
                 <label
                   htmlFor="email"
@@ -124,16 +160,19 @@ export default function SignUp() {
                 </label>
                 <input
                   type="email"
-                  id="email"
-                  onChange={handleChange}
                   name="email"
-                  className="mt-2 block text-black py-[.5rem] px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  id="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  className="mt-2 block text-black py-2 px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Votre email"
                 />
                 {errors.email && (
-                  <p className="text-red-500">{errors.email[0]}</p>
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                 )}
               </div>
+
+              {/* Mot de passe */}
               <div>
                 <label
                   htmlFor="password"
@@ -141,58 +180,84 @@ export default function SignUp() {
                 >
                   Mot de passe
                 </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  onChange={handleChange}
-                  className="mt-2 block text-black py-[.5rem] px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Votre mot de passe"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    id="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    className="mt-2 block text-black py-2 px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Votre mot de passe"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-2 flex items-center text-gray-600"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
                 {errors.password && (
-                  <p className="text-red-500">{errors.password[0]}</p>
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
                 )}
               </div>
+
+              {/* Confirmation mot de passe */}
               <div>
                 <label
-                  htmlFor="confirm-password"
+                  htmlFor="confirmPassword"
                   className="block text-sm font-bold text-[#3E3232]"
                 >
                   Confirmer le mot de passe
                 </label>
-                <input
-                  type="password"
-                  id="confirm-password"
-                  name="confirmPassword"
-                  onChange={handleChange}
-                  className="mt-2 block text-black py-[.5rem] px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Confirmez votre mot de passe"
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    id="confirmPassword"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    className="mt-2 block text-black py-2 px-2 w-full rounded-md border border-gray focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Confirmez votre mot de passe"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-2 flex items-center text-gray-600"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
                 {errors.confirmPassword && (
-                  <p className="text-red-500">{errors.confirmPassword[0]}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.confirmPassword}
+                  </p>
                 )}
               </div>
-              {error && <p style={{ color: "red" }}>{error}</p>}
-              {errors.general && (
-                <p className="text-red-500">{errors.general[0]}</p>
-              )}
+
+              {/* Submit */}
               <button
                 type="submit"
-                className="w-full font-semibold bg-[#FC4308] text-white py-2 px-4 rounded-md shadow hover:bg-[#d44717] transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-[#FC4308] hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-md"
               >
-                S'inscrire
+                Créer un compte
               </button>
-            </form>
 
-            <p className="mt-4 text-center text-md font-semibold text-[#3E3232]">
-              Déjà un compte ?
-              <Link
-                href="/login"
-                className="text-[#FC4308] hover:underline ml-1"
-              >
-                Se connecter
-              </Link>
-            </p>
+              <p className="text-center text-sm mt-4 text-black">
+                Vous avez déjà un compte ?{" "}
+                <Link
+                  href="/login"
+                  className="text-[#FC4308] font-medium hover:underline"
+                >
+                  Connexion
+                </Link>
+              </p>
+            </form>
           </>
         )}
       </div>

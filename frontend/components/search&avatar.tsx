@@ -61,17 +61,19 @@ export default function SearchAvatar() {
   return (
     <div>
       {user ? (
-        <div className="container flex items-center w-[31rem] justify-between">
-          <div className="relative flex items-center flex-1 max-w-lg mx-4 bg-gray-100 rounded-lg">
+        <div className="container w-full flex items-center justify-between">
+          <div className="relative flex items-center gap-3 flex-1 mx-4 px-4 py-2 bg-gray-100 rounded-lg">
             <button className="p-2">
               <FaEllipsisV className="text-black" />
             </button>
+
             <input
               type="text"
               placeholder="Search Anything"
-              className="w-full px-4 py-2 text-gray-700 bg-transparent rounded-full focus:outline-none"
+              className="flex-1 text-sm text-gray-700 bg-transparent focus:outline-none"
             />
-            <FaSearch className="absolute right-3 text-black" />
+
+            <FaSearch className="text-black" />
           </div>
 
           <div ref={menuRef} className="relative flex items-center gap-2">
@@ -84,7 +86,7 @@ export default function SearchAvatar() {
               onClick={() => setIsOpen(!isOpen)}
             />
             <span
-              className="font-semibold cursor-pointer"
+              className="font-semibold cursor-pointer text-black"
               onClick={() => setIsOpen(!isOpen)}
             >
               {user.name}
@@ -111,11 +113,10 @@ export default function SearchAvatar() {
                   className="font-bold text-lg borderp-0 items-center gap-1 rounded-lg transition-all flex flex-col"
                 >
                   {menuItems.map((item, index) => (
-                    
                     <li
                       key={index}
                       onClick={item.onClick || undefined}
-                      className="px-4 py-2 m-0 rounded-lg w-full text-center hover:bg-[#FC4308] hover:text-white transition-all cursor-pointer"
+                      className="px-4 py-2 m-0 text-black rounded-lg w-full text-center hover:bg-[#FC4308] hover:text-white transition-all cursor-pointer"
                     >
                       {item.href !== "#" ? (
                         <Link href={item.href}>{item.label}</Link>

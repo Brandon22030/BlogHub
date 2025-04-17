@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserPayload } from './jwt.strategy';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LogUserDto } from './dto/login-user.dto';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class AuthService {
@@ -18,13 +19,17 @@ export class AuthService {
     const { email, password } = authBody;
 
     const existingUser = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
     if (!existingUser) {
-      throw new Error("L'utilisateur n'existe pas!!!");
+      throw new BadRequestException("L'utilisateur n'existe pas !");
+    }
+
+    if (!existingUser.isVerified) {
+      throw new BadRequestException(
+        'Veuillez vérifier votre adresse email avant de vous connecter.',
+      );
     }
 
     const isPasswordValid = await this.isPasswordValid({
@@ -33,33 +38,33 @@ export class AuthService {
     });
 
     if (!isPasswordValid) {
-      throw new Error('Le mot de passe est incorrect!!!');
+      throw new BadRequestException('Le mot de passe est incorrect !');
     }
 
-    return this.authenticateUser({
-      userId: existingUser.id,
-      userName: existingUser.name,
-      userEmail: existingUser.email,
-    });
+    return {
+      ...this.authenticateUser({
+        userId: existingUser.id,
+        userName: existingUser.name,
+        userEmail: existingUser.email,
+      }),
+      message: 'Connexion réussie.',
+    };
   }
 
-  // REGISTER;
+  // REGISTER
   async register({ registerBody }: { registerBody: CreateUserDto }) {
     const { email, name, password, confirmPassword } = registerBody;
 
-    // Vérification si les mots de passe correspondent
     if (password !== confirmPassword) {
       throw new BadRequestException('Les mots de passe ne correspondent pas.');
     }
 
     const existingUser = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
     if (existingUser) {
-      throw new Error('Un compte existe déjà à cet adresse email!!!');
+      throw new BadRequestException('Un compte existe déjà à cette adresse email !');
     }
 
     const hashedPassword = await this.hashPassword({ password });
@@ -69,20 +74,27 @@ export class AuthService {
         email,
         password: hashedPassword,
         name,
+        isVerified: false,
+        // verificationToken: '', // à activer si tu veux stocker le token
       },
     });
 
-    return this.authenticateUser({
-      userId: createdUser.id,
-      userName: createdUser.name,
-      userEmail: createdUser.email,
-    });
+    // Générer le token de vérification
+    const verificationToken = this.jwtService.sign(
+      { email: createdUser.email },
+      { expiresIn: '24h' }
+    );
+
+    // Envoi de l'email de vérification
+    await this.sendVerificationEmail(createdUser.email, verificationToken);
+
+    return {
+      message: 'Inscription réussie. Vérifiez votre email pour activer votre compte.',
+    };
   }
 
   private async hashPassword({ password }: { password: string }) {
-    const hashedPassword = await hash(password, 10);
-
-    return hashedPassword;
+    return await hash(password, 10);
   }
 
   private async isPasswordValid({
@@ -92,9 +104,7 @@ export class AuthService {
     password: string;
     hashedPassword: string;
   }) {
-    const isPasswordValid = await compare(password, hashedPassword);
-
-    return isPasswordValid;
+    return await compare(password, hashedPassword);
   }
 
   private authenticateUser({ userId, userName, userEmail }: UserPayload) {
@@ -102,5 +112,70 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  private async sendVerificationEmail(email: string, token: string) {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    const verificationLink = `http://localhost:3000/verify-email?token=${token}`;
+
+    const emailHTML = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px;">
+        <h2 style="text-align: center; color: #FC4308;">Vérification de votre adresse e-mail</h2>
+        <p style="font-size: 16px; color: #333;">
+          Bonjour, <br><br>
+          Merci de vous être inscrit sur notre plateforme. Veuillez cliquer sur le bouton ci-dessous pour vérifier votre adresse e-mail et activer votre compte :
+        </p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; font-size: 18px; color: white; background-color: #FC4308; text-decoration: none; border-radius: 8px;">
+            Vérifier mon e-mail
+          </a>
+        </div>
+        <p style="font-size: 14px; color: #666;">
+          Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail. Ce lien expirera dans 24 heures.
+        </p>
+        <hr style="border: none; border-top: 1px solid #ddd;">
+        <p style="text-align: center; font-size: 12px; color: #999;">
+          &copy; ${new Date().getFullYear()} BlogHub. Tous droits réservés.
+        </p>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Vérification de votre adresse e-mail',
+      html: emailHTML,
+    });
+  }
+
+  async verifyEmail(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const user = await this.prisma.user.findUnique({
+        where: { email: decoded.email },
+      });
+
+      if (!user) throw new BadRequestException('Utilisateur non trouvé.');
+      if (user.isVerified) return { message: 'Email déjà vérifié.' };
+
+      await this.prisma.user.update({
+        where: { email: user.email },
+        data: { isVerified: true },
+      });
+
+      return { message: 'Email vérifié avec succès.' };
+    } catch (error) {
+      throw new BadRequestException('Lien invalide ou expiré.');
+    }
   }
 }

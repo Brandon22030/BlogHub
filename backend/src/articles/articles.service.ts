@@ -1,9 +1,163 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateArticleDto } from './dto/create-article.dto';
+import { ArticleStatus } from '@prisma/client';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { SearchQueryDto } from './dto/search-query.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ArticlesService {
-    constructor(private readonly  prisma: PrismaService){}
+  constructor(private readonly prisma: PrismaService) {}
 
-    async create()
+// Create an article
+  async create(createArticleDto: CreateArticleDto, userId: string) {
+    try {
+      const article = await this.prisma.article.create({
+        data: {
+          title: createArticleDto.title,
+          content: createArticleDto.content,
+          imageUrl: createArticleDto.imageUrl || null,
+          status: createArticleDto.status || ArticleStatus.DRAFT,
+          categoryId: createArticleDto.categoryId,
+          authorId: userId,
+        },
+      });
+      return article;
+    } catch {
+      throw new HttpException(
+        "Erreur de création de l'article",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Read all articles with pagination and search
+  async findAll(query: SearchQueryDto) {
+    const { page = 1, limit = 10, searchTerm, category, author } = query;
+    const skip = (page - 1) * limit;
+
+    try {
+      // Build where clause for search
+      const whereClause: Prisma.ArticleWhereInput = {
+        status: ArticleStatus.PUBLISHED,
+        ...(searchTerm && {
+          OR: [
+            { title: { contains: searchTerm, mode: 'insensitive' } },
+            { content: { contains: searchTerm, mode: 'insensitive' } },
+            { author: { name: { contains: searchTerm, mode: 'insensitive' } } },
+          ],
+        }),
+        ...(category && { categoryId: category }),
+        ...(author && { author: { name: { contains: author, mode: 'insensitive' } } }),
+      };
+
+      // Get total count of matching articles
+      const totalItems = await this.prisma.article.count({
+        where: whereClause,
+      });
+
+      // Get paginated and filtered articles
+      const articles = await this.prisma.article.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          imageUrl: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              imageUrl: true,
+            },
+          },
+          categoryId: true,
+          status: true,
+          createdAt: true,
+        },
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      return {
+        data: articles,
+        meta: {
+          totalItems,
+          itemsPerPage: limit,
+          currentPage: page,
+          totalPages: Math.ceil(totalItems / limit),
+          hasNextPage: page < Math.ceil(totalItems / limit),
+          hasPreviousPage: page > 1,
+        },
+      };
+    } catch {
+      throw new HttpException(
+        'Erreur lors de la récupération des articles',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+
+
+// Read a specific article by ID
+  async findOne(id: string) {
+    try {
+      const article = await this.prisma.article.findUnique({
+        where: { id },
+        include: {
+          author: true,
+          category: true,
+        },
+      });
+      if (!article) {
+        throw new HttpException('Article non trouvé', HttpStatus.NOT_FOUND);
+      }
+      return article;
+    } catch {
+      throw new HttpException(
+        "Erreur lors de la récupération de l'article",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+// Update an article
+  async update(id: string, updateArticleDto: CreateArticleDto, userId: string) {
+    const article = await this.prisma.article.findUnique({ where: { id } });
+    if (!article) {
+      throw new HttpException('Article non trouvé', HttpStatus.NOT_FOUND);
+    }
+  
+      // Check if the user is the author
+    if (article.authorId !== userId) {
+      throw new HttpException(
+        "Vous n'avez pas la permission de modifier cet article",
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  
+    try {
+      return await this.prisma.article.update({
+        where: { id },
+        data: {
+          title: updateArticleDto.title,
+          content: updateArticleDto.content,
+          imageUrl: updateArticleDto.imageUrl || null,
+          status: updateArticleDto.status || ArticleStatus.DRAFT,
+          categoryId: updateArticleDto.categoryId,
+        },
+      });
+    } catch {
+      throw new HttpException(
+        "Erreur lors de la modification de l'article",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  
 }

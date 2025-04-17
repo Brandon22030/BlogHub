@@ -1,4 +1,13 @@
-import { Body, Controller, Post, UseGuards, Get, Req } from '@nestjs/common';
+
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Get,
+  Req,
+  Query,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RequestWithUser } from './jwt.strategy';
@@ -27,5 +36,11 @@ export class AuthController {
   @Get('profile')
   getProfile(@Req() req: RequestWithUser) {
     return req.user;
+  }
+
+
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return this.authService.verifyEmail(token);
   }
 }

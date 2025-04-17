@@ -7,6 +7,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CategoryModule } from './category/category.module';
 import { PrismaService } from './prisma/prisma.service';
 
+import { ArticlesModule } from './articles/articles.module';
+import { CommentsModule } from './comments/comments.module';
+
 @Module({
   imports: [
     UserModule,
@@ -16,7 +19,10 @@ import { PrismaService } from './prisma/prisma.service';
     }),
     // ArticlesModule,
     PrismaModule,
-    CategoryModule
+
+    CategoryModule,
+    ArticlesModule,
+    CommentsModule,
   ],
   providers: [PrismaService],
   controllers: [],

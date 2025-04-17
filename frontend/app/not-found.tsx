@@ -8,29 +8,25 @@ export default function NotFound() {
   const router = useRouter();
 
   useEffect(() => {
-    setTimeout(() => setShowText(true), 500); // Retard pour l'effet fade-in
+    const timer = setTimeout(() => setShowText(true), 500);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full text-white scrollbar-hide">
-      <div className="">
-        <Image
-          className=""
-          src="/logo.svg"
-          alt="logo"
-          width={300}
-          height={48}
-          priority
-        />
+    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-white text-black overflow-hidden">
+      {/* Logo */}
+      <div className="mb-6">
+        <Image src="/logo.svg" alt="logo" width={300} height={48} priority />
       </div>
+
       {/* Animation Glitch 404 */}
-      <h1 className="text-8xl font-extrabold glitch text-black" data-text="404">
+      <h1 className="text-8xl font-extrabold glitch" data-text="404">
         404
       </h1>
 
       {/* Texte avec effet fade-in */}
       <p
-        className={`text-lg mt-4 text-black transition-opacity duration-1000 ${
+        className={`text-lg mt-4 transition-opacity duration-1000 ${
           showText ? "opacity-100" : "opacity-0"
         }`}
       >

@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
 import "./globals.css";
 import Breadcrumbs from "@/components/breadcrumbs";
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./globals.css";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +34,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Si tu veux ajouter des éléments globaux comme des breadcrumbs, tu peux les inclure ici */}
         {/* <Breadcrumbs /> */}
-        {children}
+        {children} {/* Affiche une seule fois les enfants */}
+        <Footer /> {/* Le footer après les enfants */}
       </body>
     </html>
   );

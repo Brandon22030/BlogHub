@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
@@ -8,20 +9,24 @@ import Mega_categories from "./mega_categories";
 import Pages from "./pages";
 import { motion, AnimatePresence } from "framer-motion";
 import Cookies from "js-cookie";
+import NotificationBell from "./notifications/NotificationBell";
 
 export function NavBar() {
-  const [activeMenu, setActiveMenu] = useState(null);
-  const [user, setUser] = useState(null);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
+  const [user, setUser] = useState<any>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  // Fonction pour basculer l'affichage du menu
-  const toggleMenu = (id) => {
+
+  const toggleMenu = (id: number) => {
     setActiveMenu((prev) => (prev === id ? null : id));
   };
 
-  // Fermer le menu en cliquant en dehors
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        event.target instanceof Node &&
+        !menuRef.current.contains(event.target)
+      ) {
         setActiveMenu(null);
       }
     };
@@ -32,7 +37,6 @@ export function NavBar() {
     };
   }, []);
 
-  // Récupérer l'utilisateur via le token
   useEffect(() => {
     const fetchUser = async () => {
       const token = Cookies.get("token");
@@ -40,7 +44,6 @@ export function NavBar() {
 
       try {
         const res = await fetch("http://localhost:3001/user/profile", {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -51,7 +54,10 @@ export function NavBar() {
           setUser(data);
         }
       } catch (error) {
-        console.error("Erreur lors de la récupération de l'utilisateur :", error);
+        console.error(
+          "Erreur lors de la récupération de l'utilisateur :",
+          error
+        );
       }
     };
 
@@ -59,41 +65,65 @@ export function NavBar() {
   }, []);
 
   const menus = [
-    { id: 0, name: "Categories", submenus: Mega_categories },
-    { id: 1, name: "Pages", submenus: Pages },
-    { id: 2, name: "Contact us", submenus: null },
-    { id: 3, name: "About Us", submenus: null },
+    { id: 0, name: "Categories", SubmenuComponent: Mega_categories },
+    { id: 1, name: "Pages", SubmenuComponent: Pages },
+    { id: 2, name: "Contact us", SubmenuComponent: null },
+    { id: 3, name: "About Us", SubmenuComponent: null },
   ];
 
   return (
-    <nav className={`relative flex w-full items-center z-20 ${!user ? "gap-[10rem]" : ""}`} ref={menuRef}>
-      <div className="container mx-auto flex justify-center items-center gap-[50px]">
-        {/* Logo */}
+    <nav
+      ref={menuRef}
+      className={`relative flex justify-between items-center z-20 ${
+        !user ? "gap-[10rem]" : ""
+      }`}
+    >
+      <div className="flex items-center gap-[40px]">
         <Link href="/">
-          <Image src="/logo.svg" alt="logo" width={120} height={48} priority className="w-[10rem]" />
+          <Image
+            src="/logo.svg"
+            alt="logo"
+            width={120}
+            height={48}
+            priority
+            className="w-[7rem]"
+          />
         </Link>
 
-        {/* Menu Principal */}
-        <ul className="flex w-full">
-          {menus.map((menu) => (
-            <li key={menu.id} className="relative w-full">
+        <ul className="flex gap-5">
+          {menus.map(({ id, name, SubmenuComponent }) => (
+            <li key={id} className="relative">
               <button className="items-center rounded-lg transition-colors duration-300">
-                <div onClick={() => toggleMenu(menu.id)} className="flex items-center pr-4 font-semibold cursor-pointer">
-                  {menu.name}
-                  {menu.submenus && (
+                <div
+                  onClick={() => toggleMenu(id)}
+                  className="text-black text-sm flex items-center font-semibold cursor-pointer"
+                >
+                  {name}
+                  {SubmenuComponent && (
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-300 ${activeMenu === menu.id ? "rotate-180" : ""}`}
+                      className={`w-4 h-4 transition-transform duration-300 ${
+                        activeMenu === id ? "rotate-180" : ""
+                      }`}
                     />
                   )}
                 </div>
-                <div className={`h-[.2rem] rounded-lg w-[1.5rem] transition-colors duration-500 ${activeMenu === menu.id ? "bg-[#FC4308]" : "group-hover:bg-[#FC4308]"}`}></div>
+                <div
+                  className={`h-[.2rem] rounded-lg w-[1.5rem] transition-colors duration-500 ${
+                    activeMenu === id
+                      ? "bg-[#FC4308]"
+                      : "group-hover:bg-[#FC4308]"
+                  }`}
+                />
               </button>
 
-              {/* Sous-menu déroulant */}
-              {menu.submenus && activeMenu === menu.id && (
+              {SubmenuComponent && activeMenu === id && (
                 <div
                   className={`absolute top-10 z-20 ${
-                    menu.id === 0 && user ? "-left-60 w-[75rem]" : menu.id === 0 && !user ? "-left-52 w-[75rem]" : ""
+                    id === 0
+                      ? user
+                        ? "-left-60 w-[75rem]"
+                        : "-left-52 w-[75rem]"
+                      : ""
                   }`}
                 >
                   <AnimatePresence>
@@ -104,7 +134,7 @@ export function NavBar() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="relative"
                     >
-                      <menu.submenus />
+                      <SubmenuComponent />
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -114,8 +144,9 @@ export function NavBar() {
         </ul>
       </div>
 
-      {/* Barre de recherche & Avatar */}
-      <div>
+      {/* Barre de recherche, Notifications & Avatar */}
+      <div className="flex items-center gap-4">
+        {user && <NotificationBell />}
         <SearchAvatar />
       </div>
     </nav>
