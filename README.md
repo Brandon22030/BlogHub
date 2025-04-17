@@ -31,6 +31,7 @@ BlogHub is a modern blogging platform allowing users to create, manage, customiz
 - **Image upload and display reliability:**
   - Backend now returns Cloudinary `secure_url` after image upload for consistent access to uploaded images.
   - Frontend robustly displays images (articles & avatars) with fallback logic for missing or invalid URLs.
+  - Article image upload endpoint is JWT-protected for security.
 - **Loader during image upload:**
   - A centered spinner and message are shown while uploading images in the SendPost form for better user feedback.
   - Loader is perfectly centered regardless of container height.
@@ -46,7 +47,8 @@ BlogHub is a modern blogging platform allowing users to create, manage, customiz
 ## Features
 - **User registration, login, and secure session management (JWT, cookies)**
 - **User profile update (name, email, password, avatar, etc.)**
-- **Profile image upload**
+- **Profile image upload (local)**
+- **Article image upload (Cloudinary, secure_url, JWT protected)**
 - **Smooth navigation with a global user context (UserContext)**
 - **Instant user info updates across the app (navbar, menus, profile, etc.)**
 - **Create, edit, delete, and view articles**
@@ -55,13 +57,15 @@ BlogHub is a modern blogging platform allowing users to create, manage, customiz
 - **Article search**
 - **Notifications (structure ready)**
 - **Modern, responsive, and animated UI**
+- **Centered loader during article image upload**
+- **Robust fallback for missing images (articles/avatars)**
 
 ---
 
 ## Architecture & Stack
 
 - **Frontend**: Next.js 13+ (App Router, TypeScript, React Context API, TailwindCSS, js-cookie, jwt-decode)
-- **Backend**: NestJS, Prisma ORM, MongoDB, JWT, Multer (image upload), bcrypt
+- **Backend**: NestJS, Prisma ORM, MongoDB, JWT, Multer (image upload), Cloudinary (article images), bcrypt
 - **Other**: Email sending (nodemailer), environment variable management (.env)
 
 ---
@@ -84,6 +88,7 @@ npm install
   - `DATABASE_URL` (MongoDB)
   - `JWT_SECRET` (JWT secret key)
   - `EMAIL_USER` and `EMAIL_PASS` (for email sending)
+  - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (for image uploads)
 - Start the server:
 ```bash
 npm run start:dev
@@ -155,9 +160,16 @@ BlogHub/
 ---
 
 ## Image Management
-- **Upload**: via Multer (NestJS)
-- **Storage**: `backend/uploads` folder
-- **Access**: the image URL is automatically prefixed on the frontend for display (see UserContext and SearchAvatar)
+- **Article Images:** Uploaded via a JWT-protected endpoint (`/articles/images/upload`). Images are stored on [Cloudinary](https://cloudinary.com/) and the backend returns a `secure_url`.
+- **Profile Images:** Uploaded via Multer to the `backend/uploads` folder.
+- **Frontend Fallback Logic:**
+  - If an image URL is missing or invalid, a default SVG is shown (for both articles and avatars).
+  - The frontend always checks if the URL starts with `http` (Cloudinary) or falls back to the local image or default.
+- **Loader:**
+  - While uploading an article image, a centered spinner and message are displayed in the SendPost form.
+- **Access:**
+  - Article images: Cloudinary URLs (https)
+  - Profile images: `/uploads/...` via backend
 
 ---
 
@@ -177,6 +189,9 @@ DATABASE_URL=... # MongoDB URL
 JWT_SECRET=...   # JWT secret key
 EMAIL_USER=...   # Email for sending mails
 EMAIL_PASS=...   # Email app password
+CLOUDINARY_CLOUD_NAME=... # Cloudinary cloud name
+CLOUDINARY_API_KEY=...    # Cloudinary API key
+CLOUDINARY_API_SECRET=... # Cloudinary API secret
 ```
 
 ### Frontend
