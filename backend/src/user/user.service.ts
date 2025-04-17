@@ -11,10 +11,13 @@ import { JwtService } from '@nestjs/jwt';
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService, // injecte JwtService
+    private readonly jwtService: JwtService, // Injects JwtService
   ) {}
 
-  // Récupérer tout les utilisateurs
+  /**
+   * Retrieve all users from the database.
+   * @returns Array of users (id, name, email, imageUrl)
+   */
   async getUsers() {
     const users = await this.prisma.user.findMany({
       select: {
@@ -27,7 +30,11 @@ export class UserService {
     return users;
   }
 
-  // Récupérer un utilisateur par son ID
+  /**
+   * Retrieve a user by their unique ID.
+   * @param userId - The ID of the user to retrieve
+   * @returns The user object (id, name, email, imageUrl)
+   */
   async getUser({ userId }: { userId: string }) {
     const users = await this.prisma.user.findMany({
       where: {
@@ -43,37 +50,44 @@ export class UserService {
     return users;
   }
 
-  // Mettre à jour un utilisateur par son ID
+  /**
+   * Update a user's profile by their ID.
+   * Verifies the old password, updates fields, and handles image upload.
+   * @param userId - The ID of the user to update
+   * @param body - The update payload (userName, email, password, oldPassword)
+   * @param image - (Optional) profile image file
+   * @returns Updated user info, new JWT token, and a success message
+   */
   async updateProfile(userId: string, body: any, image?: Express.Multer.File) {
-    // 1. Récupère l'utilisateur
+    // 1. Retrieve the user
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new BadRequestException('Utilisateur non trouvé.');
+    if (!user) throw new BadRequestException('User not found.');
 
-    // 2. Vérifie l'ancien mot de passe
+    // 2. Verify the old password
     if (!body.oldPassword)
-      throw new BadRequestException('Ancien mot de passe requis.');
+      throw new BadRequestException('Old password required.');
     const passwordValid = await bcrypt.compare(body.oldPassword, user.password);
     if (!passwordValid)
-      throw new UnauthorizedException('Ancien mot de passe incorrect.');
+      throw new UnauthorizedException('Incorrect old password.');
 
-    // 3. Prépare les données à mettre à jour
+    // 3. Prepare data to update
     const data: any = {};
     if (body.userName) data.name = body.userName;
     if (body.email) data.email = body.email;
     if (body.password) data.password = await bcrypt.hash(body.password, 10);
 
-    // 4. Gère l'image si présente
+    // 4. Handle image if present
     if (image && image.filename) {
       data.imageUrl = `/uploads/${image.filename}`;
     }
 
-    // Mise à jour effective en base
+    // Update user in the database
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data,
     });
 
-    // Génère un nouveau token avec les nouvelles infos
+    // Generate a new token with updated info
     const payload = {
       userId: updatedUser.id,
       userName: updatedUser.name,
@@ -83,10 +97,12 @@ export class UserService {
     const newToken = this.jwtService.sign(payload);
 
     return {
-      message: 'Profil mis à jour avec succès.',
+      message: 'Profile updated successfully.',
       token: newToken,
       user: payload,
     };
 
   }
+
 }
+

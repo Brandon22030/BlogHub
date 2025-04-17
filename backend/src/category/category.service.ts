@@ -5,7 +5,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Retrieve all categories from the database.
+   * @returns Array of category objects
+   */
   async getAllCategories() {
     return this.prisma.category.findMany();
   }
+
 }

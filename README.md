@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="frontend/public/logo.svg" alt="BlogHub Logo" width="180" />
+</div>
+
 # BlogHub
 
 BlogHub is a modern blogging platform allowing users to create, manage, customize, and explore articles with a smooth and reactive user experience.

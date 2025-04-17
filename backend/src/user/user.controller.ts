@@ -24,24 +24,36 @@ import { extname } from 'path';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // Récupérer tout les utilisateurs
+  /**
+   * Get all users in the system.
+   * @returns An array of user objects (id, name, email, imageUrl)
+   */
   @Get()
   getUsers() {
     return this.userService.getUsers();
   }
 
-  // Récupérer un utilisateur par son ID
+  /**
+   * Get a user by their unique ID.
+   * @param userId - The ID of the user to retrieve
+   * @returns The user object (id, name, email, imageUrl)
+   */
   @Get('/id/:userId')
   getUser(@Param('userId') userId: string) {
     return this.userService.getUser({ userId });
   }
 
-  // Récupérer le profil de l'utilisateur connecté
+  /**
+   * Get the profile of the currently authenticated user.
+   * Requires JWT authentication.
+   * @param req - The request object containing user info
+   * @returns The user's profile (id, name, email)
+   */
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Req() req: RequestWithUser) {
     if (!req.user) {
-      throw new Error('Utilisateur non authentifié');
+      throw new Error('User not authenticated');
     }
 
     return {
@@ -52,7 +64,14 @@ export class UserController {
     };
   }
 
-  // Mettre à jour le profil de l'utilisateur connecté
+  /**
+   * Update the profile of the currently authenticated user.
+   * Handles image upload and password verification.
+   * @param req - The request object containing user info
+   * @param body - The update payload (userName, email, password, oldPassword)
+   * @param image - (Optional) profile image file
+   * @returns The updated user object and a new JWT token
+   */
   @UseGuards(JwtAuthGuard)
   @Put('profile')
   @UseInterceptors(
@@ -75,4 +94,6 @@ export class UserController {
     const userId = req.user.userId;
     return this.userService.updateProfile(userId, body, image);
   }
+
 }
+

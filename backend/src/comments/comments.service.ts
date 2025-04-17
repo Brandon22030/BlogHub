@@ -8,11 +8,23 @@ import { Comment } from '@prisma/client';
 
 @Injectable()
 export class CommentsService {
+  /**
+   * Initializes the CommentsService with dependencies.
+   * @param prisma - PrismaService instance for database operations
+   * @param notificationsService - NotificationsService instance for sending notifications
+   */
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
   ) {}
 
+  /**
+   * Create a new comment for an article. Handles both top-level comments and replies.
+   * Sends notifications to article author or parent comment author as appropriate.
+   * @param createCommentDto - Comment creation payload
+   * @param userId - The ID of the user creating the comment
+   * @returns The created comment object
+   */
   async create(
     createCommentDto: CreateCommentDto,
     userId: string,
@@ -78,7 +90,7 @@ export class CommentsService {
         },
       });
 
-      // Send notification to article author if it's a top-level comment
+      // Notify article author if it's a top-level comment
       if (!createCommentDto.parentId && article.authorId !== userId) {
         await this.notificationsService.create({
           userId: article.authorId,
@@ -90,7 +102,7 @@ export class CommentsService {
           sourceId: comment.id,
         });
       } else if (createCommentDto.parentId) {
-        // Send notification to parent comment author for replies
+        // Notify parent comment author if this is a reply
         const parentComment = await this.prisma.comment.findUnique({
           where: { id: createCommentDto.parentId },
         });
@@ -101,7 +113,7 @@ export class CommentsService {
             recipientId: parentComment.authorId,
             type: NotificationType.REPLY,
             title: 'New Reply',
-            message: 'Someone replied to your comment',
+            message: `Someone replied to your comment`,
             link: `/articles/${article.id}#comment-${comment.id}`,
             sourceId: comment.id,
           });
@@ -110,12 +122,8 @@ export class CommentsService {
 
       return comment;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      console.error('Error creating comment:', error);
       throw new HttpException(
-        'Error creating comment',
+        error.message || 'Error creating comment',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

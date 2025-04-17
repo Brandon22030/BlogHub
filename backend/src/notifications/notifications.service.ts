@@ -14,6 +14,11 @@ export class NotificationsService {
     private readonly notificationsGateway: NotificationsGateway,
   ) {}
 
+  /**
+   * Create a new notification in the database and send it in real-time.
+   * @param createNotificationDto - Notification creation payload
+   * @returns The created notification object
+   */
   async create(
     createNotificationDto: CreateNotificationDto,
   ): Promise<Notification> {
@@ -42,6 +47,11 @@ export class NotificationsService {
     }
   }
 
+  /**
+   * Retrieve all notifications for a specific user.
+   * @param userId - The user's unique ID
+   * @returns Array of notifications
+   */
   async getUserNotifications(userId: string): Promise<Notification[]> {
     try {
       return await this.prisma.notification.findMany({
@@ -54,12 +64,18 @@ export class NotificationsService {
     }
   }
 
+  /**
+   * Mark a specific notification as read for a user.
+   * @param notificationId - The notification's unique ID
+   * @param userId - The user's unique ID
+   * @returns The updated notification object or error if not found/unauthorized
+   */
   async markAsRead(
     notificationId: string,
     userId: string,
   ): Promise<Notification | null> {
     try {
-      // Vérifie que la notif appartient à l'utilisateur
+      // Check that the notification belongs to the user
       const notif = await this.prisma.notification.findUnique({
         where: { id: notificationId },
       });
@@ -76,6 +92,11 @@ export class NotificationsService {
     }
   }
 
+  /**
+   * Mark all notifications as read for a specific user.
+   * @param userId - The user's unique ID
+   * @returns The number of notifications marked as read
+   */
   async markAllAsRead(userId: string): Promise<{ count: number }> {
     try {
       return await this.prisma.notification.updateMany({

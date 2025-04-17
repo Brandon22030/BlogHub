@@ -14,7 +14,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // LOGIN
+  /**
+   * Authenticate a user by email and password, and return a JWT token if valid.
+   * Checks if the user exists and is verified, and validates the password.
+   * @param authBody - Login credentials (email, password)
+   * @returns JWT token and user info if successful
+   */
   async login({ authBody }: { authBody: LogUserDto }) {
     const { email, password } = authBody;
 
@@ -23,12 +28,12 @@ export class AuthService {
     });
 
     if (!existingUser) {
-      throw new BadRequestException("L'utilisateur n'existe pas !");
+      throw new BadRequestException("User does not exist!");
     }
 
     if (!existingUser.isVerified) {
       throw new BadRequestException(
-        'Veuillez vérifier votre adresse email avant de vous connecter.',
+        'Please verify your email address before logging in.',
       );
     }
 
@@ -38,7 +43,7 @@ export class AuthService {
     });
 
     if (!isPasswordValid) {
-      throw new BadRequestException('Le mot de passe est incorrect !');
+      throw new BadRequestException('Incorrect password!');
     }
 
     return {
@@ -47,16 +52,20 @@ export class AuthService {
         userName: existingUser.name,
         userEmail: existingUser.email,
       }),
-      message: 'Connexion réussie.',
+      message: 'Login successful.',
     };
   }
 
-  // REGISTER
+  /**
+   * Register a new user, hash their password, and send a verification email.
+   * @param registerBody - Registration payload (name, email, password, confirmPassword)
+   * @returns Confirmation message
+   */
   async register({ registerBody }: { registerBody: CreateUserDto }) {
     const { email, name, password, confirmPassword } = registerBody;
 
     if (password !== confirmPassword) {
-      throw new BadRequestException('Les mots de passe ne correspondent pas.');
+      throw new BadRequestException('Passwords do not match.');
     }
 
     const existingUser = await this.prisma.user.findUnique({
@@ -65,7 +74,7 @@ export class AuthService {
 
     if (existingUser) {
       throw new BadRequestException(
-        'Un compte existe déjà à cette adresse email !',
+        'An account with this email already exists!',
       );
     }
 
@@ -77,29 +86,40 @@ export class AuthService {
         password: hashedPassword,
         name,
         isVerified: false,
-        // verificationToken: '', // à activer si tu veux stocker le token
+        // verificationToken: '', // enable if you want to store the token
       },
     });
 
-    // Générer le token de vérification
+    // Generate the verification token
     const verificationToken = this.jwtService.sign(
       { email: createdUser.email },
       { expiresIn: '24h' },
     );
 
-    // Envoi de l'email de vérification
+    // Send the verification email
     await this.sendVerificationEmail(createdUser.email, verificationToken);
 
     return {
       message:
-        'Inscription réussie. Vérifiez votre email pour activer votre compte.',
+        'Registration successful. Check your email to activate your account.',
     };
   }
 
+  /**
+   * Hash a plain text password using bcrypt.
+   * @param password - The plain text password
+   * @returns The hashed password
+   */
   private async hashPassword({ password }: { password: string }) {
     return await hash(password, 10);
   }
 
+  /**
+   * Compare a plain text password to a hashed password.
+   * @param password - The plain text password
+   * @param hashedPassword - The hashed password
+   * @returns True if passwords match, false otherwise
+   */
   private async isPasswordValid({
     password,
     hashedPassword,
@@ -110,6 +130,13 @@ export class AuthService {
     return await compare(password, hashedPassword);
   }
 
+  /**
+   * Generate a JWT token for an authenticated user.
+   * @param userId - The user's ID
+   * @param userName - The user's name
+   * @param userEmail - The user's email
+   * @returns An object containing the JWT access token
+   */
   private authenticateUser({ userId, userName, userEmail }: UserPayload) {
     const payload: UserPayload = { userId, userName, userEmail };
     return {
@@ -117,6 +144,11 @@ export class AuthService {
     };
   }
 
+  /**
+   * Send a verification email to a newly registered user.
+   * @param email - The user's email address
+   * @param token - The verification token
+   */
   private async sendVerificationEmail(email: string, token: string) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -133,22 +165,22 @@ export class AuthService {
 
     const emailHTML = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px;">
-        <h2 style="text-align: center; color: #FC4308;">Vérification de votre adresse e-mail</h2>
+        <h2 style="text-align: center; color: #FC4308;">Verify your email address</h2>
         <p style="font-size: 16px; color: #333;">
-          Bonjour, <br><br>
-          Merci de vous être inscrit sur notre plateforme. Veuillez cliquer sur le bouton ci-dessous pour vérifier votre adresse e-mail et activer votre compte :
+          Hello, <br><br>
+          Thank you for registering on our platform. Please click the button below to verify your email address and activate your account:
         </p>
         <div style="text-align: center; margin: 30px 0;">
           <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; font-size: 18px; color: white; background-color: #FC4308; text-decoration: none; border-radius: 8px;">
-            Vérifier mon e-mail
+            Verify my email
           </a>
         </div>
         <p style="font-size: 14px; color: #666;">
-          Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail. Ce lien expirera dans 24 heures.
+          If you did not request this, you can ignore this email. This link will expire in 24 hours.
         </p>
         <hr style="border: none; border-top: 1px solid #ddd;">
         <p style="text-align: center; font-size: 12px; color: #999;">
-          &copy; ${new Date().getFullYear()} BlogHub. Tous droits réservés.
+          &copy; ${new Date().getFullYear()} BlogHub. All rights reserved.
         </p>
       </div>
     `;
@@ -156,11 +188,16 @@ export class AuthService {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Vérification de votre adresse e-mail',
+      subject: 'Verify your email address',
       html: emailHTML,
     });
   }
 
+  /**
+   * Verify a user's email address using the provided token.
+   * @param token - The JWT verification token
+   * @returns Confirmation message or error
+   */
   async verifyEmail(token: string) {
     try {
       const decoded = this.jwtService.verify(token);
@@ -168,17 +205,17 @@ export class AuthService {
         where: { email: decoded.email },
       });
 
-      if (!user) throw new BadRequestException('Utilisateur non trouvé.');
-      if (user.isVerified) return { message: 'Email déjà vérifié.' };
+      if (!user) throw new BadRequestException('User not found.');
+      if (user.isVerified) return { message: 'Email already verified.' };
 
       await this.prisma.user.update({
         where: { email: user.email },
         data: { isVerified: true, verificationToken: token },
       });
 
-      return { message: 'Email vérifié avec succès.' };
+      return { message: 'Email verified successfully.' };
     } catch (error) {
-      throw new BadRequestException('Lien invalide ou expiré.');
+      throw new BadRequestException('Invalid or expired link.');
     }
   }
 }

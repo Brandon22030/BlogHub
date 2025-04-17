@@ -10,7 +10,12 @@ import { Prisma } from '@prisma/client';
 export class ArticlesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // Create an article
+  /**
+   * Create a new article in the database.
+   * @param createArticleDto - The article creation payload
+   * @param userId - The ID of the user creating the article
+   * @returns The created article object
+   */
   async create(createArticleDto: CreateArticleDto, userId: string) {
     try {
       const article = await this.prisma.article.create({
@@ -26,13 +31,17 @@ export class ArticlesService {
       return article;
     } catch {
       throw new HttpException(
-        "Erreur de création de l'article",
+        "Error creating article",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  // Read all articles with pagination and search
+  /**
+   * Get all articles with pagination and optional search/filtering.
+   * @param query - Search and pagination parameters
+   * @returns Paginated and filtered list of articles with meta info
+   */
   async findAll(query: SearchQueryDto) {
     const { page = 1, limit = 10, searchTerm, category, author } = query;
     const skip = (page - 1) * limit;
@@ -98,7 +107,7 @@ export class ArticlesService {
       };
     } catch {
       throw new HttpException(
-        'Erreur lors de la récupération des articles',
+        'Error retrieving articles',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

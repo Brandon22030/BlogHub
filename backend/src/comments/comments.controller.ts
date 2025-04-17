@@ -19,6 +19,13 @@ import { RequestWithUser } from '../auth/jwt.strategy';
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  /**
+   * Create a new comment for the authenticated user.
+   * Requires JWT authentication.
+   * @param createCommentDto - Comment creation payload
+   * @param req - The request object containing user info
+   * @returns The created comment object
+   */
   @Post()
   @UseGuards(JwtAuthGuard)
   create(
@@ -28,11 +35,24 @@ export class CommentsController {
     return this.commentsService.create(createCommentDto, req.user.userId);
   }
 
+  /**
+   * Get all comments for a specific article by its ID.
+   * @param articleId - The article's unique ID
+   * @returns Array of comments for the article
+   */
   @Get('article/:articleId')
   findByArticleId(@Param('articleId') articleId: string) {
     return this.commentsService.findByArticleId(articleId);
   }
 
+  /**
+   * Update a comment by its ID for the authenticated user.
+   * Requires JWT authentication.
+   * @param id - The comment's unique ID
+   * @param updateCommentDto - The update payload
+   * @param req - The request object containing user info
+   * @returns The updated comment object
+   */
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   update(
@@ -43,9 +63,18 @@ export class CommentsController {
     return this.commentsService.update(id, updateCommentDto, req.user.userId);
   }
 
+  /**
+   * Delete a comment by its ID for the authenticated user.
+   * Requires JWT authentication.
+   * @param id - The comment's unique ID
+   * @param req - The request object containing user info
+   * @returns Confirmation message or error
+   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string, @Req() req: RequestWithUser) {
     return this.commentsService.remove(id, req.user.userId);
   }
+
 }
+
