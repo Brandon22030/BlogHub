@@ -1,14 +1,14 @@
 # BlogHub
 
-BlogHub est une plateforme moderne de blogging permettant aux utilisateurs de créer, gérer, personnaliser et explorer des articles avec une expérience utilisateur fluide et réactive.
+BlogHub is a modern blogging platform allowing users to create, manage, customize, and explore articles with a smooth and reactive user experience.
 
 ---
 
-## Sommaire
-- [Fonctionnalités](#fonctionnalités)
+## Table of Contents
+- [Features](#features)
 - [Architecture & Stack](#architecture--stack)
-- [Installation & Lancement](#installation--lancement)
-- [Structure du Projet](#structure-du-projet)
+- [Installation & Getting Started](#installation--getting-started)
+- [Project Structure](#project-structure)
 - [Gestion des Utilisateurs](#gestion-des-utilisateurs)
 - [Sécurité & Authentification](#sécurité--authentification)
 - [Mise à jour du profil utilisateur](#mise-à-jour-du-profil-utilisateur)
@@ -19,177 +19,177 @@ BlogHub est une plateforme moderne de blogging permettant aux utilisateurs de cr
 
 ---
 
-## Fonctionnalités
-- **Inscription, connexion et gestion sécurisée des sessions utilisateur (JWT, cookies)**
-- **Mise à jour du profil utilisateur (nom, email, mot de passe, avatar, etc.)**
-- **Upload d'images de profil**
-- **Navigation fluide grâce à un contexte utilisateur global (UserContext)**
-- **Affichage instantané des infos utilisateur dans toute l'app (navbar, menus, profil, etc.)**
-- **Création, modification, suppression et affichage d'articles**
-- **Système de favoris (articles marqués)**
-- **Dashboard personnel (mes posts, articles marqués, etc.)**
-- **Recherche d'articles**
-- **Notifications (structure prête)**
-- **Interface moderne, responsive et animée**
+## Features
+- **User registration, login, and secure session management (JWT, cookies)**
+- **User profile update (name, email, password, avatar, etc.)**
+- **Profile image upload**
+- **Smooth navigation with a global user context (UserContext)**
+- **Instant user info updates across the app (navbar, menus, profile, etc.)**
+- **Create, edit, delete, and view articles**
+- **Favorites system (bookmarked articles)**
+- **Personal dashboard (my posts, bookmarked articles, etc.)**
+- **Article search**
+- **Notifications (structure ready)**
+- **Modern, responsive, and animated UI**
 
 ---
 
 ## Architecture & Stack
 
-- **Frontend** : Next.js 13+ (App Router, TypeScript, React Context API, TailwindCSS, js-cookie, jwt-decode)
-- **Backend** : NestJS, Prisma ORM, MongoDB, JWT, Multer (upload images), bcrypt
-- **Autres** : Envoi d'emails (nodemailer), gestion des variables d'environnement (.env)
+- **Frontend**: Next.js 13+ (App Router, TypeScript, React Context API, TailwindCSS, js-cookie, jwt-decode)
+- **Backend**: NestJS, Prisma ORM, MongoDB, JWT, Multer (image upload), bcrypt
+- **Other**: Email sending (nodemailer), environment variable management (.env)
 
 ---
 
-## Installation & Lancement
+## Installation & Getting Started
 
-### 1. Cloner le dépôt
+### 1. Clone the repository
 ```bash
 git clone <repo-url>
 cd BlogHub
 ```
 
-### 2. Configuration du Backend
-- Aller dans le dossier `backend`
-- Installer les dépendances :
+### 2. Backend Setup
+- Go to the `backend` folder
+- Install dependencies:
 ```bash
 npm install
 ```
-- Copier `.env.example` vers `.env` et renseigner :
+- Copy `.env.example` to `.env` and fill in:
   - `DATABASE_URL` (MongoDB)
-  - `JWT_SECRET` (clé secrète JWT)
-  - `EMAIL_USER` et `EMAIL_PASS` (pour l'envoi d'emails)
-- Lancer le serveur :
+  - `JWT_SECRET` (JWT secret key)
+  - `EMAIL_USER` and `EMAIL_PASS` (for email sending)
+- Start the server:
 ```bash
 npm run start:dev
 ```
 
-### 3. Configuration du Frontend
-- Aller dans le dossier `frontend`
-- Installer les dépendances :
+### 3. Frontend Setup
+- Go to the `frontend` folder
+- Install dependencies:
 ```bash
 npm install
 ```
-- Lancer le serveur :
+- Start the server:
 ```bash
 npm run dev
 ```
 
-### 4. Accès à l'application
-- Frontend : http://localhost:3000
-- Backend API : http://localhost:3001
+### 4. Access the application
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
 
 ---
 
-## Structure du Projet
+## Project Structure
 
 ```
 BlogHub/
 ├── backend/
 │   ├── src/
-│   │   ├── user/            # Gestion des utilisateurs (service, controller, module)
-│   │   ├── auth/            # Authentification JWT
-│   │   ├── prisma/          # Service Prisma
+│   │   ├── user/            # User management (service, controller, module)
+│   │   ├── auth/            # JWT authentication
+│   │   ├── prisma/          # Prisma service
 │   │   └── ...
-│   ├── uploads/             # Images uploadées
-│   └── .env                 # Variables d'environnement backend
+│   ├── uploads/             # Uploaded images
+│   └── .env                 # Backend environment variables
 ├── frontend/
-│   ├── app/                 # Pages Next.js (profile, edit, dashboard, etc.)
-│   ├── components/          # Composants UI (navbar, search&avatar, dashboard, etc.)
-│   ├── context/             # UserContext pour gestion globale de l'utilisateur
-│   ├── public/              # Images statiques (logo, avatars, etc.)
+│   ├── app/                 # Next.js pages (profile, edit, dashboard, etc.)
+│   ├── components/          # UI components (navbar, search&avatar, dashboard, etc.)
+│   ├── context/             # UserContext for global user management
+│   ├── public/              # Static images (logo, avatars, etc.)
 │   └── ...
 └── README.md
 ```
 
 ---
 
-## Gestion des Utilisateurs
-- **Inscription et connexion** avec vérification du mot de passe (bcrypt) et génération d'un token JWT.
-- **Contexte utilisateur global** : toutes les infos utilisateur sont accessibles partout via le contexte React (`UserContext`).
-- **Modification du profil** : changement du nom, email, mot de passe, image de profil (upload), avec vérification du mot de passe actuel.
-- **Mise à jour instantanée** : après modification, le contexte utilisateur est rafraîchi et toutes les infos sont à jour dans l'UI.
+## User Management
+- **Registration and login** with password verification (bcrypt) and JWT token generation.
+- **Global user context**: all user info is accessible everywhere via React context (`UserContext`).
+- **Profile update**: change name, email, password, profile image (upload), with current password verification.
+- **Instant update**: after modification, the user context is refreshed and all info is up to date in the UI.
 
 ---
 
-## Sécurité & Authentification
-- **JWT** : chaque requête protégée nécessite un token JWT valide (stocké en cookie).
-- **Vérification du mot de passe** avant toute modification sensible.
-- **Endpoints protégés** côté backend avec des guards NestJS.
-- **Hashage des mots de passe** avec bcrypt.
+## Security & Authentication
+- **JWT**: every protected request requires a valid JWT token (stored in cookie).
+- **Password verification** before any sensitive modification.
+- **Protected endpoints** on the backend using NestJS guards.
+- **Password hashing** with bcrypt.
 
 ---
 
-## Mise à jour du profil utilisateur
-- **API** : `PUT /user/profile` (protégé JWT)
-- **Payload** : `{ userName, email, password, oldPassword, image }`
-- **Réponse** : `{ message, token, user }`
-- **Frontend** : après update, le cookie token est remplacé et le contexte utilisateur est rafraîchi (pas besoin de reload)
-- **Image** : uploadée dans `/uploads` côté backend, accessible via `http://localhost:3001/uploads/...`
+## User Profile Update
+- **API**: `PUT /user/profile` (JWT protected)
+- **Payload**: `{ userName, email, password, oldPassword, image }`
+- **Response**: `{ message, token, user }`
+- **Frontend**: after update, the token cookie is replaced and the user context is refreshed (no reload needed)
+- **Image**: uploaded to `/uploads` on the backend, accessible via `http://localhost:3001/uploads/...`
 
 ---
 
-## Gestion des images
-- **Upload** : via Multer (NestJS)
-- **Stockage** : dossier `backend/uploads`
-- **Accès** : l'URL de l'image est automatiquement préfixée côté frontend pour affichage (voir UserContext et SearchAvatar)
+## Image Management
+- **Upload**: via Multer (NestJS)
+- **Storage**: `backend/uploads` folder
+- **Access**: the image URL is automatically prefixed on the frontend for display (see UserContext and SearchAvatar)
 
 ---
 
-## Personnalisation & UI
-- **Navbar** et **menus** affichent toujours les infos utilisateur à jour (nom, avatar)
-- **Dashboard** : accès rapide à mes posts, articles marqués, édition du profil
-- **Composants réutilisables** : SearchAvatar, Marked, MyPosts, Footer, etc.
-- **Design** : TailwindCSS, animations Framer Motion, responsive mobile/desktop
+## Customization & UI
+- **Navbar** and **menus** always display up-to-date user info (name, avatar)
+- **Dashboard**: quick access to my posts, bookmarked articles, profile editing
+- **Reusable components**: SearchAvatar, Marked, MyPosts, Footer, etc.
+- **Design**: TailwindCSS, Framer Motion animations, responsive mobile/desktop
 
 ---
 
-## Variables d'environnement
+## Environment Variables
 
 ### Backend (`backend/.env`)
 ```
-DATABASE_URL=... # URL MongoDB
-JWT_SECRET=...   # Clé secrète JWT
-EMAIL_USER=...   # Email pour l'envoi de mails
-EMAIL_PASS=...   # Mot de passe d'application email
+DATABASE_URL=... # MongoDB URL
+JWT_SECRET=...   # JWT secret key
+EMAIL_USER=...   # Email for sending mails
+EMAIL_PASS=...   # Email app password
 ```
 
 ### Frontend
-- Pas de variable critique, tout passe par le backend sécurisé
+- No critical variable, everything goes through the secured backend
 
 ---
 
-## FAQ & Dépannage
+## FAQ & Troubleshooting
 
-### Je ne vois pas mon image de profil après upload
-- Vérifie que l'URL de l'image commence par `/uploads/` et que le backend est bien accessible sur `localhost:3001`.
-- Si tu déploies, adapte l'URL de base dans le frontend.
+### I can't see my profile image after upload
+- Check that the image URL starts with `/uploads/` and that the backend is accessible at `localhost:3001`.
+- If you deploy, adapt the base URL in the frontend.
 
-### Les modifications de profil ne s'appliquent pas
-- Vérifie que tu fournis l'ancien mot de passe lors de la modification.
-- Vérifie que le token JWT est bien mis à jour côté frontend (cookie) et que le contexte utilisateur est rafraîchi.
+### Profile modifications are not applied
+- Make sure you provide the old password when updating.
+- Make sure the JWT token is updated on the frontend (cookie) and that the user context is refreshed.
 
-### Erreur "secretOrPrivateKey must have a value"
-- Vérifie la présence de `JWT_SECRET` dans le `.env` du backend et que le `JwtModule` l'utilise bien.
+### Error "secretOrPrivateKey must have a value"
+- Check that `JWT_SECRET` is present in the backend `.env` and that the `JwtModule` uses it.
 
-### Problèmes de CORS
-- Assure-toi que le backend autorise les requêtes du frontend (voir config CORS NestJS).
-
----
-
-## Contribution
-
-1. Fork du repo
-2. Création d'une branche (`feature/ma-fonctionnalite`)
-3. PR détaillée
+### CORS issues
+- Make sure the backend allows requests from the frontend (see NestJS CORS config).
 
 ---
 
-## Auteurs
-- Brandon Medehou (et contributeurs)
+## Contributing
+
+1. Fork the repo
+2. Create a branch (`feature/my-feature`)
+3. Make a detailed PR
 
 ---
 
-## Licence
+## Authors
+- Brandon Medehou (and contributors)
+
+---
+
+## License
 [MIT](LICENSE)
