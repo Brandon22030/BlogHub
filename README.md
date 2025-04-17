@@ -9,6 +9,7 @@ BlogHub is a modern blogging platform allowing users to create, manage, customiz
 ---
 
 ## Table of Contents
+- [Recent Updates](#recent-updates)
 - [Features](#features)
 - [Architecture & Stack](#architecture--stack)
 - [Installation & Getting Started](#installation--getting-started)
@@ -20,6 +21,25 @@ BlogHub is a modern blogging platform allowing users to create, manage, customiz
 - [Personnalisation & UI](#personnalisation--ui)
 - [Variables d'environnement](#variables-denvironnement)
 - [FAQ & Dépannage](#faq--dépannage)
+
+---
+
+## Recent Updates
+
+### April 2025
+
+- **Image upload and display reliability:**
+  - Backend now returns Cloudinary `secure_url` after image upload for consistent access to uploaded images.
+  - Frontend robustly displays images (articles & avatars) with fallback logic for missing or invalid URLs.
+- **Loader during image upload:**
+  - A centered spinner and message are shown while uploading images in the SendPost form for better user feedback.
+  - Loader is perfectly centered regardless of container height.
+- **UI/UX improvements:**
+  - Article cards have improved hover effects and feedback.
+  - Loader component is reusable and styled for clarity.
+- **Refactoring & reliability:**
+  - Improved error handling and state management for image upload.
+  - Code refactored for maintainability and user experience.
 
 ---
 
