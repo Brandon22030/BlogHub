@@ -61,7 +61,7 @@ export default function ArticlePage() {
         {article.imageUrl && (
           <div className="w-full mb-6">
             <Image
-              src={article.imageUrl.startsWith("/uploads/") ? `http://localhost:3001${article.imageUrl}` : article.imageUrl}
+              src={article.imageUrl || "/avatar.png"}
               alt={article.title}
               width={900}
               height={400}
@@ -70,9 +70,9 @@ export default function ArticlePage() {
           </div>
         )}
         <div
-  className="text-md text-gray-800 leading-relaxed whitespace-pre-line"
-  dangerouslySetInnerHTML={{ __html: article.content }}
-/>
+          className="text-md text-gray-800 leading-relaxed whitespace-pre-line"
+          dangerouslySetInnerHTML={{ __html: article.content }}
+        />
       </div>
 
       {/* Right: Sidebar */}
@@ -102,7 +102,7 @@ export default function ArticlePage() {
             {related.map((rel) => (
               <Link key={rel.id} href={`/article/${rel.id}`} className="flex gap-3 items-center bg-gray-50 rounded-lg p-2 hover:bg-gray-100">
                 <Image
-                  src={rel.imageUrl?.startsWith("/uploads/") ? `http://localhost:3001${rel.imageUrl}` : rel.imageUrl || "/avatar.png"}
+                  src={rel.imageUrl || "/avatar.png"}
                   alt={rel.title}
                   width={50}
                   height={50}

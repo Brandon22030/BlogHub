@@ -3,12 +3,13 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
-type User = {
+export interface User {
   userId: string;
   userName: string;
   userEmail: string;
   userImage?: string;
-};
+  imageUrl?: string; // Ajout compat Cloudinary
+}
 
 type UserContextType = {
   user: User | null;
@@ -36,6 +37,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           userName: decoded.userName,
           userEmail: decoded.userEmail,
           userImage: decoded.userImage,
+          imageUrl: decoded.imageUrl, // Ajout compat Cloudinary
         });
       } catch {
         setUser(null);

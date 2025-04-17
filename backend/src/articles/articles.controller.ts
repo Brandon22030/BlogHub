@@ -16,6 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ArticlesService } from './articles.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RequestWithUser } from 'src/auth/jwt.strategy';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -23,7 +24,10 @@ import { SearchQueryDto } from './dto/search-query.dto';
 
 @Controller('articles')
 export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+  constructor(
+    private readonly articlesService: ArticlesService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   /**
    * Upload an image file for an article. Only allows JPEG, PNG, and GIF formats.
@@ -33,27 +37,10 @@ export class ArticlesController {
    */
   @Post('/images/upload')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, uniqueSuffix + extname(file.originalname));
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (!allowedTypes.includes(file.mimetype)) {
-          return cb(new Error('File type not allowed'), false);
-        }
-        cb(null, true);
-      },
-    }),
-  )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return { filePath: `/uploads/${file.filename}` }; // Returns the file path
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    const result = await this.cloudinaryService.uploadImage(file);
+    return { secure_url: result.secure_url };
   }
 
   /**

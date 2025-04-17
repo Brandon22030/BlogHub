@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import { SendPulse } from "./send";
+import Loader from "./Loader";
 /**
  * SendPost component for BlogHub dashboard.
  * Provides a form for creating and submitting a new blog post, including image upload and category selection.
@@ -62,8 +63,10 @@ export default function SendPost() {
   }, []);
 
   const [isDragging, setIsDragging] = useState(false);
+const [isUploading, setIsUploading] = useState(false);
 
   const handleImageUpload = async (file) => {
+    setIsUploading(true);
     const formData = new FormData();
     formData.append("file", file);
     const uploadResponse = await fetch(
@@ -76,8 +79,9 @@ export default function SendPost() {
     );
     if (uploadResponse.ok) {
       const uploadData = await uploadResponse.json();
-      setImageUrl(uploadData.filePath);
+      setImageUrl(uploadData.secure_url || uploadData.filePath);
     }
+    setIsUploading(false);
   };
 
   // Fonction pour gérer le drag and drop
@@ -311,10 +315,16 @@ export default function SendPost() {
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
             >
-              {imageUrl ? (
+              {isUploading ? (
+                <Loader />
+              ) : imageUrl ? (
                 <div className="relative w-full h-full rounded-lg overflow-hidden">
                   <Image
-                    src={`http://localhost:3001${imageUrl}`}
+                    src={
+                      imageUrl?.startsWith("http")
+                        ? imageUrl
+                        : `http://localhost:3001${imageUrl}`
+                    }
                     alt="Preview"
                     layout="fill"
                     objectFit="cover"
@@ -359,11 +369,16 @@ export default function SendPost() {
                         className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                       />
                     </div>
-                    <span className="font-semibold">Select</span>
+                    <span className="font-semibold">Choose Image</span>
                     <input
                       type="file"
-                      onChange={(e) => handleImageUpload(e.target.files[0])}
+                      accept="image/*"
                       className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleImageUpload(e.target.files[0]);
+                        }
+                      }}
                     />
                   </label>
                 </div>

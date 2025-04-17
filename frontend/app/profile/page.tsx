@@ -33,9 +33,7 @@ export default function Profile() {
         return <Send />;
       case "posts":
         return (
-          <MyPosts
-            onPostClick={(postId: string) => router.push(`/posts/${postId}`)}
-          />
+          <MyPosts />
         );
       default:
         return <Marked />;
@@ -79,13 +77,7 @@ export default function Profile() {
           <div className="flex gap-3 items-center">
             <Image
               className="rounded-xl container"
-              src={
-                user?.userImage || user?.imageUrl
-                  ? (user?.userImage || user?.imageUrl).startsWith("/uploads/")
-                    ? `http://localhost:3001${user?.userImage || user?.imageUrl}`
-                    : user?.userImage || user?.imageUrl
-                  : "/avatar.png"
-              }
+              src={user?.userImage || user?.imageUrl || "/avatar.png"}
               alt="profile"
               width={75}
               height={75}

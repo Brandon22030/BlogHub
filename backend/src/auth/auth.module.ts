@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { UserService } from 'src/user/user.service';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UserService } from 'src/user/user.service';
       secret: process.env.JWT_SECRET || '',
       signOptions: { expiresIn: '30d' },
     }),
+    CloudinaryModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, PrismaService, JwtStrategy, UserService],

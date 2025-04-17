@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class UserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService, // Injects JwtService
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   /**
@@ -59,6 +61,10 @@ export class UserService {
    * @returns Updated user info, new JWT token, and a success message
    */
   async updateProfile(userId: string, body: any, image?: Express.Multer.File) {
+    if (image) {
+      const result = await this.cloudinaryService.uploadImage(image);
+      body.imageUrl = result.secure_url;
+    }
     // 1. Retrieve the user
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new BadRequestException('User not found.');
@@ -77,8 +83,8 @@ export class UserService {
     if (body.password) data.password = await bcrypt.hash(body.password, 10);
 
     // 4. Handle image if present
-    if (image && image.filename) {
-      data.imageUrl = `/uploads/${image.filename}`;
+    if (body.imageUrl) {
+      data.imageUrl = body.imageUrl;
     }
 
     // Update user in the database
