@@ -40,8 +40,13 @@ export default function SearchAvatar() {
     };
   }, []);
 
+  // DEBUG: Affiche l'objet user dans la console pour vérifier le rôle
+  if (typeof window !== 'undefined') {
+    console.log('USER CONTEXT in SearchAvatar:', user);
+  }
   const menuItems = [
     { label: "Profil", href: "/profile", onClick: null },
+    ...(user?.role === 'ADMIN' ? [{ label: 'Administration', href: '/admin', onClick: null }] : []),
     { label: "Logout", href: "#", onClick: handleLogout },
   ];
 
@@ -65,7 +70,7 @@ export default function SearchAvatar() {
 
           <div ref={menuRef} className="relative flex items-center gap-2">
             <Image
-              src={user?.userImage || "/avatar.png"}
+              src={user?.imageUrl || "/avatar.png"}
               alt="User"
               width={48}
               height={48}
@@ -73,7 +78,7 @@ export default function SearchAvatar() {
               onClick={() => setIsOpen(!isOpen)}
             />
             <span
-              className="font-semibold cursor-pointer text-black"
+              className="font-semibold cursor-pointer text-sm text-black"
               onClick={() => setIsOpen(!isOpen)}
             >
               {user?.userName}
@@ -100,17 +105,24 @@ export default function SearchAvatar() {
                   className="font-bold text-lg borderp-0 items-center gap-1 rounded-lg transition-all flex flex-col"
                 >
                   {menuItems.map((item, index) => (
-                    <li
-                      key={index}
-                      onClick={item.onClick || undefined}
-                      className="px-4 py-2 m-0 text-black rounded-lg w-full text-center hover:bg-[#FC4308] hover:text-white transition-all cursor-pointer"
-                    >
+                    <div key={index} className="w-full">
                       {item.href !== "#" ? (
-                        <Link href={item.href}>{item.label}</Link>
+                        <Link
+                          href={item.href}
+                          onClick={item.onClick || undefined}
+                          className="block px-4 py-2 m-0 items-center text-black text-sm rounded-lg w-full text-center hover:bg-[#FC4308] hover:text-white transition-all cursor-pointer"
+                        >
+                          {item.label}
+                        </Link>
                       ) : (
-                        item.label
+                        <li
+                          onClick={item.onClick || undefined}
+                          className="block px-4 py-2 m-0 text-black text-sm rounded-lg w-full text-center hover:bg-[#FC4308] hover:text-white transition-all cursor-pointer"
+                        >
+                          {item.label}
+                        </li>
                       )}
-                    </li>
+                    </div>
                   ))}
                 </motion.ul>
               </AnimatePresence>
@@ -132,13 +144,13 @@ export default function SearchAvatar() {
         <div className="flex gap-10 w-[18rem]">
           <Link
             href="/login"
-            className="p-2 bg-[#FC4308] text-white font-semibold rounded-md ml-1 transition-all duration-200 ease-in-out hover:bg-[#FF5A1F] hover:text-black hover:scale-105"
+            className="p-2 text-sm bg-[#FC4308] text-white font-semibold rounded-md ml-1 transition-all duration-200 ease-in-out hover:bg-[#FF5A1F] hover:text-black hover:scale-105"
           >
             Se connecter
           </Link>
           <Link
             href="/register"
-            className="p-2 bg-[#FC4308] text-white font-semibold rounded-md ml-1 transition-all duration-200 ease-in-out hover:bg-[#FF5A1F] hover:text-black hover:scale-105"
+            className="p-2 text-sm bg-[#FC4308] text-white font-semibold rounded-md ml-1 transition-all duration-200 ease-in-out hover:bg-[#FF5A1F] hover:text-black hover:scale-105"
           >
             S'enregistrer
           </Link>

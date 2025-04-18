@@ -7,7 +7,7 @@ const Breadcrumbs = () => {
   const pathSegments = pathname.split("/").filter((segment) => segment);
 
   return (
-    <nav className="text-sm text-gray-500 py-[45px]">
+    <nav className="text-sm text-gray-500 py-[45px] mx-20 ">
       <ul className="flex items-center space-x-2">
         <li>
           <Link href="/" className="text-black font-bold">

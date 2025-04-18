@@ -8,6 +8,10 @@ export class SearchQueryDto extends PaginationQueryDto {
 
   @IsOptional()
   @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
   category?: string;
 
   @IsOptional()

@@ -40,9 +40,10 @@ export default function RootLayout({
         <UserProvider>
           {/* Si tu veux ajouter des éléments globaux comme des breadcrumbs, tu peux les inclure ici */}
           {/* <Breadcrumbs /> */}
-          <main >
+          <main className="flex-1">
             <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
           </main>
+          <Footer />
         </UserProvider>
       </body>
     </html>

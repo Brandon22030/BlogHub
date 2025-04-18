@@ -8,7 +8,7 @@ import SocialButtons from "./socialButtons";
  */
 export default function Newsletter() {
   return (
-    <div className="bg-[#F5F5F5] pb-10 rounded-r-3xl w-[900px]">
+    <div className="bg-[#F5F5F5] mx-0 pb-10 rounded-r-3xl w-[900px]">
       <div className="pl-40 pt-10 pr-10">
         <div className="flex justify-between gap-28">
           {/* Mega menu & Newsletters */}

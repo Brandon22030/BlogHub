@@ -165,8 +165,8 @@ const [isUploading, setIsUploading] = useState(false);
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="text-black pt-10">
-      <div className="flex h-screen gap-6">
+    <div className="text-black pt-10 pb-32">
+      <div className="flex min-h-screen gap-6">
         {/* FIRST PART */}
         <div className="items-center flex-auto">
           <div className="flex gap-6 mb-5">

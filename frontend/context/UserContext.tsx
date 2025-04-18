@@ -7,8 +7,8 @@ export interface User {
   userId: string;
   userName: string;
   userEmail: string;
-  userImage?: string;
-  imageUrl?: string; // Ajout compat Cloudinary
+  role: 'USER' | 'ADMIN';
+  imageUrl?: string; // Standardized for profile image
 }
 
 type UserContextType = {
@@ -26,29 +26,65 @@ const UserContext = createContext<UserContextType>({
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // Décoder le token pour récupérer l'utilisateur
-  const refreshUser = () => {
-    const token = Cookies.get("token");
-    if (token) {
-      try {
-        const decoded: any = jwtDecode(token);
-        setUser({
-          userId: decoded.userId,
-          userName: decoded.userName,
-          userEmail: decoded.userEmail,
-          userImage: decoded.userImage,
-          imageUrl: decoded.imageUrl, // Ajout compat Cloudinary
-        });
-      } catch {
-        setUser(null);
+  // Helper to check token expiry
+  const isTokenExpired = (token: string) => {
+    try {
+      const decoded: any = jwtDecode(token);
+      if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+        return true;
       }
-    } else {
+      return false;
+    } catch {
+      return true;
+    }
+  };
+
+  // Fetch user profile from backend
+  const fetchUserProfile = async (token: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch user profile");
+      const data = await res.json();
+      setUser({
+        userId: data.id || data.userId,
+        userName: data.name || data.userName,
+        userEmail: data.email || data.userEmail,
+        role: data.role,
+        imageUrl: data.imageUrl,
+      });
+    } catch (e) {
       setUser(null);
     }
   };
 
+  // Refresh user: decode token, check expiry, fetch profile
+  const refreshUser = async () => {
+    const token = Cookies.get("token");
+    if (!token || isTokenExpired(token)) {
+      setUser(null);
+      Cookies.remove("token");
+      return;
+    }
+    await fetchUserProfile(token);
+  };
+
+  // On mount, refresh user
   useEffect(() => {
     refreshUser();
+    // Listen for storage events (for multi-tab logout/login)
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "token") {
+        refreshUser();
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   return (

@@ -61,7 +61,7 @@ export default function Marked() {
 
   return (
     <div className="w-full ">
-      <div className="container mx-auto">
+      <div className="mx-20 ">
         <div className="grid grid-cols-1 rounded-xl sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
             <Link

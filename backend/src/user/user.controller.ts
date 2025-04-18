@@ -12,8 +12,9 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Request } from 'express';
 import { RequestWithUser } from 'src/auth/jwt.strategy';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -28,6 +29,7 @@ export class UserController {
    * Get all users in the system.
    * @returns An array of user objects (id, name, email, imageUrl)
    */
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   getUsers() {
     return this.userService.getUsers();
@@ -38,6 +40,7 @@ export class UserController {
    * @param userId - The ID of the user to retrieve
    * @returns The user object (id, name, email, imageUrl)
    */
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('/id/:userId')
   getUser(@Param('userId') userId: string) {
     return this.userService.getUser({ userId });
@@ -56,12 +59,18 @@ export class UserController {
       throw new Error('User not authenticated');
     }
 
-    return {
-      id: req.user.userId,
-      name: req.user.userName,
-      email: req.user.userEmail,
-      // imageUrl: req.user.userImage
-    };
+    // Add role and ensure imageUrl is always present
+    // Fetch the user from the database to get the latest imageUrl
+    return this.userService.getUser({ userId: req.user.userId }).then(users => {
+      const dbUser = users && users[0];
+      return {
+        id: req.user.userId,
+        name: req.user.userName,
+        email: req.user.userEmail,
+        imageUrl: dbUser?.imageUrl || undefined,
+        role: req.user.role,
+      };
+    });
   }
 
   /**
@@ -86,6 +95,35 @@ export class UserController {
   ) {
     const userId = req.user.userId;
     return this.userService.updateProfile(userId, body, image);
+  }
+
+  /**
+   * Delete a user by their unique ID (Admin only).
+   * @param userId - The ID of the user to delete
+   * @returns Success message
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete(':id')
+  async deleteUser(@Param('id') userId: string) {
+    return this.userService.deleteUser(userId);
+  }
+
+  /**
+   * Change a user's role (Admin only).
+   * @param userId - The ID of the user
+   * @param body - The new role { role: "USER" | "ADMIN" }
+   * @returns The updated user object
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch(':id')
+  async changeUserRole(
+    @Param('id') userId: string,
+    @Body() body: { role: 'USER' | 'ADMIN' }
+  ) {
+    if (!body.role || (body.role !== 'USER' && body.role !== 'ADMIN')) {
+      return { message: 'Invalid role. Must be USER or ADMIN.' };
+    }
+    return this.userService.changeUserRole(userId, body.role);
   }
 
 }

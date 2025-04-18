@@ -62,7 +62,7 @@ export default function Profile() {
     <div>
       <NavBar />
       <Breadcrumbs />
-      <div className="bg-[#F5F5F5] p-2 mb-[45px] rounded-xl">
+      <div className="bg-[#F5F5F5] p-2 mb-[45px] rounded-xl mx-20 ">
         <div className="w-full mb-4">
           <Image
             className="w-full h-auto rounded-xl"

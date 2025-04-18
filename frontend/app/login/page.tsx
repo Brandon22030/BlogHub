@@ -65,9 +65,14 @@ export default function Login() {
       if (res.ok) {
         setMessage(data.message || "Connexion réussie.");
         Cookies.set("token", data.access_token, { expires: 7 });
+        // Appelle le refreshUser du contexte utilisateur pour rafraîchir l'état global
+        if (typeof window !== "undefined") {
+          const { refreshUser } = require("@/context/UserContext");
+          if (refreshUser) refreshUser();
+        }
         setTimeout(() => {
           router.push("/");
-        }, 2000);
+        }, 200); // plus rapide
       } else {
         if (data.errors) {
           setErrors(data.errors);

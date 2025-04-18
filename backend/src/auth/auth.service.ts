@@ -51,6 +51,7 @@ export class AuthService {
         userId: existingUser.id,
         userName: existingUser.name,
         userEmail: existingUser.email,
+        role: existingUser.role,
       }),
       message: 'Login successful.',
     };
@@ -135,10 +136,11 @@ export class AuthService {
    * @param userId - The user's ID
    * @param userName - The user's name
    * @param userEmail - The user's email
+   * @param role - The user's role
    * @returns An object containing the JWT access token
    */
-  private authenticateUser({ userId, userName, userEmail }: UserPayload) {
-    const payload: UserPayload = { userId, userName, userEmail };
+  private authenticateUser({ userId, userName, userEmail, role }: UserPayload) {
+    const payload: UserPayload = { userId, userName, userEmail, role };
     return {
       access_token: this.jwtService.sign(payload),
     };

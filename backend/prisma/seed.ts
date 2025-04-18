@@ -5,15 +5,15 @@ const prisma = new PrismaClient();
 async function main() {
   // await prisma.category.createMany({
     const categories = [
-      { name: "Food", imageUrl: "/categories/food.svg" },
-      { name: "Animal", imageUrl: "/categories/animal.svg" },
-      { name: "Car", imageUrl: "/categories/car.svg" },
-      { name: "Sport", imageUrl: "/categories/sport.svg" },
-      { name: "Music", imageUrl: "/categories/music.svg" },
-      { name: "Technology", imageUrl: "/categories/techno.svg" },
-      { name: "Abstract", imageUrl: "/categories/abstract.svg" },
-      { name: "Anime", imageUrl: "/categories/anime.png" },
-      { name: "Games", imageUrl: "/categories/game.jpg" },
+      { name: "Food", slug: "food", imageUrl: "/categories/food.svg" },
+      { name: "Animal", slug: "animal", imageUrl: "/categories/animal.svg" },
+      { name: "Car", slug: "car", imageUrl: "/categories/car.svg" },
+      { name: "Sport", slug: "sport", imageUrl: "/categories/sport.svg" },
+      { name: "Music", slug: "music", imageUrl: "/categories/music.svg" },
+      { name: "Technology", slug: "technology", imageUrl: "/categories/techno.svg" },
+      { name: "Abstract", slug: "abstract", imageUrl: "/categories/abstract.svg" },
+      { name: "Anime", slug: "anime", imageUrl: "/categories/anime.png" },
+      { name: "Games", slug: "games", imageUrl: "/categories/game.jpg" },
     ];
   // });
 

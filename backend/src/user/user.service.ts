@@ -107,8 +107,34 @@ export class UserService {
       token: newToken,
       user: payload,
     };
-
   }
 
-}
+  /**
+   * Delete a user by their ID.
+   * @param userId - The ID of the user to delete
+   * @returns Success message if deleted
+   */
+  async deleteUser(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new BadRequestException('User not found.');
+    await this.prisma.user.delete({ where: { id: userId } });
+    return { message: 'User deleted successfully.' };
+  }
 
+  /**
+   * Change the role of a user by their ID.
+   * @param userId - The ID of the user
+   * @param newRole - The new role ("USER" or "ADMIN")
+   * @returns The updated user object
+   */
+  async changeUserRole(userId: string, newRole: 'USER' | 'ADMIN') {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new BadRequestException('User not found.');
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role: newRole },
+      select: { id: true, name: true, email: true, imageUrl: true, role: true },
+    });
+    return updatedUser;
+  }
+}

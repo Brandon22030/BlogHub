@@ -7,7 +7,8 @@ export type UserPayload = {
   userId: string;
   userName: string;
   userEmail: string;
-  // userImage: string;
+  role: string;
+  userImage?: string; // Added for profile image persistence
 };
 
 export interface RequestWithUser extends Request {

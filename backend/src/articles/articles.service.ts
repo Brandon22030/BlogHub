@@ -43,11 +43,21 @@ export class ArticlesService {
    * @returns Paginated and filtered list of articles with meta info
    */
   async findAll(query: SearchQueryDto) {
-    const { page = 1, limit = 10, searchTerm, category, author } = query;
+    // Correction : accepte aussi le paramètre 'search' (venant du frontend)
+    // et fallback sur 'searchTerm' si besoin
+    const {
+      page = 1,
+      limit = 10,
+      search: searchRaw,
+      searchTerm: searchTermRaw,
+      category,
+      author,
+    } = query;
+    const searchTerm = searchRaw || searchTermRaw;
     const skip = (page - 1) * limit;
 
     try {
-      // Build where clause for search
+      // Build where clause for search (insensible, sur titre, contenu, auteur)
       const whereClause: Prisma.ArticleWhereInput = {
         status: ArticleStatus.PUBLISHED,
         ...(searchTerm && {
@@ -94,6 +104,7 @@ export class ArticlesService {
         },
       });
 
+      // Retourne les articles paginés + infos de pagination
       return {
         data: articles,
         meta: {
