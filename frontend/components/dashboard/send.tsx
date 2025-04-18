@@ -24,7 +24,7 @@ export default function Send() {
   return (
     <>
       <div>
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 mx-20">
           {["sendPost", "sendVideo"].map((tab) => (
             <button
               key={tab}

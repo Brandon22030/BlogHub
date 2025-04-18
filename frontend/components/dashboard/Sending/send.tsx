@@ -8,7 +8,7 @@ import Image from "next/image";
 export const SendPulse = () => {
   return (
     <>
-      <div role="status" className="relative rounded-lg w-full">
+      <div role="status" className="relative rounded-lg w-full mx-20">
         <div className="pt-16">
           <div className="flex h-screen gap-6 animate-pulse">
             {/* FIRST PART */}

@@ -38,28 +38,30 @@ export default function Mega_Categories() {
   if (error) return <div className="p-8 text-red-500">Erreur: {error}</div>;
 
   return (
-    <div className="flex gap-8 p-3 bg-white rounded-xl shadow-md border-gray-200 transition">
+    <div className="ml-8 flex gap-8 p-4 bg-white rounded-xl shadow-md border-gray-200 transition">
       <div className="grid grid-cols-3 gap-6 w-full">
         {categories.map((category) => (
-          <div
+          <Link
             key={category.id}
-            className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-red-50 transition-all"
+            href={`/categories/${category.slug}`}
+            className="relative group rounded-xl overflow-hidden flex items-center justify-center h-32 min-h-[8rem] bg-gray-200 shadow transition-transform duration-300 hover:scale-105"
+            style={{ minWidth: '10rem' }}
           >
-            <div className="relative w-24 h-24 rounded-xl overflow-hidden mb-2">
-              <Image
-                src={category.imageUrl || "/mega_default.svg"}
-                alt={category.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <Link
-              href={`/categories/${category.slug}`}
-              className="font-bold text-lg text-[#3E3232] hover:text-[#F81539] transition"
-            >
-              {category.name}
-            </Link>
-          </div>
+            <Image
+              src={category.imageUrl || "/mega_default.svg"}
+              alt={category.name}
+              fill
+              className="object-cover z-0 group-hover:scale-110 transition-transform duration-300"
+              style={{ filter: 'brightness(0.5)' }}
+            />
+            <span className="absolute inset-0 flex items-center justify-center z-10">
+              <span className="text-white font-bold text-xl drop-shadow-lg text-center px-2">
+                {category.name}
+              </span>
+            </span>
+            {/* Overlay for readability */}
+            <span className="absolute inset-0 bg-black/40 z-5" />
+          </Link>
         ))}
       </div>
     </div>

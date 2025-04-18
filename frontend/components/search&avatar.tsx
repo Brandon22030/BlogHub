@@ -46,7 +46,7 @@ export default function SearchAvatar() {
   }
   const menuItems = [
     { label: "Profil", href: "/profile", onClick: null },
-    ...(user?.role === 'ADMIN' ? [{ label: 'Administration', href: '/admin', onClick: null }] : []),
+    ...(user?.role?.toLowerCase() === 'admin' ? [{ label: 'Administration', href: '/admin', onClick: null }] : []),
     { label: "Logout", href: "#", onClick: handleLogout },
   ];
 

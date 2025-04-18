@@ -4,61 +4,144 @@
 
 # BlogHub
 
-BlogHub is a modern blogging platform allowing users to create, manage, customize, and explore articles with a smooth and reactive user experience.
+BlogHub is a modern, full-stack blogging platform built with a robust NestJS backend and a sleek Next.js frontend. It allows users to create, manage, and explore articles with a highly responsive and user-friendly interface. Featuring secure authentication, role-based access (including admin dashboard), image uploads, and a beautiful UI, BlogHub is ideal for both end-users and developers.
 
 ---
 
 ## Table of Contents
-- [Recent Updates](#recent-updates)
 - [Features](#features)
-- [Architecture & Stack](#architecture--stack)
-- [Installation & Getting Started](#installation--getting-started)
+- [Architecture & Tech Stack](#architecture--tech-stack)
+- [Quickstart](#quickstart)
 - [Project Structure](#project-structure)
-- [Gestion des Utilisateurs](#gestion-des-utilisateurs)
-- [Sécurité & Authentification](#sécurité--authentification)
-- [Mise à jour du profil utilisateur](#mise-à-jour-du-profil-utilisateur)
-- [Gestion des images](#gestion-des-images)
-- [Personnalisation & UI](#personnalisation--ui)
-- [Variables d'environnement](#variables-denvironnement)
-- [FAQ & Dépannage](#faq--dépannage)
-
----
-
-## Recent Updates
-
-### April 2025
-
-- **Image upload and display reliability:**
-  - Backend now returns Cloudinary `secure_url` after image upload for consistent access to uploaded images.
-  - Frontend robustly displays images (articles & avatars) with fallback logic for missing or invalid URLs.
-  - Article image upload endpoint is JWT-protected for security.
-- **Loader during image upload:**
-  - A centered spinner and message are shown while uploading images in the SendPost form for better user feedback.
-  - Loader is perfectly centered regardless of container height.
-- **UI/UX improvements:**
-  - Article cards have improved hover effects and feedback.
-  - Loader component is reusable and styled for clarity.
-- **Refactoring & reliability:**
-  - Improved error handling and state management for image upload.
-  - Code refactored for maintainability and user experience.
+- [Environment Variables](#environment-variables)
+- [Role Management & Admin](#role-management--admin)
+- [Contributing](#contributing)
+- [FAQ](#faq)
+- [Support](#support)
 
 ---
 
 ## Features
-- **User registration, login, and secure session management (JWT, cookies)**
-- **User profile update (name, email, password, avatar, etc.)**
-- **Profile image upload (local)**
-- **Article image upload (Cloudinary, secure_url, JWT protected)**
-- **Smooth navigation with a global user context (UserContext)**
-- **Instant user info updates across the app (navbar, menus, profile, etc.)**
-- **Create, edit, delete, and view articles**
-- **Favorites system (bookmarked articles)**
-- **Personal dashboard (my posts, bookmarked articles, etc.)**
-- **Article search**
-- **Notifications (structure ready)**
-- **Modern, responsive, and animated UI**
-- **Centered loader during article image upload**
-- **Robust fallback for missing images (articles/avatars)**
+- User registration, login, and secure session management (JWT, cookies)
+- User profile update (name, email, password, avatar, etc.)
+- Article image upload (Cloudinary, secure_url, JWT protected)
+- Smooth navigation with a global user context
+- Create, edit, delete, and view articles
+- Favorites system (bookmarked articles)
+- Personal dashboard (my posts, bookmarks, etc.)
+- Article search
+- Notifications (structure ready)
+- Modern, responsive, and animated UI
+- Robust fallback for missing images
+- Admin dashboard for user & category management
+
+---
+
+## Architecture & Tech Stack
+- **Backend:** [NestJS](https://nestjs.com/) (TypeScript) with [Prisma ORM](https://www.prisma.io/) for database access
+- **Frontend:** [Next.js](https://nextjs.org/) (TypeScript, React)
+- **Database:** PostgreSQL (default, configurable)
+- **Image Hosting:** Cloudinary
+- **Authentication:** JWT (with cookies)
+- **UI:** TailwindCSS, Framer Motion, Lucide Icons
+
+---
+
+## Quickstart
+
+### Prerequisites
+- Node.js (v18+ recommended)
+- PostgreSQL database
+- Cloudinary account (for image uploads)
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/Brandon22030/BlogHub.git
+cd BlogHub
+```
+
+### 2. Backend Setup (NestJS)
+```bash
+cd backend
+cp .env.example .env # Edit .env with your DB and Cloudinary credentials
+npm install
+npx prisma migrate dev # Initialize DB
+npm run start:dev
+```
+
+### 3. Frontend Setup (Next.js)
+```bash
+cd ../frontend
+cp .env.example .env # Edit .env with correct API_URL
+npm install
+npm run dev
+```
+
+Frontend will be available at [http://localhost:3000](http://localhost:3000), backend at [http://localhost:3001](http://localhost:3001) by default.
+
+---
+
+## Project Structure
+```
+BlogHub/
+  backend/    # NestJS API, Prisma, Auth, Roles, etc.
+  frontend/   # Next.js app, UI, UserContext, etc.
+  README.md   # This file
+```
+
+---
+
+## Environment Variables
+
+Both backend and frontend require environment variables. See `.env.example` in each folder for all options.
+
+- **Backend:**
+  - `DATABASE_URL` (Postgres connection string)
+  - `JWT_SECRET`
+  - `CLOUDINARY_URL` (for image uploads)
+- **Frontend:**
+  - `NEXT_PUBLIC_API_URL` (should point to backend API)
+
+---
+
+## Role Management & Admin
+
+- Users have roles: `USER`, `ADMIN`.
+- Only admins can access the admin dashboard and manage categories/users.
+- Role-based access is enforced both in the backend (NestJS guards) and frontend (UI hides admin features for non-admins).
+
+---
+
+## Contributing
+
+Contributions are welcome! To contribute:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes
+4. Open a Pull Request
+
+Please follow the code style and add tests where relevant.
+
+---
+
+## FAQ
+
+**Q: I can't see the Administration button?**
+A: Make sure your user role is `ADMIN` (case-insensitive). Log out and log back in if you just changed roles.
+
+**Q: Image upload fails?**
+A: Check your Cloudinary credentials and backend `.env` config.
+
+**Q: How do I reset my password?**
+A: Use the profile edit page after login.
+
+---
+
+## Support
+
+For issues, open a GitHub issue or contact the maintainer via the repository.
+
+---
 
 ---
 

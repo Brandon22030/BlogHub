@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { NavBar } from "@/components/navBar";
 
 interface Category {
   id: number;
@@ -18,10 +19,17 @@ interface Article {
   excerpt: string;
   imageUrl?: string;
   slug: string;
+  content?: string;
+  author?: {
+    name: string;
+    imageUrl?: string;
+  };
+  createdAt?: string;
 }
 
 import { useRouter } from "next/navigation";
 import logo from "@/public/logo.svg";
+import dragndrop from "@/public/dragndrop.svg";
 
 function NotFoundCategory({ message }: { message: string }) {
   const [showText, setShowText] = useState(false);
@@ -38,7 +46,9 @@ function NotFoundCategory({ message }: { message: string }) {
       <h1 className="text-8xl font-extrabold glitch" data-text="404">
         404
       </h1>
-      <p className={`text-lg mt-4 transition-opacity duration-1000 ${showText ? "opacity-100" : "opacity-0"}`}>
+      <p
+        className={`text-lg mt-4 transition-opacity duration-1000 ${showText ? "opacity-100" : "opacity-0"}`}
+      >
         {message || "Oops! Cette page n'existe pas."}
       </p>
       <button
@@ -83,81 +93,149 @@ export default function CategoryPage() {
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
-    Promise.all([
-      fetch(`http://localhost:3001/categories/slug/${slug}`).then((res) => {
+    fetch(`http://localhost:3001/categories/slug/${slug}`)
+      .then((res) => {
         if (!res.ok) throw new Error("Catégorie introuvable");
         return res.json();
-      }),
-      fetch(`http://localhost:3001/articles/category/${slug}`).then((res) => {
-        if (!res.ok) throw new Error("Erreur lors du chargement des articles");
-        return res.json();
-      }),
-    ])
-      .then(([cat, arts]) => {
+      })
+      .then((cat) => {
         setCategory(cat);
-        setArticles(arts);
+        return fetch(`http://localhost:3001/articles?category=${cat.id}`)
+          .then((res) => {
+            if (!res.ok)
+              throw new Error("Erreur lors du chargement des articles");
+            return res.json();
+          })
+          .then((arts) => setArticles(arts.data || arts));
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [slug]);
 
   if (loading) return <div className="p-8">Chargement...</div>;
-  if (error || !category) return <NotFoundCategory message={error || "Catégorie introuvable"} />;
+  if (error || !category)
+    return <NotFoundCategory message={error || "Catégorie introuvable"} />;
 
   return (
+    <>
+    <NavBar />
     <div className="min-h-screen bg-white">
-      {/* Hero section */}
-      <div className="relative w-full h-60 md:h-80 flex flex-col justify-end items-center bg-gray-100 mb-10">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 z-10 text-center text-[#3E3232] drop-shadow-lg">
-          {category.name}
-        </h1>
+      {/* Hero section modernisée */}
+      <section className="relative w-full h-72 md:h-96 flex flex-col justify-center items-center bg-gradient-to-br from-[#FC4308]/60 to-[#3E3232]/90 mb-16 overflow-hidden shadow-lg">
         {category.imageUrl && (
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-40 h-40 md:w-56 md:h-56">
-            <Image
-              src={category.imageUrl}
-              alt={category.name}
-              fill
-              className="object-contain rounded-xl border shadow-lg"
-            />
-          </div>
+          <Image
+            src={category.imageUrl}
+            alt={category.name}
+            fill
+            className="object-cover opacity-20"
+            priority
+          />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-0" />
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#3E3232]/90 via-transparent to-[#FC4308]/20 z-10" />
+        <div className="relative z-20 flex flex-col items-center justify-center w-full h-full">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white drop-shadow-xl text-center mb-2">
+            {category.name}
+          </h1>
+          <span className="inline-block text-lg md:text-2xl text-[#FC4308] bg-white bg-opacity-70 px-6 py-2 rounded-xl font-semibold mt-2 shadow">
+            Catégorie
+          </span>
+        </div>
+      </section>
 
-      {/* Articles section */}
-      <div className="max-w-5xl mx-auto px-4">
-        <h2 className="text-2xl font-semibold mb-6 text-[#FC4308]">Articles</h2>
+      {/* Articles section modernisée */}
+      <section className="max-w-6xl mx-auto px-4 pb-16">
+        <h2 className="text-3xl font-bold mb-10 text-[#FC4308] text-center tracking-tight">
+          Articles de la catégorie
+        </h2>
         {articles.length === 0 ? (
-          <div className="text-gray-500">Aucun article dans cette catégorie.</div>
+          <div className="flex flex-col items-center justify-center py-24 text-gray-400 text-xl font-semibold bg-[#f8f8f8] rounded-xl shadow-inner">
+            <Image
+              src={dragndrop}
+              alt="vide"
+              width={80}
+              height={80}
+              className="mb-6"
+            />
+            Aucun article dans cette catégorie.
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {articles.map((article) => (
               <Link
-                href={`/blog/${article.slug}`}
                 key={article.id}
-                className="block rounded-xl shadow hover:shadow-lg transition bg-white border overflow-hidden group"
+                href={`/blog/${article.slug}`}
+                className="block group"
               >
-                {article.imageUrl && (
-                  <div className="relative w-full h-40 bg-gray-50">
-                    <Image
-                      src={article.imageUrl}
-                      alt={article.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                <div className="bg-white hover:bg-[#FC4308] group-hover:text-white shadow-md rounded-xl overflow-hidden p-3 transition-transform hover:scale-105">
+                  {/* Image principale */}
+                  <Image
+                    src={
+                      article.imageUrl?.startsWith("http")
+                        ? article.imageUrl
+                        : "/dragndrop.svg"
+                    }
+                    alt={article.title}
+                    width={400}
+                    height={250}
+                    className="w-full h-48 object-cover rounded-xl"
+                  />
+
+                  {/* Contenu de l’article */}
+                  <div className="pt-4">
+                    <h3 className="text-md px-3 font-semibold line-clamp-1 text-[#3E3232] group-hover:text-white">
+                      {article.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 px-3 mt-2 line-clamp-2 group-hover:text-white">
+                      {(article.excerpt || article.content)
+                        ?.replace(/<[^>]+>/g, "")
+                        .slice(0, 100)}
+                      ...
+                    </p>
+
+                    {/* Infos auteur */}
+                    {article.author && (
+                      <div className="flex items-center justify-between mt-4 bg-[#F5F5F5] py-3 px-4 rounded-xl">
+                        <div className="flex items-center">
+                          <Image
+                            src={
+                              article.author.imageUrl?.startsWith("http")
+                                ? article.author.imageUrl
+                                : "/avatar.png"
+                            }
+                            alt={article.author.name}
+                            width={44}
+                            height={44}
+                            className="w-11 h-11 rounded-xl object-cover"
+                          />
+                          <div className="ml-2 text-sm">
+                            <p className="text-[#3E3232] font-semibold">
+                              {article.author.name}
+                            </p>
+                            <p className="text-[#3E3232] text-opacity-75">
+                              {article.createdAt &&
+                                new Date(article.createdAt).toLocaleDateString(
+                                  "fr-FR"
+                                )}
+                            </p>
+                          </div>
+                        </div>
+                        <Image
+                          src="/signet.svg"
+                          alt="signet"
+                          width={30}
+                          height={30}
+                          className="w-10 h-10 object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-                <div className="p-4">
-                  <h3 className="text-lg font-bold mb-2 text-[#3E3232] group-hover:text-[#FC4308] transition">
-                    {article.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm line-clamp-3">{article.excerpt}</p>
                 </div>
               </Link>
             ))}
           </div>
         )}
-      </div>
+      </section>
     </div>
+    </>
   );
 }

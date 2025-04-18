@@ -172,7 +172,7 @@ export default function SendPost() {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="text-black pt-10">
+    <div className="text-black pt-10 mx-20">
       <div className="flex h-screen gap-6">
         {/* FIRST PART */}
         <div className="items-center flex-auto">

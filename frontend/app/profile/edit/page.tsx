@@ -181,7 +181,7 @@ export default function EditProfile() {
             <input
               type="file"
               accept="image/*"
-              className="mb-2"
+              className="mb-2 text-black"
               onChange={handleImageChange}
             />
             {imageUrl && (
@@ -200,20 +200,6 @@ export default function EditProfile() {
             type="submit"
             className="flex items-center gap-2 bg-[#F81539] text-white font-bold py-2 px-8 rounded-lg hover:bg-[#d91432] transition"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5m0 14a9 9 0 110-18 9 9 0 010 18z"
-              />
-            </svg>
             Save
           </button>
         </div>
