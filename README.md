@@ -40,7 +40,7 @@ BlogHub is a modern, full-stack blogging platform built with a robust NestJS bac
 ## Architecture & Tech Stack
 - **Backend:** [NestJS](https://nestjs.com/) (TypeScript) with [Prisma ORM](https://www.prisma.io/) for database access
 - **Frontend:** [Next.js](https://nextjs.org/) (TypeScript, React)
-- **Database:** PostgreSQL (default, configurable)
+- **Database:** MongoDB (via Prisma)
 - **Image Hosting:** Cloudinary
 - **Authentication:** JWT (with cookies)
 - **UI:** TailwindCSS, Framer Motion, Lucide Icons
@@ -51,7 +51,7 @@ BlogHub is a modern, full-stack blogging platform built with a robust NestJS bac
 
 ### Prerequisites
 - Node.js (v18+ recommended)
-- PostgreSQL database
+- MongoDB database
 - Cloudinary account (for image uploads)
 
 ### 1. Clone the repository
@@ -96,7 +96,7 @@ BlogHub/
 Both backend and frontend require environment variables. See `.env.example` in each folder for all options.
 
 - **Backend:**
-  - `DATABASE_URL` (Postgres connection string)
+  - `DATABASE_URL` (MongoDB connection string)
   - `JWT_SECRET`
   - `CLOUDINARY_URL` (for image uploads)
 - **Frontend:**
