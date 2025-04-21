@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { NavBar } from "@/components/navBar";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 interface Category {
   id: number;
@@ -119,6 +120,7 @@ export default function CategoryPage() {
   return (
     <>
     <NavBar />
+    <Breadcrumbs />
     <div className="min-h-screen bg-white">
       {/* Hero section modernisée */}
       <section className="relative w-full h-72 md:h-96 flex flex-col justify-center items-center bg-gradient-to-br from-[#FC4308]/60 to-[#3E3232]/90 mb-16 overflow-hidden shadow-lg">

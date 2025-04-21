@@ -65,14 +65,17 @@ export default function Login() {
       if (res.ok) {
         setMessage(data.message || "Connexion réussie.");
         Cookies.set("token", data.access_token, { expires: 7 });
-        // Appelle le refreshUser du contexte utilisateur pour rafraîchir l'état global
+        // Rafraîchir le contexte utilisateur AVANT de rediriger
         if (typeof window !== "undefined") {
           const { refreshUser } = require("@/context/UserContext");
-          if (refreshUser) refreshUser();
+          if (refreshUser) {
+            const maybePromise = refreshUser();
+            if (maybePromise && typeof maybePromise.then === "function") {
+              await maybePromise;
+            }
+          }
         }
-        setTimeout(() => {
-          router.push("/");
-        }, 200); // plus rapide
+        router.push("/");
       } else {
         if (data.errors) {
           setErrors(data.errors);

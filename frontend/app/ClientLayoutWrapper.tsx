@@ -22,7 +22,7 @@ export default function ClientLayoutWrapper({
   return (
     <>
       {children}
+      {shouldShowFooter && <Footer />}
     </>
   );
 }
-

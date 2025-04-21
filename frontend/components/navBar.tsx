@@ -79,12 +79,7 @@ export function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav
-      ref={menuRef}
-      className={`relative flex justify-between items-center z-20 mx-20 mt-10 ${
-        !user ? "gap-[10rem]" : ""
-      }`}
-    >
+    <nav ref={menuRef} className="relative flex justify-between items-center z-20 mx-20 mt-10">
       <div className="flex items-center gap-[40px]">
         <Link href="/">
           <Image
@@ -96,7 +91,6 @@ export function NavBar() {
             className="w-[7rem]"
           />
         </Link>
-
         <ul className="flex gap-5">
           {menus.map(({ id, name, SubmenuComponent, href }) => (
             <li key={id} className="relative">

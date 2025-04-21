@@ -54,7 +54,7 @@ export default function SearchAvatar() {
     <div>
       {user ? (
         <div className="container w-full flex items-center justify-between">
-          <div className="relative flex items-center gap-3 flex-1 mx-4 px-4 py-2 bg-gray-100 rounded-lg">
+          {/* <div className="relative flex items-center gap-3 flex-1 mx-4 px-4 py-2 bg-gray-100 rounded-lg">
             <button className="p-2">
               <FaEllipsisV className="text-black" />
             </button>
@@ -66,7 +66,7 @@ export default function SearchAvatar() {
             />
 
             <FaSearch className="text-black" />
-          </div>
+          </div> */}
 
           <div ref={menuRef} className="relative flex items-center gap-2">
             <Image

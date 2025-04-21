@@ -43,7 +43,6 @@ export default function RootLayout({
           <main className="flex-1">
             <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
           </main>
-          <Footer />
         </UserProvider>
       </body>
     </html>
