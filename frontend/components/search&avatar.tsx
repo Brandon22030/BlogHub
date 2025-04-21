@@ -41,12 +41,14 @@ export default function SearchAvatar() {
   }, []);
 
   // DEBUG: Affiche l'objet user dans la console pour vérifier le rôle
-  if (typeof window !== 'undefined') {
-    console.log('USER CONTEXT in SearchAvatar:', user);
+  if (typeof window !== "undefined") {
+    console.log("USER CONTEXT in SearchAvatar:", user);
   }
   const menuItems = [
     { label: "Profil", href: "/profile", onClick: null },
-    ...(user?.role?.toLowerCase() === 'admin' ? [{ label: 'Administration', href: '/admin', onClick: null }] : []),
+    ...(user?.role?.toLowerCase() === "admin"
+      ? [{ label: "Administration", href: "/admin", onClick: null }]
+      : []),
     { label: "Logout", href: "#", onClick: handleLogout },
   ];
 

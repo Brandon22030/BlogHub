@@ -57,7 +57,7 @@ export function NavBar() {
       } catch (error) {
         console.error(
           "Erreur lors de la récupération de l'utilisateur :",
-          error
+          error,
         );
       }
     };
@@ -79,7 +79,10 @@ export function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav ref={menuRef} className="relative flex justify-between items-center z-20 mx-20 mt-10">
+    <nav
+      ref={menuRef}
+      className="relative flex justify-between items-center z-20 mx-20 mt-10"
+    >
       <div className="flex items-center gap-[40px]">
         <Link href="/">
           <Image
@@ -125,9 +128,11 @@ export function NavBar() {
                 </button>
               )}
               {/* Ligne orange sous le lien actif pour /contact et /about */}
-              {href && ((href === "/contact" && pathname.startsWith("/contact")) || (href === "/about" && pathname.startsWith("/about"))) && (
-                <div className="h-[.2rem] rounded-lg w-[1.5rem] bg-[#FC4308] absolute left-1/2 -translate-x-1/2 mt-1" />
-              )}
+              {href &&
+                ((href === "/contact" && pathname.startsWith("/contact")) ||
+                  (href === "/about" && pathname.startsWith("/about"))) && (
+                  <div className="h-[.2rem] rounded-lg w-[1.5rem] bg-[#FC4308] absolute left-1/2 -translate-x-1/2 mt-1" />
+                )}
 
               {SubmenuComponent && activeMenu === id && (
                 <div

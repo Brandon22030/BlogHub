@@ -7,7 +7,6 @@ import { FaChevronRight } from "react-icons/fa";
  * @returns JSX.Element - Header section with new posts title and button
  */
 export default function NewPosts() {
-  
   return (
     <div>
       <div className=" flex items-center mb-5 mt-16 justify-between">

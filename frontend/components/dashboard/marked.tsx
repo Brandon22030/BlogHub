@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import Cookies from "js-cookie"; // For reading JWT
 import { LoadingMarked } from "./Sending/send";
 import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation"; // Ajout pour navigation programmatique
 
 // Fonction utilitaire pour retirer toutes les balises HTML
 function stripHtml(html: string): string {
@@ -27,6 +29,8 @@ const formatDate = (dateString: string) => {
 };
 
 export default function Marked() {
+  const [likedArticles, setLikedArticles] = useState<string[]>([]);
+  const router = useRouter();
   const { user } = useUser();
 
   const [loading, setLoading] = useState(true);
@@ -37,6 +41,8 @@ export default function Marked() {
     imageUrl?: string;
     author: { name: string; imageUrl?: string };
     createdAt: string;
+    views?: number;
+    likes?: number;
   }
 
   const [articles, setArticles] = useState<Article[]>([]);
@@ -45,7 +51,6 @@ export default function Marked() {
     async function loadArticles() {
       try {
         const data = await fetchArticles();
-        console.log(data.data);
         setArticles(data.data);
       } catch (error) {
         console.error("Error fetching categories", error);
@@ -53,8 +58,23 @@ export default function Marked() {
         setLoading(false);
       }
     }
-
+    async function loadLikedArticles() {
+      try {
+        const token = Cookies.get("token") || Cookies.get("access_token");
+        if (!token) return;
+        const res = await fetch("http://localhost:3001/articles/liked", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const likedIds = await res.json();
+          setLikedArticles(likedIds);
+        }
+      } catch (error) {
+        // Silently ignore if not logged in
+      }
+    }
     loadArticles();
+    loadLikedArticles();
   }, []);
 
   if (loading) return <LoadingMarked />;
@@ -68,6 +88,23 @@ export default function Marked() {
               href={`/article/${article.id}`}
               key={article.id}
               className="block group"
+              onClick={async (e) => {
+                e.preventDefault();
+                await fetch(
+                  `http://localhost:3001/articles/${article.id}/view`,
+                  {
+                    method: "PATCH",
+                  },
+                );
+                setArticles((prev) =>
+                  prev.map((a) =>
+                    a.id === article.id
+                      ? { ...a, views: (a.views || 0) + 1 }
+                      : a,
+                  ),
+                );
+                router.push(`/article/${article.id}`);
+              }}
             >
               <div className="bg-white hover:bg-[#FC4308] group-hover:text-white flex flex-col justify-between shadow-md rounded-xl overflow-hidden p-3 transition transform hover:scale-105 cursor-pointer">
                 {article.imageUrl ? (
@@ -142,6 +179,60 @@ export default function Marked() {
                         height={30}
                         className="w-10 h-10 object-cover"
                       />
+                    </div>
+                    {/* Compteurs views/likes et bouton like */}
+                    <div className="flex items-center justify-between mt-2 px-3">
+                      <span className="text-xs text-gray-500 flex items-center gap-1">
+                        <svg
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          className="inline mr-1"
+                        >
+                          <circle cx="8" cy="8" r="7" strokeWidth="2" />
+                        </svg>
+                        {article.views || 0} views
+                      </span>
+                      <button
+                        className={`flex items-center gap-1 text-xs focus:outline-none ${likedArticles.includes(article.id) ? "text-[#FC4308] cursor-not-allowed" : "text-gray-500 hover:text-[#FC4308]"}`}
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (likedArticles.includes(article.id)) return;
+                          const token = Cookies.get("token") || Cookies.get("access_token");
+                          const res = await fetch(
+                            `http://localhost:3001/articles/${article.id}/like`,
+                            {
+                              method: "PATCH",
+                              headers: token ? { Authorization: `Bearer ${token}` } : {},
+                            },
+                          );
+                          if (res.ok) {
+                            const updated = await res.json();
+                            setArticles((prev) =>
+                              prev.map((a) =>
+                                a.id === article.id
+                                  ? { ...a, likes: updated.likes }
+                                  : a,
+                              ),
+                            );
+                            setLikedArticles((prev) => [...prev, article.id]);
+                          }
+                        }}
+                        aria-label="Like"
+                        disabled={likedArticles.includes(article.id)}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="inline text-red-500"
+                        >
+                          <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
+                        </svg>
+                        {article.likes || 0} likes
+                      </button>
                     </div>
                   </div>
                 </div>

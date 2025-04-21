@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   Query,
   Controller,
+  Patch,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -24,6 +25,24 @@ import { SearchQueryDto } from './dto/search-query.dto';
 
 @Controller('articles')
 export class ArticlesController {
+  // GET /articles/liked
+  @Get('liked')
+  @UseGuards(JwtAuthGuard)
+  async getLikedArticles(@Req() req: RequestWithUser) {
+    return this.articlesService.getLikedArticleIds(req.user.userId);
+  }
+  // PATCH /articles/:id/view
+  @Patch(':id/view')
+  async addView(@Param('id') id: string) {
+    return this.articlesService.incrementView(id);
+  }
+
+  // PATCH /articles/:id/like
+  @Patch(':id/like')
+  @UseGuards(JwtAuthGuard)
+  async addLike(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.articlesService.incrementLike(id, req.user.userId);
+  }
   constructor(
     private readonly articlesService: ArticlesService,
     private readonly cloudinaryService: CloudinaryService,

@@ -63,7 +63,7 @@ export default function SendPost() {
   }, []);
 
   const [isDragging, setIsDragging] = useState(false);
-const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleImageUpload = async (file) => {
     setIsUploading(true);
@@ -75,7 +75,7 @@ const [isUploading, setIsUploading] = useState(false);
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
-      }
+      },
     );
     if (uploadResponse.ok) {
       const uploadData = await uploadResponse.json();

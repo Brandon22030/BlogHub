@@ -7,7 +7,7 @@ export interface User {
   userId: string;
   userName: string;
   userEmail: string;
-  role: 'USER' | 'ADMIN';
+  role: "USER" | "ADMIN";
   imageUrl?: string; // Standardized for profile image
 }
 
@@ -42,11 +42,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Fetch user profile from backend
   const fetchUserProfile = async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/user/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/user/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       if (!res.ok) throw new Error("Failed to fetch user profile");
       const data = await res.json();
       setUser({

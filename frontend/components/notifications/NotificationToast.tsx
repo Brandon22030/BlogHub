@@ -3,7 +3,7 @@ interface NotificationToastProps {
   message: string;
   visible: boolean;
   onClose: () => void;
-  type?: 'success' | 'error';
+  type?: "success" | "error";
 }
 
 /**
@@ -19,7 +19,7 @@ export default function NotificationToast({
   message,
   visible,
   onClose,
-  type = 'success',
+  type = "success",
 }: NotificationToastProps) {
   const [shouldRender, setShouldRender] = useState(visible);
   useEffect(() => {
@@ -30,14 +30,40 @@ export default function NotificationToast({
       return () => clearTimeout(timeout);
     }
   }, [visible]);
-  const color = type === 'success' ? 'bg-green-50 border-green-400 text-green-800' : 'bg-red-50 border-red-400 text-red-800';
-  const icon = type === 'success' ? (
-    <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-  ) : (
-    <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-  );
+  const color =
+    type === "success"
+      ? "bg-green-50 border-green-400 text-green-800"
+      : "bg-red-50 border-red-400 text-red-800";
+  const icon =
+    type === "success" ? (
+      <svg
+        className="w-6 h-6 text-green-400"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    ) : (
+      <svg
+        className="w-6 h-6 text-red-400"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    );
   // Animation slide-in/out droite
-  const animationClass = visible ? 'animate-toast-slide-in' : 'animate-toast-slide-out';
+  const animationClass = visible
+    ? "animate-toast-slide-in"
+    : "animate-toast-slide-out";
   if (!shouldRender) return null;
   return (
     <div

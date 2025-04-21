@@ -50,13 +50,13 @@ export default function MyPosts() {
       try {
         const data = await fetchArticles();
         // Filtre les articles écrits par l'utilisateur connecté
-        console.log('ARTICLES DEBUG', data.data);
-const myArticles = data.data.filter(
-  (article: Article) =>
-    article.author?.userId === user?.userId ||
-    article.author?.id === user?.userId // fallback si backend renvoie id
-);
-setArticles(myArticles);
+        console.log("ARTICLES DEBUG", data.data);
+        const myArticles = data.data.filter(
+          (article: Article) =>
+            article.author?.userId === user?.userId ||
+            article.author?.id === user?.userId, // fallback si backend renvoie id
+        );
+        setArticles(myArticles);
       } catch (error) {
         setArticles([]);
       } finally {
@@ -69,9 +69,17 @@ setArticles(myArticles);
 
   if (loading) return <LoadingMarked />;
   if (!user)
-    return <p className="text-[#3E3232] font-semibold">Connectez-vous pour voir vos articles.</p>;
+    return (
+      <p className="text-[#3E3232] font-semibold">
+        Connectez-vous pour voir vos articles.
+      </p>
+    );
   if (articles.length === 0)
-    return <p className="text-[#3E3232] font-semibold">Vous n'avez pas encore publié d'article.</p>;
+    return (
+      <p className="text-[#3E3232] font-semibold">
+        Vous n'avez pas encore publié d'article.
+      </p>
+    );
 
   return (
     <div className="w-full ">
@@ -167,4 +175,3 @@ setArticles(myArticles);
     </div>
   );
 }
-

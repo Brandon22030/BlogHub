@@ -6,7 +6,6 @@ import Image from "next/image";
 import { NavBar } from "../../components/navBar";
 import Breadcrumbs from "@/components/breadcrumbs";
 
-
 interface Article {
   id: string;
   title: string;
@@ -142,7 +141,7 @@ export default function BlogPage() {
                           </p>
                           <p className="text-[#3E3232] text-opacity-75">
                             {new Date(article.createdAt).toLocaleDateString(
-                              "fr-FR"
+                              "fr-FR",
                             )}
                           </p>
                         </div>
@@ -178,13 +177,11 @@ export default function BlogPage() {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="px-4 py-2 rounded bg-gray-200 text-black hover:text-white hover:bg-[#FC4308]  font-bold disabled:opacity-50 disabled:hover:bg-gray-300 disabled:text-black"
-
           >
             Suivant
           </button>
         </div>
       </main>
-
     </>
   );
 }

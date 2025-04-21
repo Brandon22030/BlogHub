@@ -87,7 +87,7 @@ export default function EditProfile() {
       try {
         const data = await res.json();
         if (data.token) {
-          Cookies.set('token', data.token);
+          Cookies.set("token", data.token);
           refreshUser(); // Mets à jour le contexte utilisateur global
         }
       } catch {}
@@ -123,7 +123,7 @@ export default function EditProfile() {
       <Breadcrumbs />
       <form
         onSubmit={handleSubmit}
-        className="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-md mt-8"
+        className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-md mt-8"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
           <div>

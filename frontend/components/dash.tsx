@@ -8,7 +8,6 @@ import { useState } from "react";
  * @returns JSX.Element - The dashboard menu with dynamic content
  */
 export default function DashboardMenu() {
-
   const [activeTab, setActiveTab] = useState("favoris");
 
   return (

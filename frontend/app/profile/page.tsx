@@ -32,9 +32,7 @@ export default function Profile() {
       case "create":
         return <Send />;
       case "posts":
-        return (
-          <MyPosts />
-        );
+        return <MyPosts />;
       default:
         return <Marked />;
     }

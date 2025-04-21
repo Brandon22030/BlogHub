@@ -45,14 +45,14 @@ export default function Mega_Categories() {
             key={category.id}
             href={`/categories/${category.slug}`}
             className="relative group rounded-xl overflow-hidden flex items-center justify-center h-32 min-h-[8rem] bg-gray-200 shadow transition-transform duration-300 hover:scale-105"
-            style={{ minWidth: '10rem' }}
+            style={{ minWidth: "10rem" }}
           >
             <Image
               src={category.imageUrl || "/mega_default.svg"}
               alt={category.name}
               fill
               className="object-cover z-0 group-hover:scale-110 transition-transform duration-300"
-              style={{ filter: 'brightness(0.5)' }}
+              style={{ filter: "brightness(0.5)" }}
             />
             <span className="absolute inset-0 flex items-center justify-center z-10">
               <span className="text-white font-bold text-xl drop-shadow-lg text-center px-2">

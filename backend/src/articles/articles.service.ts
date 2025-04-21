@@ -8,6 +8,50 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ArticlesService {
+  // Return array of article IDs liked by the user
+  async getLikedArticleIds(userId: string): Promise<string[]> {
+    const likes = await this.prisma.like.findMany({
+      where: { userId },
+      select: { articleId: true },
+    });
+    return likes.map(like => like.articleId);
+  }
+  async incrementView(id: string) {
+    return this.prisma.article.update({
+      where: { id },
+      data: { views: { increment: 1 } },
+    });
+  }
+
+  async incrementLike(id: string, userId: string) {
+    // Check if Like already exists
+    const existingLike = await this.prisma.like.findUnique({
+      where: {
+        userId_articleId: {
+          userId,
+          articleId: id,
+        },
+      },
+    });
+    if (existingLike) {
+      throw new HttpException(
+        'You have already liked this article.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    // Create Like record
+    await this.prisma.like.create({
+      data: {
+        userId,
+        articleId: id,
+      },
+    });
+    // Increment article like count
+    return this.prisma.article.update({
+      where: { id },
+      data: { likes: { increment: 1 } },
+    });
+  }
   constructor(private readonly prisma: PrismaService) {}
 
   /**
@@ -96,6 +140,8 @@ export class ArticlesService {
           categoryId: true,
           status: true,
           createdAt: true,
+          views: true, // Ajout views
+          likes: true, // Ajout likes
         },
         skip,
         take: limit,

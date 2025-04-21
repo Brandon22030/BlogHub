@@ -7,7 +7,6 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
  * @returns JSX.Element - Header with navigation buttons
  */
 export default function PopularPosts() {
-  
   return (
     <div>
       <div className="flex items-center mb-5 mt-16 justify-between">

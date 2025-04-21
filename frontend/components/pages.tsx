@@ -60,14 +60,15 @@ export default function Pages({ current }: PagesProps) {
                   onMouseEnter={() => setActiveCategory(page.id)}
                   onMouseLeave={() => setActiveCategory(null)}
                 >
-                  <span className="font-semibold text-base tracking-wide">{page.title}</span>
+                  <span className="font-semibold text-base tracking-wide">
+                    {page.title}
+                  </span>
                 </div>
               </Link>
             </li>
           ))}
         </ul>
       </div>
-      
     </div>
   );
 }
