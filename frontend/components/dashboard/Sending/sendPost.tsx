@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+// JWT is managed by httpOnly cookie, no js-cookie needed.
 import Image from "next/image";
 import { SendPulse } from "./send";
 import Loader from "./Loader";
@@ -25,7 +25,7 @@ export default function SendPost() {
 
   const editorRef = useRef(null);
 
-  const token = Cookies.get("token");
+  // No token needed, use credentials: 'include'.
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -33,7 +33,7 @@ export default function SendPost() {
 
       const res = await fetch("http://localhost:3001/user/profile", {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
 
       if (res.ok) {
@@ -73,7 +73,7 @@ export default function SendPost() {
       "http://localhost:3001/articles/images/upload",
       {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
         body: formData,
       },
     );

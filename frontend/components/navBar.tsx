@@ -9,7 +9,7 @@ import SearchAvatar from "./search&avatar";
 import Mega_categories from "./mega_categories";
 import Pages from "./pages";
 import { motion, AnimatePresence } from "framer-motion";
-import Cookies from "js-cookie";
+// JWT is managed by httpOnly cookie, no js-cookie needed.
 import NotificationBell from "./notifications/NotificationBell";
 
 export function NavBar() {
@@ -40,21 +40,18 @@ export function NavBar() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = Cookies.get("token");
-      if (!token) return;
-
       try {
         const res = await fetch("http://localhost:3001/user/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         });
-
         if (res.ok) {
           const data = await res.json();
           setUser(data);
+        } else {
+          setUser(null);
         }
       } catch (error) {
+        setUser(null);
         console.error(
           "Erreur lors de la récupération de l'utilisateur :",
           error,

@@ -8,49 +8,96 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ArticlesService {
+  private viewCache: Map<string, Set<string>> = new Map();
   // Return array of article IDs liked by the user
   async getLikedArticleIds(userId: string): Promise<string[]> {
     const likes = await this.prisma.like.findMany({
       where: { userId },
       select: { articleId: true },
     });
-    return likes.map(like => like.articleId);
+    return likes.map((like) => like.articleId);
   }
-  async incrementView(id: string) {
-    return this.prisma.article.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-    });
-  }
+  async incrementView(id: string, clientIp: string) {
+    try {
+      // Vérifier si l'article existe
+      const article = await this.prisma.article.findUnique({
+        where: { id },
+      });
 
-  async incrementLike(id: string, userId: string) {
-    // Check if Like already exists
-    const existingLike = await this.prisma.like.findUnique({
-      where: {
-        userId_articleId: {
-          userId,
-          articleId: id,
-        },
-      },
-    });
-    if (existingLike) {
+      if (!article) {
+        throw new HttpException('Article non trouvé', HttpStatus.NOT_FOUND);
+      }
+
+      // Créer une clé unique pour l'article
+      const cacheKey = id;
+
+      // Initialiser le Set pour cet article s'il n'existe pas
+      if (!this.viewCache.has(cacheKey)) {
+        this.viewCache.set(cacheKey, new Set());
+      }
+
+      const viewSet = this.viewCache.get(cacheKey);
+
+      // Vérifier si cette IP a déjà vu l'article
+      if (!viewSet.has(clientIp)) {
+        // Ajouter l'IP au Set
+        viewSet.add(clientIp);
+
+        // Incrémenter le compteur de vues
+        const updatedArticle = await this.prisma.article.update({
+          where: { id },
+          data: { views: { increment: 1 } },
+        });
+
+        // Nettoyer le cache après 24h
+        setTimeout(
+          () => {
+            viewSet.delete(clientIp);
+            if (viewSet.size === 0) {
+              this.viewCache.delete(cacheKey);
+            }
+          },
+          24 * 60 * 60 * 1000,
+        );
+
+        return updatedArticle;
+      }
+
+      // Si l'IP a déjà vu l'article, retourner l'article sans incrémenter
+      return article;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
       throw new HttpException(
-        'You have already liked this article.',
-        HttpStatus.BAD_REQUEST,
+        "Erreur lors de l'incrémentation des vues",
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    // Create Like record
-    await this.prisma.like.create({
-      data: {
-        userId,
-        articleId: id,
-      },
+  }
+
+  async setLikeStatus(id: string, userId: string, status: number) {
+    const existingLike = await this.prisma.like.findUnique({
+      where: { userId_articleId: { userId, articleId: id } },
     });
-    // Increment article like count
-    return this.prisma.article.update({
-      where: { id },
-      data: { likes: { increment: 1 } },
-    });
+    if (status === 1) {
+      if (!existingLike) {
+        await this.prisma.like.create({ data: { userId, articleId: id } });
+        await this.prisma.article.update({
+          where: { id },
+          data: { likes: { increment: 1 } },
+        });
+      }
+    } else if (status === 0) {
+      if (existingLike) {
+        await this.prisma.like.delete({
+          where: { userId_articleId: { userId, articleId: id } },
+        });
+        await this.prisma.article.update({
+          where: { id },
+          data: { likes: { decrement: 1 } },
+        });
+      }
+    }
+    return this.prisma.article.findUnique({ where: { id } });
   }
   constructor(private readonly prisma: PrismaService) {}
 
@@ -75,7 +122,7 @@ export class ArticlesService {
       return article;
     } catch {
       throw new HttpException(
-        "Error creating article",
+        'Error creating article',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

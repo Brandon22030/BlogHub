@@ -33,15 +33,25 @@ export class ArticlesController {
   }
   // PATCH /articles/:id/view
   @Patch(':id/view')
-  async addView(@Param('id') id: string) {
-    return this.articlesService.incrementView(id);
+  async addView(@Param('id') id: string, @Req() req: Request) {
+    const clientIp = req.ip;
+    return this.articlesService.incrementView(id, clientIp);
   }
 
   // PATCH /articles/:id/like
   @Patch(':id/like')
   @UseGuards(JwtAuthGuard)
-  async addLike(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.articlesService.incrementLike(id, req.user.userId);
+  async setLikeStatus(
+    @Param('id') id: string,
+    @Req() req: RequestWithUser,
+    @Body('status') status: number,
+  ) {
+    const article = await this.articlesService.setLikeStatus(
+      id,
+      req.user.userId,
+      status,
+    );
+    return article;
   }
   constructor(
     private readonly articlesService: ArticlesService,
@@ -69,8 +79,8 @@ export class ArticlesController {
    * @param req - The request object containing user info
    * @returns The created article object
    */
-  @Post()
   @UseGuards(JwtAuthGuard)
+  @Post()
   async create(
     @Body() createArticleDto: CreateArticleDto,
     @Req() req: RequestWithUser,

@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { NavBar } from "../../components/navBar";
 import Breadcrumbs from "@/components/breadcrumbs";
+import LikeButton from "@/components/LikeButton";
+import { useRouter } from "next/navigation"; // Ajout de useRouter
 
 interface Article {
   id: string;
@@ -16,9 +18,12 @@ interface Article {
     imageUrl?: string;
   };
   createdAt: string;
+  views?: number;
+  likes?: number;
 }
 
 export default function BlogPage() {
+  const router = useRouter(); // Instance de useRouter
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -92,72 +97,108 @@ export default function BlogPage() {
           </p>
         ) : (
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article) => (
-              <Link
-                key={article.id}
-                href={`/article/${article.id}`}
-                className="block group"
-              >
-                <div className="bg-white hover:bg-[#FC4308] group-hover:text-white shadow-md rounded-xl overflow-hidden p-3 transition-transform hover:scale-105">
-                  {/* Image principale */}
-                  <Image
-                    src={
-                      article.imageUrl?.startsWith("http")
-                        ? article.imageUrl
-                        : "/dragndrop.svg"
-                    }
-                    alt={article.title}
-                    width={400}
-                    height={250}
-                    className="w-full h-48 object-cover rounded-xl"
-                  />
-
-                  {/* Contenu de l’article */}
-                  <div className="pt-4">
-                    <h3 className="text-md px-3 font-semibold line-clamp-1 text-[#3E3232] group-hover:text-white">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 px-3 mt-2 line-clamp-2 group-hover:text-white">
-                      {article.content.replace(/<[^>]+>/g, "").slice(0, 100)}...
-                    </p>
-
-                    {/* Infos auteur */}
-                    <div className="flex items-center justify-between mt-4 bg-[#F5F5F5] py-3 px-4 rounded-xl">
-                      <div className="flex items-center">
-                        <Image
-                          src={
-                            article.author.imageUrl?.startsWith("http")
-                              ? article.author.imageUrl
-                              : "/avatar.png"
-                          }
-                          alt={article.author.name}
-                          width={44}
-                          height={44}
-                          className="w-11 h-11 rounded-xl object-cover"
-                        />
-                        <div className="ml-2 text-sm">
-                          <p className="text-[#3E3232] font-semibold">
-                            {article.author.name}
-                          </p>
-                          <p className="text-[#3E3232] text-opacity-75">
-                            {new Date(article.createdAt).toLocaleDateString(
-                              "fr-FR",
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                      <Image
-                        src="/signet.svg"
-                        alt="signet"
-                        width={30}
-                        height={30}
-                        className="w-10 h-10 object-cover"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+            {articles.map((article) => {
+  const initialLiked = false; // À remplacer par la vraie logique utilisateur si possible
+  return (
+    <Link
+      key={article.id}
+      href={`/article/${article.id}`}
+      className="block group"
+      onClick={async (e) => {
+        e.preventDefault();
+        try {
+          // Appel explicite pour incrémenter la vue
+          const res = await fetch(
+            `http://localhost:3001/articles/${article.id}/view`,
+            {
+              method: "PATCH",
+            },
+          );
+          if (res.ok) {
+            // Optionnel: mise à jour optimiste si vous affichez les vues directement ici
+            // ou si vous voulez forcer un re-fetch sur la page de détail
+            console.log(`View increment API call successful for ${article.id} from BlogPage`);
+          } else {
+            console.error(`View increment API call failed for ${article.id} from BlogPage`);
+          }
+        } catch (error) {
+          console.error("Error calling view increment API from BlogPage:", error);
+        }
+        // Navigation programmatique vers la page de l'article
+        router.push(`/article/${article.id}`);
+      }}
+    >
+      <div className="bg-white hover:bg-[#FC4308] group-hover:text-white shadow-md rounded-xl overflow-hidden p-3 transition-transform hover:scale-105">
+        {/* Image principale */}
+        <Image
+          src={
+            article.imageUrl?.startsWith("http")
+              ? article.imageUrl
+              : "/dragndrop.svg"
+          }
+          alt={article.title}
+          width={400}
+          height={250}
+          className="w-full h-48 object-cover rounded-xl"
+        />
+        {/* Vues et likes */}
+        <div className="flex items-center justify-between mt-2 px-3">
+          <span className="text-xs text-gray-500 flex items-center gap-1">
+            <svg width="16" height="16" fill="none" stroke="currentColor" className="inline mr-1"><circle cx="8" cy="8" r="7" strokeWidth="2" /></svg>
+            {article.views || 0} vues
+          </span>
+          <LikeButton
+            articleId={article.id}
+            initialLiked={initialLiked}
+            initialLikes={article.likes || 0}
+          />
+        </div>
+        {/* Contenu de l’article */}
+        <div className="pt-4">
+          <h3 className="text-md px-3 font-semibold line-clamp-1 text-[#3E3232] group-hover:text-white">
+            {article.title}
+          </h3>
+          <p className="text-sm text-gray-600 px-3 mt-2 line-clamp-2 group-hover:text-white">
+            {article.content.replace(/<[^>]+>/g, "").slice(0, 100)}...
+          </p>
+          {/* Infos auteur */}
+          <div className="flex items-center justify-between mt-4 bg-[#F5F5F5] py-3 px-4 rounded-xl">
+            <div className="flex items-center">
+              <Image
+                src={
+                  article.author.imageUrl?.startsWith("http")
+                    ? article.author.imageUrl
+                    : "/avatar.png"
+                }
+                alt={article.author.name}
+                width={44}
+                height={44}
+                className="w-11 h-11 rounded-xl object-cover"
+              />
+              <div className="ml-2 text-sm">
+                <p className="text-[#3E3232] font-semibold">
+                  {article.author.name}
+                </p>
+                <p className="text-[#3E3232] text-opacity-75">
+                  {new Date(article.createdAt).toLocaleDateString(
+                    "fr-FR",
+                  )}
+                </p>
+              </div>
+            </div>
+            <Image
+              src="/signet.svg"
+              alt="signet"
+              width={30}
+              height={30}
+              className="w-10 h-10 object-cover"
+            />
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+})}
           </section>
         )}
 

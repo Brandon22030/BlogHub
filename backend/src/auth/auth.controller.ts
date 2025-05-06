@@ -6,7 +6,9 @@ import {
   Get,
   Req,
   Query,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RequestWithUser } from './jwt.strategy';
@@ -27,8 +29,28 @@ export class AuthController {
    * @returns JWT token and user info if successful
    */
   @Post('login')
-  async login(@Body() authBody: LogUserDto) {
-    return await this.authService.login({ authBody });
+  async login(
+    @Body() authBody: LogUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.login({ authBody });
+    res.cookie('access_token', result.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    });
+    const { access_token, ...rest } = result;
+    return rest;
+  }
+
+  /**
+   * Logout the user by clearing the JWT cookie.
+   */
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token');
+    return { message: 'Logged out successfully.' };
   }
 
   /**

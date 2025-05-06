@@ -7,13 +7,6 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // Always send cookies with requests
 });
-
-// Add a request interceptor to add the auth token
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// No more Authorization header or token logic needed.

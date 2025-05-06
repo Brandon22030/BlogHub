@@ -6,7 +6,7 @@ import { FaSearch, FaEllipsisV } from "react-icons/fa";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+// JWT is managed by httpOnly cookie, no js-cookie needed.
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -22,8 +22,11 @@ export default function SearchAvatar() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
-  const handleLogout = useCallback(() => {
-    Cookies.remove("token");
+  const handleLogout = useCallback(async () => {
+    await fetch("http://localhost:3001/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     router.push("/login");
   }, [router]);
 

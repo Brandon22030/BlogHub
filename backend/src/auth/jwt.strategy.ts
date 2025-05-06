@@ -20,7 +20,11 @@ export interface RequestWithUser extends Request {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // Extract JWT from httpOnly cookie first, then from Authorization header
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => req?.cookies?.access_token,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET || '',
     });

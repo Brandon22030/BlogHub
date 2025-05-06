@@ -1,7 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
+// JWT is now managed by httpOnly cookie, no js-cookie or jwtDecode needed.
 
 export interface User {
   userId: string;
@@ -26,28 +25,15 @@ const UserContext = createContext<UserContextType>({
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // Helper to check token expiry
-  const isTokenExpired = (token: string) => {
-    try {
-      const decoded: any = jwtDecode(token);
-      if (decoded.exp && Date.now() >= decoded.exp * 1000) {
-        return true;
-      }
-      return false;
-    } catch {
-      return true;
-    }
-  };
+  // No token expiry check needed with httpOnly cookie.
 
-  // Fetch user profile from backend
-  const fetchUserProfile = async (token: string) => {
+  // Fetch user profile from backend using httpOnly cookie
+  const fetchUserProfile = async () => {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/user/profile`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         },
       );
       if (!res.ok) throw new Error("Failed to fetch user profile");
@@ -64,30 +50,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Refresh user: decode token, check expiry, fetch profile
+  // Refresh user: just fetch profile with cookie
   const refreshUser = async () => {
-    const token = Cookies.get("token");
-    if (!token || isTokenExpired(token)) {
-      setUser(null);
-      Cookies.remove("token");
-      return;
-    }
-    await fetchUserProfile(token);
+    await fetchUserProfile();
   };
 
   // On mount, refresh user
   useEffect(() => {
     refreshUser();
-    // Listen for storage events (for multi-tab logout/login)
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === "token") {
-        refreshUser();
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      window.removeEventListener("storage", handleStorage);
-    };
+    // No more token in storage, skip multi-tab sync for token.
   }, []);
 
   return (

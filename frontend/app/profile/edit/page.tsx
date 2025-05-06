@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+// JWT is managed by httpOnly cookie, no js-cookie needed.
 import Image from "next/image";
 import Breadcrumbs from "@/components/breadcrumbs";
 import { NavBar } from "@/components/navBar";
@@ -20,21 +20,14 @@ export default function EditProfile() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
-  const token = Cookies.get("token");
   const { refreshUser } = useUser();
 
   useEffect(() => {
-    if (!token) {
-      router.push("/");
-      return;
-    }
     const fetchUserProfile = async () => {
       try {
         const res = await fetch("http://localhost:3001/user/profile", {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         });
         if (!res.ok)
           throw new Error("Erreur lors de la récupération du profil.");
@@ -49,7 +42,7 @@ export default function EditProfile() {
       }
     };
     fetchUserProfile();
-  }, [token, router]);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +59,7 @@ export default function EditProfile() {
       }
       const res = await fetch("http://localhost:3001/user/profile", {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
         body: formData,
       });
       if (!res.ok) {
@@ -84,13 +75,7 @@ export default function EditProfile() {
         throw new Error(errorMsg);
       }
       // Met à jour le cookie token si la réponse contient un nouveau token
-      try {
-        const data = await res.json();
-        if (data.token) {
-          Cookies.set("token", data.token);
-          refreshUser(); // Mets à jour le contexte utilisateur global
-        }
-      } catch {}
+      refreshUser(); // Mets à jour le contexte utilisateur global
       setSuccess("Profil mis à jour avec succès !");
       setTimeout(() => router.push("/profile"), 1200);
     } catch (err: any) {

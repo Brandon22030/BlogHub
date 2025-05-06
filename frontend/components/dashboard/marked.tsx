@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import Cookies from "js-cookie"; // For reading JWT
+// import Cookies from "js-cookie"; // Cookie-based JWT is handled by browser automatically
 import { LoadingMarked } from "./Sending/send";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation"; // Ajout pour navigation programmatique
@@ -41,8 +41,8 @@ export default function Marked() {
     imageUrl?: string;
     author: { name: string; imageUrl?: string };
     createdAt: string;
-    views?: number;
-    likes?: number;
+    views: number;
+    likes: number;
   }
 
   const [articles, setArticles] = useState<Article[]>([]);
@@ -60,10 +60,8 @@ export default function Marked() {
     }
     async function loadLikedArticles() {
       try {
-        const token = Cookies.get("token") || Cookies.get("access_token");
-        if (!token) return;
         const res = await fetch("http://localhost:3001/articles/liked", {
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
         });
         if (res.ok) {
           const likedIds = await res.json();
@@ -194,45 +192,100 @@ export default function Marked() {
                         </svg>
                         {article.views || 0} views
                       </span>
-                      <button
-                        className={`flex items-center gap-1 text-xs focus:outline-none ${likedArticles.includes(article.id) ? "text-[#FC4308] cursor-not-allowed" : "text-gray-500 hover:text-[#FC4308]"}`}
-                        onClick={async (e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (likedArticles.includes(article.id)) return;
-                          const token = Cookies.get("token") || Cookies.get("access_token");
-                          const res = await fetch(
-                            `http://localhost:3001/articles/${article.id}/like`,
-                            {
-                              method: "PATCH",
-                              headers: token ? { Authorization: `Bearer ${token}` } : {},
-                            },
-                          );
-                          if (res.ok) {
-                            const updated = await res.json();
-                            setArticles((prev) =>
-                              prev.map((a) =>
-                                a.id === article.id
-                                  ? { ...a, likes: updated.likes }
-                                  : a,
-                              ),
+                      {likedArticles.includes(article.id) ? (
+                        <button
+                          className="flex items-center gap-1 text-xs focus:outline-none text-[#FC4308] hover:text-gray-500 group-hover:text-white"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const res = await fetch(
+                              `http://localhost:3001/articles/${article.id}/like`,
+                              {
+                                method: "PATCH",
+                                credentials: "include",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ status: 0 }),
+                              },
                             );
-                            setLikedArticles((prev) => [...prev, article.id]);
-                          }
-                        }}
-                        aria-label="Like"
-                        disabled={likedArticles.includes(article.id)}
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="inline text-red-500"
+                            if (res.ok) {
+                              const updated = await res.json();
+                              setArticles((prev) =>
+                                prev.map((a) =>
+                                  a.id === article.id
+                                    ? { ...a, likes: updated.likes }
+                                    : a,
+                                ),
+                              );
+                              setLikedArticles((prev) =>
+                                prev.filter((id) => id !== article.id),
+                              );
+                            }
+                          }}
+                          aria-label="Dislike"
                         >
-                          <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
-                        </svg>
-                        {article.likes || 0} likes
-                      </button>
+                          <svg
+                            width="16"
+                            height="16"
+                            fill="none"
+                            stroke="currentColor"
+                            className="inline text-red-500 group-hover:text-white"
+                          >
+                            <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
+                            <line
+                              x1="4"
+                              y1="12"
+                              x2="12"
+                              y2="4"
+                              stroke="red"
+                              strokeWidth="2"
+                            />
+                          </svg>
+                          Dislike ({article.likes || 0})
+                        </button>
+                      ) : (
+                        <button
+                          className="flex items-center gap-1 text-xs focus:outline-none text-gray-500 hover:text-[#FC4308] group-hover:text-white"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const res = await fetch(
+                              `http://localhost:3001/articles/${article.id}/like`,
+                              {
+                                method: "PATCH",
+                                credentials: "include",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ status: 1 }),
+                              },
+                            );
+                            if (res.ok) {
+                              const updated = await res.json();
+                              setArticles((prev) =>
+                                prev.map((a) =>
+                                  a.id === article.id
+                                    ? { ...a, likes: updated.likes }
+                                    : a,
+                                ),
+                              );
+                              setLikedArticles((prev) => [...prev, article.id]);
+                            }
+                          }}
+                          aria-label="Like"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="inline text-red-500 group-hover:text-white"
+                          >
+                            <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
+                          </svg>
+                          Like ({article.likes || 0})
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
