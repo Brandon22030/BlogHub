@@ -30,7 +30,7 @@ export default function LikeButton({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ status }),
-      }
+      },
     );
     if (res.ok) {
       const updated = await res.json();
@@ -47,7 +47,7 @@ export default function LikeButton({
           ? "text-[#FC4308] hover:text-gray-500 group-hover:text-white"
           : "text-gray-500 hover:text-[#FC4308] group-hover:text-white"
       } ${className}`}
-      onClick={e => {
+      onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
         handleLikeToggle();
@@ -64,14 +64,7 @@ export default function LikeButton({
           className="inline text-red-500 group-hover:text-white"
         >
           <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
-          <line
-            x1="4"
-            y1="12"
-            x2="12"
-            y2="4"
-            stroke="red"
-            strokeWidth="2"
-          />
+          <line x1="4" y1="12" x2="12" y2="4" stroke="red" strokeWidth="2" />
         </svg>
       ) : (
         <svg

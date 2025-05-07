@@ -167,112 +167,127 @@ export default function CategoryPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {articles.map((article) => {
-  const initialLiked = false; // À remplacer par la vraie logique utilisateur si possible
-  return (
-    <Link
-      key={article.id}
-      href={`/article/${article.id}`} // Correction: Utiliser /article/:id
-      className="block group"
-      onClick={async (e) => {
-        e.preventDefault();
-        try {
-          // Appel explicite pour incrémenter la vue
-          // Note: article.id est un nombre ici, l'API doit le gérer ou il faut convertir
-          const res = await fetch(
-            `http://localhost:3001/articles/${article.id}/view`,
-            {
-              method: "PATCH",
-            },
-          );
-          if (res.ok) {
-            console.log(`View increment API call successful for ${article.id} from CategoryPage`);
-          } else {
-            console.error(`View increment API call failed for ${article.id} from CategoryPage`);
-          }
-        } catch (error) {
-          console.error("Error calling view increment API from CategoryPage:", error);
-        }
-        // Navigation programmatique vers la page de l'article
-        router.push(`/article/${article.id}`); // Correction: Utiliser /article/:id
-      }}
-    >
-      <div className="bg-white hover:bg-[#FC4308] group-hover:text-white shadow-md rounded-xl overflow-hidden p-3 transition-transform hover:scale-105">
-        {/* Image principale */}
-        <Image
-          src={
-            article.imageUrl?.startsWith("http")
-              ? article.imageUrl
-              : "/dragndrop.svg"
-          }
-          alt={article.title}
-          width={400}
-          height={250}
-          className="w-full h-48 object-cover rounded-xl"
-        />
-        {/* Vues et likes */}
-        <div className="flex items-center justify-between mt-2 px-3">
-          <span className="text-xs text-gray-500 flex items-center gap-1">
-            <svg width="16" height="16" fill="none" stroke="currentColor" className="inline mr-1"><circle cx="8" cy="8" r="7" strokeWidth="2" /></svg>
-            {article.views || 0} vues
-          </span>
-          <LikeButton
-            articleId={String(article.id)} // Convertir en chaîne
-            initialLiked={initialLiked}
-            initialLikes={article.likes || 0}
-          />
-        </div>
-        {/* Contenu de l’article */}
-        <div className="pt-4">
-          <h3 className="text-md px-3 font-semibold line-clamp-1 text-[#3E3232] group-hover:text-white">
-            {article.title}
-          </h3>
-          <p className="text-sm text-gray-600 px-3 mt-2 line-clamp-2 group-hover:text-white">
-            {(article.excerpt || article.content)
-              ?.replace(/<[^>]+>/g, "")
-              .slice(0, 100)}
-            ...
-          </p>
-          {/* Infos auteur */}
-          {article.author && (
-            <div className="flex items-center justify-between mt-4 bg-[#F5F5F5] py-3 px-4 rounded-xl">
-              <div className="flex items-center">
-                <Image
-                  src={
-                    article.author.imageUrl?.startsWith("http")
-                      ? article.author.imageUrl
-                      : "/avatar.png"
-                  }
-                  alt={article.author.name}
-                  width={44}
-                  height={44}
-                  className="w-11 h-11 rounded-xl object-cover"
-                />
-                <div className="ml-2 text-sm">
-                  <p className="text-[#3E3232] font-semibold">
-                    {article.author.name}
-                  </p>
-                  <p className="text-[#3E3232] text-opacity-75">
-                    {article.createdAt &&
-                      new Date(
-                        article.createdAt,
-                      ).toLocaleDateString("fr-FR")}
-                  </p>
-                </div>
-              </div>
-              <Image
-                src="/signet.svg"
-                alt="signet"
-                width={30}
-                height={30}
-                className="w-10 h-10 object-cover"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-})}
+                const initialLiked = false; // À remplacer par la vraie logique utilisateur si possible
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/article/${article.id}`} // Correction: Utiliser /article/:id
+                    className="block group"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      try {
+                        // Appel explicite pour incrémenter la vue
+                        // Note: article.id est un nombre ici, l'API doit le gérer ou il faut convertir
+                        const res = await fetch(
+                          `http://localhost:3001/articles/${article.id}/view`,
+                          {
+                            method: "PATCH",
+                          },
+                        );
+                        if (res.ok) {
+                          console.log(
+                            `View increment API call successful for ${article.id} from CategoryPage`,
+                          );
+                        } else {
+                          console.error(
+                            `View increment API call failed for ${article.id} from CategoryPage`,
+                          );
+                        }
+                      } catch (error) {
+                        console.error(
+                          "Error calling view increment API from CategoryPage:",
+                          error,
+                        );
+                      }
+                      // Navigation programmatique vers la page de l'article
+                      router.push(`/article/${article.id}`); // Correction: Utiliser /article/:id
+                    }}
+                  >
+                    <div className="bg-white hover:bg-[#FC4308] group-hover:text-white shadow-md rounded-xl overflow-hidden p-3 transition-transform hover:scale-105">
+                      {/* Image principale */}
+                      <Image
+                        src={
+                          article.imageUrl?.startsWith("http")
+                            ? article.imageUrl
+                            : "/dragndrop.svg"
+                        }
+                        alt={article.title}
+                        width={400}
+                        height={250}
+                        className="w-full h-48 object-cover rounded-xl"
+                      />
+                      {/* Vues et likes */}
+                      <div className="flex items-center justify-between mt-2 px-3">
+                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                          <svg
+                            width="16"
+                            height="16"
+                            fill="none"
+                            stroke="currentColor"
+                            className="inline mr-1"
+                          >
+                            <circle cx="8" cy="8" r="7" strokeWidth="2" />
+                          </svg>
+                          {article.views || 0} vues
+                        </span>
+                        <LikeButton
+                          articleId={String(article.id)} // Convertir en chaîne
+                          initialLiked={initialLiked}
+                          initialLikes={article.likes || 0}
+                        />
+                      </div>
+                      {/* Contenu de l’article */}
+                      <div className="pt-4">
+                        <h3 className="text-md px-3 font-semibold line-clamp-1 text-[#3E3232] group-hover:text-white">
+                          {article.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 px-3 mt-2 line-clamp-2 group-hover:text-white">
+                          {(article.excerpt || article.content)
+                            ?.replace(/<[^>]+>/g, "")
+                            .slice(0, 100)}
+                          ...
+                        </p>
+                        {/* Infos auteur */}
+                        {article.author && (
+                          <div className="flex items-center justify-between mt-4 bg-[#F5F5F5] py-3 px-4 rounded-xl">
+                            <div className="flex items-center">
+                              <Image
+                                src={
+                                  article.author.imageUrl?.startsWith("http")
+                                    ? article.author.imageUrl
+                                    : "/avatar.png"
+                                }
+                                alt={article.author.name}
+                                width={44}
+                                height={44}
+                                className="w-11 h-11 rounded-xl object-cover"
+                              />
+                              <div className="ml-2 text-sm">
+                                <p className="text-[#3E3232] font-semibold">
+                                  {article.author.name}
+                                </p>
+                                <p className="text-[#3E3232] text-opacity-75">
+                                  {article.createdAt &&
+                                    new Date(
+                                      article.createdAt,
+                                    ).toLocaleDateString("fr-FR")}
+                                </p>
+                              </div>
+                            </div>
+                            <Image
+                              src="/signet.svg"
+                              alt="signet"
+                              width={30}
+                              height={30}
+                              className="w-10 h-10 object-cover"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </section>

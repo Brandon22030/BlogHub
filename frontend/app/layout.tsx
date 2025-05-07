@@ -34,6 +34,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Include Material Icons Outlined */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
