@@ -11,6 +11,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.use(cookieParser()); // <--- AJOUTÉ/ASSURÉ ICI
   const logger = new Logger('Bootstrap'); // Logger instance
 
   // Configuration de la Spécification OpenAPI (identique à avant)

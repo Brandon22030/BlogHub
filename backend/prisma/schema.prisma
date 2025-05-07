@@ -29,6 +29,7 @@ model User {
   notifications     Notification[]
   passwordResetToken   String?        @unique
   passwordResetExpires DateTime? 
+  favorites         Favorite[]
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
 }
@@ -42,6 +43,17 @@ model Like {
   createdAt DateTime @default(now())
 
   @@unique([userId, articleId])
+}
+
+model Favorite {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  article   Article  @relation(fields: [articleId], references: [id])
+  articleId String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  @@unique([userId, articleId]) // Un utilisateur ne peut mettre en favori un article qu'une fois
 }
 
 model Article {
@@ -60,6 +72,7 @@ model Article {
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
   likesList  Like[]
+  favoritedBy Favorite[]
 }
 
 

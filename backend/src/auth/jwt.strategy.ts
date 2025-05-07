@@ -20,18 +20,30 @@ export interface RequestWithUser extends Request {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      // Extract JWT from httpOnly cookie first, then from Authorization header
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => req?.cookies?.access_token,
+        (req) => {
+          // console.log('Cookies reçus dans JwtStrategy:', req.cookies); // Peut être commenté si trop verbeux
+          const token = req?.cookies?.access_token;
+          // console.log('Token extrait du cookie access_token:', token); // Peut être commenté si trop verbeux
+          return token;
+        },
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET || '',
     });
+    // console.log('JwtStrategy initialized. Secret used (ou une partie pour vérification):', process.env.JWT_SECRET ? process.env.JWT_SECRET.substring(0, 5) + '...' : 'Non défini !');
   }
 
   async validate(payload: UserPayload) {
-    // console.log("Payload reçu:", payload); // Vérifier que le payload contient bien userId
-    return payload;
+    // console.log('JwtStrategy - Méthode VALIDATE appelée.');
+    // console.log('JwtStrategy - Payload reçu dans validate:', payload);
+    if (!payload || !payload.userId) {
+      // console.error('JwtStrategy - VALIDATE: Payload invalide ou userId manquant !', payload);
+      // Vous pourriez envisager de lancer une UnauthorizedException ici si le payload n'est pas conforme
+      // import { UnauthorizedException } from '@nestjs/common';
+      // throw new UnauthorizedException('Invalid token payload');
+    }
+    return payload; // Passport va attacher ceci à req.user
   }
 }

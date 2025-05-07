@@ -44,8 +44,8 @@ export default function LikeButton({
     <button
       className={`flex items-center gap-1 text-xs focus:outline-none transition-colors ${
         liked
-          ? "text-[#FC4308] hover:text-gray-500 group-hover:text-white"
-          : "text-gray-500 hover:text-[#FC4308] group-hover:text-white"
+          ? "text-[#FC4308] hover:text-gray-500 group-hover:text-[#FC4308]"
+          : "text-gray-500 hover:text-[#FC4308] group-hover:text-gray-500"
       } ${className}`}
       onClick={(e) => {
         e.preventDefault();
@@ -61,7 +61,7 @@ export default function LikeButton({
           height="16"
           fill="none"
           stroke="currentColor"
-          className="inline text-red-500 group-hover:text-white"
+          className="inline text-red-500 group-hover:text-red-500"
         >
           <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
           <line x1="4" y1="12" x2="12" y2="4" stroke="red" strokeWidth="2" />
@@ -71,7 +71,7 @@ export default function LikeButton({
           width="16"
           height="16"
           fill="currentColor"
-          className="inline text-red-500 group-hover:text-white"
+          className="inline text-red-500 group-hover:text-red-500"
         >
           <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
         </svg>

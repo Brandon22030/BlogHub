@@ -34,9 +34,9 @@ export default function Login() {
     } else if (form.password.length < 6) {
       newErrors.password =
         "Le mot de passe doit contenir au moins 6 caractères.";
-    } else if (!form.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)) {
+    } else if (!form.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[ \]{};':"\\|,.<>/?-]).*$/)) {
       newErrors.password =
-        "Le mot de passe doit contenir au moins une lettre et un chiffre.";
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
     }
     return newErrors;
   };
@@ -169,13 +169,19 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full font-semibold bg-[#FC4308] text-white py-2 px-4 rounded-md shadow hover:bg-[#d44717] transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FC4308]"
+              className="w-full font-semibold bg-[#FC4308] hover:bg-[#d44717] text-white py-2 px-4 rounded-md shadow  transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FC4308]"
               disabled={isLoading}
             >
               Se connecter
             </button>
           </form>
         )}
+
+        <div className="mt-4 text-center">
+          <Link href="/forgot-password" className="text-sm text-[#FC4308] hover:underline">
+            Mots de passe oublié ?
+          </Link>
+        </div>
 
         <p className="mt-4 text-center text-md font-semibold text-[#3E3232]">
           Pas encore inscrit ?{" "}

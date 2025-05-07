@@ -29,16 +29,23 @@ export default function SendPost() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!token) return;
+      // if (!token) return; // Supprimé car le token est géré par httpOnly cookie
 
       const res = await fetch("http://localhost:3001/user/profile", {
         method: "GET",
-        credentials: "include",
+        credentials: "include", // Assure l'envoi des cookies
       });
 
       if (res.ok) {
         const data = await res.json();
+        console.log("User profile data from API:", data); // DEBUG: Inspect user profile data
         setUser(data);
+      } else {
+        // Optionnel: Gérer le cas où le profil n'est pas récupéré (par exemple, si le cookie n'est pas valide ou expiré)
+        console.error("Failed to fetch user profile, status:", res.status);
+        setError("Impossible de récupérer le profil utilisateur. Veuillez vous reconnecter.");
+        // Potentiellement rediriger vers la page de connexion si res.status est 401 ou 403
+        // if (res.status === 401 || res.status === 403) router.push('/login');
       }
     };
 
@@ -153,12 +160,19 @@ export default function SendPost() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        // Authorization: `Bearer ${token}`, // Supprimé car le token est géré par httpOnly cookie
       },
+      credentials: "include", // Ajouté pour assurer l'envoi des cookies d'authentification
       body: JSON.stringify(data),
     });
 
-    if (response.ok) window.location.reload();
+    if (response.ok) {
+      window.location.reload();
+    } else {
+      const errorData = await response.json().catch(() => ({ message: "Erreur lors de la création de l'article, réponse non JSON." }));
+      console.error("Article creation failed, status:", response.status, "data:", errorData);
+      alert(`Erreur lors de la création de l'article: ${errorData.message || response.statusText}`);
+    }
   };
 
   if (loading) return <SendPulse />;

@@ -10,6 +10,7 @@ import { PrismaService } from './prisma/prisma.service';
 
 import { ArticlesModule } from './articles/articles.module';
 import { CommentsModule } from './comments/comments.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CommentsModule } from './comments/comments.module';
     CategoryModule,
     ArticlesModule,
     CommentsModule,
+    FavoritesModule,
   ],
   providers: [PrismaService],
   controllers: [],

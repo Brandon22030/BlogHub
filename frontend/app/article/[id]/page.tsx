@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import LikeButton from "@/components/LikeButton";
+import FavoriteButton from "@/components/FavoriteButton"; // Importer FavoriteButton
 import CommentSection from "@/components/comments/CommentSection"; // Import CommentSection
 import { NavBar } from "@/components/navBar";
 
@@ -238,12 +239,12 @@ export default function ArticlePage() {
             </div>
             {/* Likes */}
             <div className="flex items-center">
-              {/* LikeButton is already an icon + count */}
-              <LikeButton
-                articleId={article.id}
-                initialLiked={false} // This should ideally come from user-specific data
-                initialLikes={article.likes || 0}
-              />
+              {/* Likes - Utilisation du composant LikeButton */}
+              {article.id && (
+                <LikeButton articleId={article.id} initialLikes={article.likes ?? 0} />
+              )}
+              {/* Bouton Favori */}
+              {article.id && <FavoriteButton articleId={article.id} />}
             </div>
           </div>
 

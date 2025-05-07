@@ -221,7 +221,7 @@ export class AuthService {
       },
     });
 
-    const resetLink = `${this.configService.get('FRONTEND_URL')}/reset-password?token=${token}`;
+    const resetLink = `${this.configService.get('FRONTEND_URL')}/reset-password/${token}`;
 
     const emailHTML = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px;">
@@ -276,7 +276,7 @@ export class AuthService {
     }
 
     const token = this.generatePasswordResetToken();
-    const hashedToken = await this.hashPassword({ password: token });
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     const expiresAt = new Date(Date.now() + 3600000); // 1 heure
 
     await this.prisma.user.update({
@@ -312,12 +312,15 @@ export class AuthService {
       throw new BadRequestException('Passwords do not match.');
     }
 
-    const hashedToken = await this.hashPassword({ password: token });
+    const incomingTokenHashed = crypto
+      .createHash('sha256')
+      .update(token)
+      .digest('hex');
 
     const user = await this.prisma.user.findFirst({
       where: {
-        passwordResetToken: hashedToken,
-        passwordResetExpires: { gt: new Date() },
+        passwordResetToken: incomingTokenHashed,
+        passwordResetExpires: { gt: new Date() }, // Token not expired
       },
     });
 
@@ -329,13 +332,14 @@ export class AuthService {
       password: newPassword,
     });
 
+    // Mettre à jour le mot de passe de l'utilisateur et effacer le token
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
         password: newHashedPassword,
-        passwordResetToken: null,
-        passwordResetExpires: null,
-        isVerified: true,
+        passwordResetToken: null, // Effacer le token
+        passwordResetExpires: null, // Effacer la date d'expiration
+        isVerified: true, // S'assurer que l'utilisateur est marqué comme vérifié
       },
     });
 

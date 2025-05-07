@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { LoadingMarked } from "./Sending/send";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation"; // Ajout pour navigation programmatique
+import FavoriteButton from "@/components/FavoriteButton"; // Ajout de FavoriteButton
 
 // Fonction utilitaire pour retirer toutes les balises HTML
 function stripHtml(html: string): string {
@@ -14,11 +15,13 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]+>/g, "");
 }
 
-const fetchArticles = async () => {
-  const res = await fetch("http://localhost:3001/articles");
-  if (!res.ok) throw new Error("Failed to fetch categories");
-  return res.json();
-};
+// L'API /favorites retourne un tableau de { id, userId, articleId, article: ArticleDetails }
+interface FavoriteEntry {
+  id: string;
+  article: Article; // L'objet Article complet
+  // userId et articleId (du modèle Favorite) ne sont pas directement utilisés ici pour l'affichage
+}
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
@@ -29,7 +32,6 @@ const formatDate = (dateString: string) => {
 };
 
 export default function Marked() {
-  const [likedArticles, setLikedArticles] = useState<string[]>([]);
   const router = useRouter();
   const { user } = useUser();
 
@@ -48,38 +50,78 @@ export default function Marked() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    async function loadArticles() {
-      try {
-        const data = await fetchArticles();
-        setArticles(data.data);
-      } catch (error) {
-        console.error("Error fetching categories", error);
-      } finally {
+    async function loadFavoriteArticles() {
+      if (!user) {
+        setArticles([]);
         setLoading(false);
+        return;
       }
-    }
-    async function loadLikedArticles() {
+      setLoading(true);
       try {
-        const res = await fetch("http://localhost:3001/articles/liked", {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const likedIds = await res.json();
-          setLikedArticles(likedIds);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/favorites`,
+          {
+            credentials: "include", // Important pour l'authentification
+            cache: "no-store", // Demander des données fraîches
+          }
+        );
+        if (response.status === 401) {
+          // Gérer le cas où l'utilisateur n'est pas authentifié ou session expirée
+          console.warn("User not authenticated to fetch favorites.");
+          setArticles([]);
+          setLoading(false); // Assurer que loading est mis à jour
+          // Optionnel: afficher un message à l'utilisateur
+        } else if (!response.ok) {
+          setLoading(false); // Assurer que loading est mis à jour
+          throw new Error(
+            `Failed to fetch favorite articles: ${response.status}`
+          );
+        } else {
+          const result: FavoriteEntry[] = await response.json();
+          setArticles(result.map((fav) => fav.article));
+          setLoading(false); // Assurer que loading est mis à jour
         }
       } catch (error) {
-        // Silently ignore if not logged in
+        console.error("Error loading favorite articles:", error);
+        setArticles([]); // Optionnel, réinitialiser en cas d'erreur
+        setLoading(false); // Assurer que loading est mis à jour dans le catch aussi
       }
     }
-    loadArticles();
-    loadLikedArticles();
-  }, []);
+    console.log("User object in Marked component's useEffect:", user);
+    loadFavoriteArticles(); // Appeler la fonction de chargement des favoris
+  }, [user]); // Ajout de user comme dépendance
 
   if (loading) return <LoadingMarked />;
+
+  // Gérer le cas où l'utilisateur n'est pas connecté
+  if (!user) {
+    return (
+      <div className="w-full">
+        <div className="mx-20 my-10 text-center">
+          <p className="text-xl text-gray-700">
+            Veuillez vous <Link href="/login" className="text-[#FC4308] hover:underline">connecter</Link> pour voir vos articles favoris.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Gérer le cas où il n'y a pas d'articles favoris
+  if (articles.length === 0) {
+    return (
+      <div className="w-full">
+        <div className="mx-20 my-10 text-center">
+          <p className="text-xl text-gray-700">Vous n'avez aucun article en favori pour le moment.</p>
+          <p className="text-md text-gray-500 mt-2">Cliquez sur l'icône ❤️ sur un article pour l'ajouter à vos favoris.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full ">
       <div className="mx-20 ">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Mes Articles Favoris</h2> {/* Titre de la section */}
         <div className="grid grid-cols-1 rounded-xl sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
             <Link
@@ -170,122 +212,24 @@ export default function Marked() {
                           </p>
                         </div>
                       </div>
-                      <Image
-                        src="/signet.svg"
-                        alt="signet"
-                        width={30}
-                        height={30}
-                        className="w-10 h-10 object-cover"
-                      />
+                      <FavoriteButton articleId={article.id} />
                     </div>
-                    {/* Compteurs views/likes et bouton like */}
-                    <div className="flex items-center justify-between mt-2 px-3">
+                    <div className="flex items-center justify-start mt-2 px-3">
                       <span className="text-xs text-gray-500 flex items-center gap-1">
                         <svg
                           width="16"
                           height="16"
+                          viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
+                          strokeWidth="2"
                           className="inline mr-1"
                         >
-                          <circle cx="8" cy="8" r="7" strokeWidth="2" />
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
                         </svg>
-                        {article.views || 0} views
+                        {article.views || 0} vues
                       </span>
-                      {likedArticles.includes(article.id) ? (
-                        <button
-                          className="flex items-center gap-1 text-xs focus:outline-none text-[#FC4308] hover:text-gray-500 group-hover:text-white"
-                          onClick={async (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const res = await fetch(
-                              `http://localhost:3001/articles/${article.id}/like`,
-                              {
-                                method: "PATCH",
-                                credentials: "include",
-                                headers: {
-                                  "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({ status: 0 }),
-                              },
-                            );
-                            if (res.ok) {
-                              const updated = await res.json();
-                              setArticles((prev) =>
-                                prev.map((a) =>
-                                  a.id === article.id
-                                    ? { ...a, likes: updated.likes }
-                                    : a,
-                                ),
-                              );
-                              setLikedArticles((prev) =>
-                                prev.filter((id) => id !== article.id),
-                              );
-                            }
-                          }}
-                          aria-label="Dislike"
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            fill="none"
-                            stroke="currentColor"
-                            className="inline text-red-500 group-hover:text-white"
-                          >
-                            <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
-                            <line
-                              x1="4"
-                              y1="12"
-                              x2="12"
-                              y2="4"
-                              stroke="red"
-                              strokeWidth="2"
-                            />
-                          </svg>
-                          Dislike ({article.likes || 0})
-                        </button>
-                      ) : (
-                        <button
-                          className="flex items-center gap-1 text-xs focus:outline-none text-gray-500 hover:text-[#FC4308] group-hover:text-white"
-                          onClick={async (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const res = await fetch(
-                              `http://localhost:3001/articles/${article.id}/like`,
-                              {
-                                method: "PATCH",
-                                credentials: "include",
-                                headers: {
-                                  "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({ status: 1 }),
-                              },
-                            );
-                            if (res.ok) {
-                              const updated = await res.json();
-                              setArticles((prev) =>
-                                prev.map((a) =>
-                                  a.id === article.id
-                                    ? { ...a, likes: updated.likes }
-                                    : a,
-                                ),
-                              );
-                              setLikedArticles((prev) => [...prev, article.id]);
-                            }
-                          }}
-                          aria-label="Like"
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="inline text-red-500 group-hover:text-white"
-                          >
-                            <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
-                          </svg>
-                          Like ({article.likes || 0})
-                        </button>
-                      )}
                     </div>
                   </div>
                 </div>

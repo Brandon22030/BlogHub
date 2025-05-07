@@ -6,6 +6,7 @@ import Image from "next/image";
 import { NavBar } from "../../components/navBar";
 import Breadcrumbs from "@/components/breadcrumbs";
 import LikeButton from "@/components/LikeButton";
+import FavoriteButton from "@/components/FavoriteButton"; // Ajout de FavoriteButton
 import { useRouter } from "next/navigation"; // Ajout de useRouter
 
 interface Article {
@@ -97,124 +98,120 @@ export default function BlogPage() {
           </p>
         ) : (
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article) => {
-              const initialLiked = false; // À remplacer par la vraie logique utilisateur si possible
-              return (
-                <Link
-                  key={article.id}
-                  href={`/article/${article.id}`}
-                  className="block group"
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    try {
-                      // Appel explicite pour incrémenter la vue
-                      const res = await fetch(
-                        `http://localhost:3001/articles/${article.id}/view`,
-                        {
-                          method: "PATCH",
-                        },
-                      );
-                      if (res.ok) {
-                        // Optionnel: mise à jour optimiste si vous affichez les vues directement ici
-                        // ou si vous voulez forcer un re-fetch sur la page de détail
-                        console.log(
-                          `View increment API call successful for ${article.id} from BlogPage`,
-                        );
-                      } else {
-                        console.error(
-                          `View increment API call failed for ${article.id} from BlogPage`,
-                        );
-                      }
-                    } catch (error) {
-                      console.error(
-                        "Error calling view increment API from BlogPage:",
-                        error,
-                      );
-                    }
-                    // Navigation programmatique vers la page de l'article
-                    router.push(`/article/${article.id}`);
-                  }}
-                >
-                  <div className="bg-white hover:bg-[#FC4308] group-hover:text-white shadow-md rounded-xl overflow-hidden p-3 transition-transform hover:scale-105">
-                    {/* Image principale */}
-                    <Image
-                      src={
-                        article.imageUrl?.startsWith("http")
-                          ? article.imageUrl
-                          : "/dragndrop.svg"
-                      }
-                      alt={article.title}
-                      width={400}
-                      height={250}
-                      className="w-full h-48 object-cover rounded-xl"
-                    />
-                    {/* Vues et likes */}
-                    <div className="flex items-center justify-between mt-2 px-3">
-                      <span className="text-xs text-gray-500 flex items-center gap-1">
-                        <svg
-                          width="16"
-                          height="16"
-                          fill="none"
-                          stroke="currentColor"
-                          className="inline mr-1"
-                        >
-                          <circle cx="8" cy="8" r="7" strokeWidth="2" />
-                        </svg>
-                        {article.views || 0} vues
-                      </span>
-                      <LikeButton
-                        articleId={article.id}
-                        initialLiked={initialLiked}
-                        initialLikes={article.likes || 0}
-                      />
-                    </div>
-                    {/* Contenu de l’article */}
-                    <div className="pt-4">
-                      <h3 className="text-md px-3 font-semibold line-clamp-1 text-[#3E3232] group-hover:text-white">
-                        {article.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 px-3 mt-2 line-clamp-2 group-hover:text-white">
-                        {article.content.replace(/<[^>]+>/g, "").slice(0, 100)}
-                        ...
-                      </p>
-                      {/* Infos auteur */}
-                      <div className="flex items-center justify-between mt-4 bg-[#F5F5F5] py-3 px-4 rounded-xl">
-                        <div className="flex items-center">
-                          <Image
-                            src={
-                              article.author.imageUrl?.startsWith("http")
-                                ? article.author.imageUrl
-                                : "/avatar.png"
-                            }
-                            alt={article.author.name}
-                            width={44}
-                            height={44}
-                            className="w-11 h-11 rounded-xl object-cover"
-                          />
-                          <div className="ml-2 text-sm">
-                            <p className="text-[#3E3232] font-semibold">
-                              {article.author.name}
-                            </p>
-                            <p className="text-[#3E3232] text-opacity-75">
-                              {new Date(article.createdAt).toLocaleDateString(
-                                "fr-FR",
-                              )}
-                            </p>
-                          </div>
-                        </div>
+            {(() => {
+              // Fonction pour gérer la navigation et l'incrémentation des vues
+              const handleCardNavigation = async (e: React.MouseEvent, articleId: string) => {
+                e.preventDefault();
+                try {
+                  const res = await fetch(
+                    `http://localhost:3001/articles/${articleId}/view`,
+                    {
+                      method: "PATCH",
+                    },
+                  );
+                  if (res.ok) {
+                    console.log(
+                      `View increment API call successful for ${articleId} from BlogPage`,
+                    );
+                  } else {
+                    console.error(
+                      `View increment API call failed for ${articleId} from BlogPage`,
+                    );
+                  }
+                } catch (error) {
+                  console.error("Error calling view increment API from BlogPage:", error);
+                }
+                router.push(`/article/${articleId}`);
+              };
+
+              return articles.map((article) => {
+                const initialLiked = false; // À remplacer par la vraie logique utilisateur si possible
+                return (
+                  <div key={article.id} className="bg-white hover:shadow-xl group shadow-md rounded-xl overflow-hidden p-3 transition-transform duration-300 ease-in-out hover:scale-105 flex flex-col justify-between">
+                    <div> {/* Conteneur pour le contenu cliquable et non cliquable en haut */}
+                      <Link href={`/article/${article.id}`} onClick={(e) => handleCardNavigation(e, article.id)} className="block group/image">
                         <Image
-                          src="/signet.svg"
-                          alt="signet"
-                          width={30}
-                          height={30}
-                          className="w-10 h-10 object-cover"
+                          src={
+                            article.imageUrl?.startsWith("http")
+                              ? article.imageUrl
+                              : "/dragndrop.svg"
+                          }
+                          alt={article.title}
+                          width={400}
+                          height={250}
+                          className="w-full h-48 object-cover rounded-xl mb-3 transition-transform duration-300 ease-in-out group-hover/image:scale-105"
                         />
+                      </Link>
+                      <div className="pt-1 px-1">
+                        <Link href={`/article/${article.id}`} onClick={(e) => handleCardNavigation(e, article.id)} className="block mb-2">
+                          <h3 className="text-md font-semibold line-clamp-1 text-[#3E3232] group-hover:text-[#FC4308] transition-colors duration-200">
+                            {article.title}
+                          </h3>
+                        </Link>
+                        <p className="text-sm text-gray-600 line-clamp-2 group-hover:text-gray-700 mb-3 transition-colors duration-200">
+                          {article.content.replace(/<[^>]+>/g, "").slice(0, 100)}
+                          ...
+                        </p>
                       </div>
                     </div>
+
+                    <div> {/* Conteneur pour les actions et infos auteur en bas */}
+                      <div className="flex items-center justify-between mt-2 px-1 mb-3">
+                        <span className="text-xs text-gray-500 flex items-center gap-1 group-hover:text-gray-700 transition-colors duration-200">
+                          <svg
+                            width="16"
+                            height="16"
+                            fill="none"
+                            stroke="currentColor"
+                            className="inline mr-1 text-gray-400 group-hover:text-[#FC4308] transition-colors duration-200"
+                          >
+                            <circle cx="8" cy="8" r="7" strokeWidth="2" />
+                          </svg>
+                          {article.views || 0} vues
+                        </span>
+                        <div className="flex items-center"> {/* Wrapper simple pour les boutons */}
+                          <LikeButton
+                            articleId={article.id}
+                            initialLiked={initialLiked} 
+                            initialLikes={article.likes || 0}
+                          />
+                          <FavoriteButton articleId={article.id} />
+                        </div>
+                      </div>
+                      
+                      <Link href={`/article/${article.id}`} onClick={(e) => handleCardNavigation(e, article.id)} className="block group/author">
+                        <div className="flex items-center justify-between mt-2 bg-[#F5F5F5] group-hover/author:bg-gray-200 py-2 px-3 rounded-xl transition-colors duration-200">
+                          <div className="flex items-center">
+                            <Image
+                              src={
+                                article.author.imageUrl?.startsWith("http")
+                                  ? article.author.imageUrl
+                                  : "/avatar.png"
+                              }
+                              alt={article.author.name}
+                              width={36} 
+                              height={36}
+                              className="w-9 h-9 rounded-lg object-cover" 
+                            />
+                            <div className="ml-2 text-xs">
+                              <p className="text-[#3E3232] font-semibold group-hover/author:text-[#FC4308] transition-colors duration-200">
+                                {article.author.name}
+                              </p>
+                              <p className="text-[#3E3232] text-opacity-75 group-hover/author:text-opacity-100 transition-colors duration-200">
+                                {new Date(article.createdAt).toLocaleDateString(
+                                  "fr-FR",
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          {/* L'icône signet ici a été enlevée car redondante avec FavoriteButton */}
+                        </div>
+                      </Link>
+                    </div>
                   </div>
-                </Link>
-              );
-            })}
+                );
+              });
+            })()}
           </section>
         )}
 
