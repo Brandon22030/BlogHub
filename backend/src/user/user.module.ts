@@ -16,6 +16,11 @@ import { ConfigModule } from '@nestjs/config';
       signOptions: { expiresIn: '7d' },
     }),
   ],
-  providers: [UserService, PrismaService, CloudinaryService, CloudinaryProvider],
+  providers: [
+    UserService,
+    PrismaService,
+    CloudinaryService,
+    CloudinaryProvider,
+  ],
 })
 export class UserModule {}

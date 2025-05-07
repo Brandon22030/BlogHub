@@ -122,10 +122,13 @@ export class CommentsService {
 
       return comment;
     } catch (error) {
-      throw new HttpException(
-        error.message || 'Error creating comment',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      const message =
+        error instanceof Error ? error.message : 'Error creating comment';
+      const status =
+        error instanceof HttpException
+          ? error.getStatus()
+          : HttpStatus.INTERNAL_SERVER_ERROR;
+      throw new HttpException(message, status);
     }
   }
 
@@ -144,6 +147,11 @@ export class CommentsService {
               imageUrl: true,
             },
           },
+          commentLikes: {
+            select: {
+              userId: true,
+            },
+          },
           replies: {
             include: {
               author: {
@@ -153,7 +161,27 @@ export class CommentsService {
                   imageUrl: true,
                 },
               },
-              replies: true, // Include nested replies
+              commentLikes: {
+                select: {
+                  userId: true,
+                },
+              },
+              replies: {
+                include: {
+                  author: {
+                    select: {
+                      id: true,
+                      name: true,
+                      imageUrl: true,
+                    },
+                  },
+                  commentLikes: {
+                    select: {
+                      userId: true,
+                    },
+                  },
+                },
+              },
             },
             orderBy: {
               createdAt: 'desc',
@@ -183,6 +211,15 @@ export class CommentsService {
       if (comment.authorId !== userId) {
         throw new HttpException(
           'You do not have permission to update this comment',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      // Check if the comment was created within the last 15 minutes
+      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+      if (comment.createdAt < fifteenMinutesAgo) {
+        throw new HttpException(
+          'Comments can only be edited within 15 minutes of posting',
           HttpStatus.FORBIDDEN,
         );
       }
@@ -228,10 +265,6 @@ export class CommentsService {
         );
       }
 
-      await this.prisma.comment.delete({
-        where: { id },
-      });
-
       return { message: 'Comment deleted successfully' };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -241,6 +274,175 @@ export class CommentsService {
         'Error deleting comment',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  /**
+   * Allows a user to like a comment.
+   * @param commentId The ID of the comment to like.
+   * @param userId The ID of the user liking the comment.
+   * @returns The updated comment with the new like count.
+   */
+  async likeComment(commentId: string, userId: string): Promise<Comment> {
+    try {
+      const comment = await this.prisma.comment.findUnique({
+        where: { id: commentId },
+      });
+
+      if (!comment) {
+        throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
+      }
+
+      const existingLike = await this.prisma.commentLike.findUnique({
+        where: {
+          userId_commentId: {
+            userId,
+            commentId,
+          },
+        },
+      });
+
+      if (existingLike) {
+        // User has already liked this comment, return current comment state
+        return comment;
+      }
+
+      // Use a transaction to ensure atomicity
+      const updatedComment = await this.prisma.$transaction(async (tx) => {
+        await tx.commentLike.create({
+          data: {
+            userId,
+            commentId,
+          },
+        });
+
+        const currentComment = await tx.comment.findUnique({
+          where: { id: commentId },
+          select: { likesCount: true },
+        });
+
+        if (!currentComment) {
+          throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
+        }
+
+        return tx.comment.update({
+          where: { id: commentId },
+          data: {
+            likesCount: currentComment.likesCount + 1,
+          },
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                imageUrl: true,
+              },
+            },
+            replies: true,
+            commentLikes: true,
+          },
+        });
+      });
+
+      // TODO: Optionally send a notification to the comment author
+
+      return updatedComment;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error liking comment';
+      const status =
+        error instanceof HttpException
+          ? error.getStatus()
+          : HttpStatus.INTERNAL_SERVER_ERROR;
+      throw new HttpException(message, status);
+    }
+  }
+
+  /**
+   * Allows a user to unlike a comment.
+   * @param commentId The ID of the comment to unlike.
+   * @param userId The ID of the user unliking the comment.
+   * @returns The updated comment with the new like count.
+   */
+  async unlikeComment(commentId: string, userId: string): Promise<Comment> {
+    try {
+      const comment = await this.prisma.comment.findUnique({
+        where: { id: commentId },
+      });
+
+      if (!comment) {
+        throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
+      }
+
+      const existingLike = await this.prisma.commentLike.findUnique({
+        where: {
+          userId_commentId: {
+            userId,
+            commentId,
+          },
+        },
+      });
+
+      if (!existingLike) {
+        // User hasn't liked this comment, or already unliked it.
+        return comment;
+      }
+
+      // Use a transaction to ensure atomicity
+      const updatedComment = await this.prisma.$transaction(async (tx) => {
+        await tx.commentLike.delete({
+          where: {
+            userId_commentId: {
+              userId,
+              commentId,
+            },
+          },
+        });
+
+        const currentComment = await tx.comment.findUnique({
+          where: { id: commentId },
+          select: { likesCount: true },
+        });
+
+        if (!currentComment) {
+          // Should not happen if commentLike existed, but good for safety
+          throw new HttpException(
+            'Comment not found after deleting like',
+            HttpStatus.NOT_FOUND,
+          );
+        }
+
+        // Ensure likesCount doesn't go below 0
+        const newLikesCount = Math.max(0, currentComment.likesCount - 1);
+
+        return tx.comment.update({
+          where: { id: commentId },
+          data: {
+            likesCount: newLikesCount,
+          },
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                imageUrl: true,
+              },
+            },
+            replies: true,
+            commentLikes: true,
+          },
+        });
+      });
+
+      return updatedComment;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error unliking comment';
+      const status =
+        error instanceof HttpException
+          ? error.getStatus()
+          : HttpStatus.INTERNAL_SERVER_ERROR;
+      throw new HttpException(message, status);
     }
   }
 }

@@ -76,5 +76,29 @@ export class CommentsController {
     return this.commentsService.remove(id, req.user.userId);
   }
 
-}
+  /**
+   * Like a comment.
+   * Requires JWT authentication.
+   * @param id - The comment's unique ID (commentId)
+   * @param req - The request object containing user info
+   * @returns The updated comment object with like count
+   */
+  @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  likeComment(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.commentsService.likeComment(id, req.user.userId);
+  }
 
+  /**
+   * Unlike a comment.
+   * Requires JWT authentication.
+   * @param id - The comment's unique ID (commentId)
+   * @param req - The request object containing user info
+   * @returns The updated comment object with like count
+   */
+  @Post(':id/unlike') // Alternatively, could use @Delete(':id/like')
+  @UseGuards(JwtAuthGuard)
+  unlikeComment(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.commentsService.unlikeComment(id, req.user.userId);
+  }
+}

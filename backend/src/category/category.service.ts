@@ -3,9 +3,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CategoryService {
-  async updateCategory(id: string, data: { name?: string; slug?: string; imageUrl?: string }) {
-    let updateData = { ...data };
-    if ((!data.slug || data.slug.trim() === "") && data.name) {
+  async updateCategory(
+    id: string,
+    data: { name?: string; slug?: string; imageUrl?: string },
+  ) {
+    const updateData = { ...data };
+    if ((!data.slug || data.slug.trim() === '') && data.name) {
       updateData.slug = this.slugify(data.name);
     }
     return this.prisma.category.update({ where: { id }, data: updateData });
@@ -53,4 +56,3 @@ export class CategoryService {
       .replace(/(^-|-$)+/g, '');
   }
 }
-

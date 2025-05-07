@@ -13,6 +13,7 @@ import {
   Controller,
   Patch,
 } from '@nestjs/common';
+import { Request } from 'express'; // Added for req.ip
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -31,11 +32,27 @@ export class ArticlesController {
   async getLikedArticles(@Req() req: RequestWithUser) {
     return this.articlesService.getLikedArticleIds(req.user.userId);
   }
+
+  /**
+   * Get a single article by its ID.
+   * @param id - The ID of the article to retrieve
+   * @returns The article object
+   */
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.articlesService.findOne(id);
+  }
+
   // PATCH /articles/:id/view
   @Patch(':id/view')
   async addView(@Param('id') id: string, @Req() req: Request) {
     const clientIp = req.ip;
-    return this.articlesService.incrementView(id, clientIp);
+    if (!clientIp) {
+      console.warn(
+        `Client IP is undefined for article view increment: ${id}. Using empty string as fallback.`,
+      );
+    }
+    return this.articlesService.incrementView(id, clientIp || '');
   }
 
   // PATCH /articles/:id/like
@@ -100,16 +117,6 @@ export class ArticlesController {
   @Get()
   async findAll(@Query() query: SearchQueryDto) {
     return await this.articlesService.findAll(query);
-  }
-
-  /**
-   * Get a specific article by its ID.
-   * @param id - The article's unique ID
-   * @returns The requested article object
-   */
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.articlesService.findOne(id);
   }
 
   /**

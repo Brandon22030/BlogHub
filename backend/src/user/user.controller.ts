@@ -20,6 +20,7 @@ import { RequestWithUser } from 'src/auth/jwt.strategy';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { extname } from 'path';
+import { UpdateProfileDto } from '../auth/dto/UpdateProfileDto';
 
 @Controller('user')
 export class UserController {
@@ -61,16 +62,18 @@ export class UserController {
 
     // Add role and ensure imageUrl is always present
     // Fetch the user from the database to get the latest imageUrl
-    return this.userService.getUser({ userId: req.user.userId }).then(users => {
-      const dbUser = users && users[0];
-      return {
-        id: req.user.userId,
-        name: req.user.userName,
-        email: req.user.userEmail,
-        imageUrl: dbUser?.imageUrl || undefined,
-        role: req.user.role,
-      };
-    });
+    return this.userService
+      .getUser({ userId: req.user.userId })
+      .then((users) => {
+        const dbUser = users && users[0];
+        return {
+          id: req.user.userId,
+          name: req.user.userName,
+          email: req.user.userEmail,
+          imageUrl: dbUser?.imageUrl || undefined,
+          role: req.user.role,
+        };
+      });
   }
 
   /**
@@ -90,7 +93,7 @@ export class UserController {
   )
   async updateProfile(
     @Req() req: RequestWithUser,
-    @Body() body,
+    @Body() body: UpdateProfileDto,
     @UploadedFile() image?: Express.Multer.File,
   ) {
     const userId = req.user.userId;
@@ -118,13 +121,11 @@ export class UserController {
   @Patch(':id')
   async changeUserRole(
     @Param('id') userId: string,
-    @Body() body: { role: 'USER' | 'ADMIN' }
+    @Body() body: { role: 'USER' | 'ADMIN' },
   ) {
     if (!body.role || (body.role !== 'USER' && body.role !== 'ADMIN')) {
       return { message: 'Invalid role. Must be USER or ADMIN.' };
     }
     return this.userService.changeUserRole(userId, body.role);
   }
-
 }
-

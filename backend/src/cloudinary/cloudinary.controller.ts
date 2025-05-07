@@ -20,7 +20,8 @@ export class CloudinaryController {
       return { success: true };
     } catch (e: any) {
       throw new BadRequestException(
-        'Erreur suppression Cloudinary: ' + (e && typeof e === 'object' && 'message' in e ? e.message : ''),
+        'Erreur suppression Cloudinary: ' +
+          (e && typeof e === 'object' && 'message' in e ? e.message : ''),
       );
     }
   }

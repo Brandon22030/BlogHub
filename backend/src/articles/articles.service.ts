@@ -22,6 +22,17 @@ export class ArticlesService {
       // Vérifier si l'article existe
       const article = await this.prisma.article.findUnique({
         where: { id },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              imageUrl: true,
+              _count: { select: { articles: true } },
+            },
+          },
+          category: true, // Assuming you might want category info too
+        },
       });
 
       if (!article) {
@@ -31,12 +42,11 @@ export class ArticlesService {
       // Créer une clé unique pour l'article
       const cacheKey = id;
 
-      // Initialiser le Set pour cet article s'il n'existe pas
+      // Initialiser le Set pour cet article s'il n'existe pas et le récupérer
       if (!this.viewCache.has(cacheKey)) {
-        this.viewCache.set(cacheKey, new Set());
+        this.viewCache.set(cacheKey, new Set<string>());
       }
-
-      const viewSet = this.viewCache.get(cacheKey);
+      const viewSet = this.viewCache.get(cacheKey)!; // Using non-null assertion as we ensure it's set
 
       // Vérifier si cette IP a déjà vu l'article
       if (!viewSet.has(clientIp)) {
@@ -47,14 +57,28 @@ export class ArticlesService {
         const updatedArticle = await this.prisma.article.update({
           where: { id },
           data: { views: { increment: 1 } },
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                imageUrl: true,
+                _count: { select: { articles: true } },
+              },
+            },
+            category: true,
+          },
         });
 
         // Nettoyer le cache après 24h
         setTimeout(
           () => {
-            viewSet.delete(clientIp);
-            if (viewSet.size === 0) {
-              this.viewCache.delete(cacheKey);
+            const currentViewSet = this.viewCache.get(cacheKey);
+            if (currentViewSet) {
+              currentViewSet.delete(clientIp);
+              if (currentViewSet.size === 0) {
+                this.viewCache.delete(cacheKey);
+              }
             }
           },
           24 * 60 * 60 * 1000,
@@ -97,7 +121,20 @@ export class ArticlesService {
         });
       }
     }
-    return this.prisma.article.findUnique({ where: { id } });
+    return this.prisma.article.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            _count: { select: { articles: true } },
+          },
+        },
+        category: true,
+      },
+    });
   }
   constructor(private readonly prisma: PrismaService) {}
 
@@ -129,12 +166,46 @@ export class ArticlesService {
   }
 
   /**
+   * Get a single article by its ID, including author and category details.
+   * Also includes the count of articles written by the author.
+   * @param id - The ID of the article to retrieve
+   * @returns The article object or throws NotFoundException
+   */
+  async findOne(id: string) {
+    const article = await this.prisma.article.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            _count: { select: { articles: true } },
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        // You might want to include comments here too later, or handle them separately
+      },
+    });
+    if (!article) {
+      throw new HttpException('Article not found', HttpStatus.NOT_FOUND);
+    }
+    return article;
+  }
+
+  /**
    * Get all articles with pagination and optional search/filtering.
    * @param query - Search and pagination parameters
    * @returns Paginated and filtered list of articles with meta info
    */
   async findAll(query: SearchQueryDto) {
-    // Correction : accepte aussi le paramètre 'search' (venant du frontend)
+    // Correction: accepte aussi le paramètre 'search' (venant du frontend)
     // et fallback sur 'searchTerm' si besoin
     const {
       page = 1,
@@ -212,28 +283,6 @@ export class ArticlesService {
     } catch {
       throw new HttpException(
         'Error retrieving articles',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  // Read a specific article by ID
-  async findOne(id: string) {
-    try {
-      const article = await this.prisma.article.findUnique({
-        where: { id },
-        include: {
-          author: true,
-          category: true,
-        },
-      });
-      if (!article) {
-        throw new HttpException('Article non trouvé', HttpStatus.NOT_FOUND);
-      }
-      return article;
-    } catch {
-      throw new HttpException(
-        "Erreur lors de la récupération de l'article",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

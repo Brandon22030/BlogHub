@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Post, Body, Put, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Put,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -40,7 +49,7 @@ export class CategoryController {
   @Put(':id')
   async updateCategory(
     @Param('id') id: string,
-    @Body() body: { name?: string; slug?: string; imageUrl?: string }
+    @Body() body: { name?: string; slug?: string; imageUrl?: string },
   ) {
     return this.categoryService.updateCategory(id, body);
   }
