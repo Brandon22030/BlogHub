@@ -1,7 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-// import { jwtConstants } from './constants';
+import { ConfigService } from '@nestjs/config'; // Import ConfigService
 
 export type UserPayload = {
   userId: string;
@@ -11,38 +11,34 @@ export type UserPayload = {
   userImage?: string; // Added for profile image persistence
 };
 
-export interface RequestWithUser extends Request {
+export interface RequestWithUser extends Request { // Assurez-vous que Request est importé ou défini globalement
   user: UserPayload;
 }
-// export type RequestWithUser = { user: UserPayload };
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly configService: ConfigService) { // Inject ConfigService
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req) => {
-          // console.log('Cookies reçus dans JwtStrategy:', req.cookies); // Peut être commenté si trop verbeux
           const token = req?.cookies?.access_token;
-          // console.log('Token extrait du cookie access_token:', token); // Peut être commenté si trop verbeux
           return token;
         },
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || '',
+      // Utilisez ConfigService pour obtenir le secret
+      secretOrKey: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
     });
-    // console.log('JwtStrategy initialized. Secret used (ou une partie pour vérification):', process.env.JWT_SECRET ? process.env.JWT_SECRET.substring(0, 5) + '...' : 'Non défini !');
   }
 
-  async validate(payload: UserPayload) {
-    // console.log('JwtStrategy - Méthode VALIDATE appelée.');
-    // console.log('JwtStrategy - Payload reçu dans validate:', payload);
+  async validate(payload: UserPayload): Promise<UserPayload> { // Type de retour explicite
+    // Le payload ici est le JWT décodé après vérification de la signature et de l'expiration
+    // Vous pouvez ajouter une logique ici pour, par exemple, charger l'entité utilisateur depuis la base de données
+    // si vous avez besoin de plus d'informations utilisateur ou pour vérifier si l'utilisateur existe toujours / n'est pas banni.
+    // Pour l'instant, nous retournons simplement le payload tel quel.
     if (!payload || !payload.userId) {
-      // console.error('JwtStrategy - VALIDATE: Payload invalide ou userId manquant !', payload);
-      // Vous pourriez envisager de lancer une UnauthorizedException ici si le payload n'est pas conforme
-      // import { UnauthorizedException } from '@nestjs/common';
-      // throw new UnauthorizedException('Invalid token payload');
+      // Gérer le cas où le payload est invalide si nécessaire, bien que Passport-JWT devrait déjà gérer les tokens invalides.
     }
     return payload; // Passport va attacher ceci à req.user
   }
