@@ -20,7 +20,7 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RequestWithUser } from './jwt.strategy';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LogUserDto } from './dto/login-user.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto'; // Ajouté

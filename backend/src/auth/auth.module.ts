@@ -4,8 +4,8 @@ import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
-import { UserService } from 'src/user/user.service';
-import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { UserService } from '../user/user.service';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [

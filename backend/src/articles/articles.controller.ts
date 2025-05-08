@@ -19,8 +19,8 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ArticlesService } from './articles.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RequestWithUser } from 'src/auth/jwt.strategy';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RequestWithUser } from '../auth/jwt.strategy';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { SearchQueryDto } from './dto/search-query.dto';
 

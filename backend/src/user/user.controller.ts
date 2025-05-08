@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserService } from './user.service';
 import { Request } from 'express';
-import { RequestWithUser } from 'src/auth/jwt.strategy';
+import { RequestWithUser } from '../auth/jwt.strategy';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { extname } from 'path';
