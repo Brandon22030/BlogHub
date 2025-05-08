@@ -132,17 +132,6 @@ export default function SearchAvatar() {
               </AnimatePresence>
             </div>
           </div>
-
-          <button className="p-2" onClick={() => setIsCliqued(!isCliqued)}>
-            <Image
-              src={isCliqued ? "/signet_open.svg" : "/signet.svg"}
-              alt="Bookmark"
-              className="font-bold"
-              width={48}
-              height={48}
-              priority
-            />
-          </button>
         </div>
       ) : (
         <div className="flex gap-10 w-[18rem]">
