@@ -18,9 +18,13 @@ export interface RequestWithUser extends Request { // Assurez-vous que Request e
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) { // Inject ConfigService
+    const secret = configService.get<string>('JWT_ACCESS_TOKEN_SECRET');
+    if (!secret) {
+      throw new Error('JWT_ACCESS_TOKEN_SECRET is not defined in environment variables. Application cannot start.');
+    }
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => {
+        (req: any) => { // Added 'any' type for req to address lint errors temporarily
           const token = req?.cookies?.access_token;
           return token;
         },
@@ -28,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ]),
       ignoreExpiration: false,
       // Utilisez ConfigService pour obtenir le secret
-      secretOrKey: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      secretOrKey: secret,
     });
   }
 
