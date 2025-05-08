@@ -12,9 +12,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LogUserDto } from './dto/login-user.dto';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 import * as crypto from 'crypto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+
+interface VerificationTokenPayload {
+  email: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -181,7 +186,7 @@ export class AuthService {
 
   async verifyEmail(token: string) {
     try {
-      const decoded = this.jwtService.verify(token, {
+      const decoded = this.jwtService.verify<VerificationTokenPayload>(token, {
         secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
       });
       const user = await this.prisma.user.findUnique({

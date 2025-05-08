@@ -59,7 +59,7 @@ export default function PopularPosts() {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/articles?sortBy=views&sortOrder=desc&limit=5&page=1`
+          `${process.env.NEXT_PUBLIC_API_URL}/articles?sortBy=views&sortOrder=desc&limit=6&page=1`
         );
         if (!response.ok) {
           throw new Error(

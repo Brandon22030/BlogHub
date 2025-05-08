@@ -36,7 +36,7 @@ export default function Login() {
         "Le mot de passe doit contenir au moins 6 caractères.";
     } else if (!form.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[ \]{};':"\\|,.<>/?-]).*$/)) {
       newErrors.password =
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+        "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial";
     }
     return newErrors;
   };

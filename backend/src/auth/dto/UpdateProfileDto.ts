@@ -26,10 +26,13 @@ export class UpdateProfileDto {
   @MinLength(6, {
     message: 'Votre nouveau mot de passe doit faire plus de 6 caractères.',
   })
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, {
-    message:
-      'Le nouveau mot de passe doit contenir au moins une lettre et un chiffre.',
-  })
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[ \]{};':"\\|,.<>/?-]).*$/,
+    {
+      message:
+        'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial',
+    },
+  )
   password?: string;
 
   @IsOptional()

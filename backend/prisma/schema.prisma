@@ -27,7 +27,7 @@ model User {
   isVerified        Boolean        @default(false)
   verificationToken String?
   notifications     Notification[]
-  passwordResetToken   String?        @unique
+  passwordResetToken   String?
   passwordResetExpires DateTime? 
   favorites         Favorite[]
   createdAt         DateTime       @default(now())

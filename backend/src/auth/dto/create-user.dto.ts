@@ -19,7 +19,7 @@ export class CreateUserDto {
       message: 'Veuillez fournir une adresse email valide',
     },
   )
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description:
@@ -31,10 +31,14 @@ export class CreateUserDto {
   @MinLength(6, {
     message: 'Votre mot de passe doit faire plus de 6 charactère',
   })
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, {
-    message: 'Le mot de passe doit contenir au moins une lettre et un chiffre.',
-  })
-  password: string;
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[ \]{};':"\\|,.<>/?-]).*$/,
+    {
+      message:
+        'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial',
+    },
+  )
+  password!: string;
 
   @ApiProperty({
     description: 'User full name or nickname',
@@ -43,12 +47,12 @@ export class CreateUserDto {
   @IsString({
     message: 'Vous devez fournir un nom valide',
   })
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'Password confirmation (must match password)',
     example: 'P@ssword123',
   })
   @IsNotEmpty()
-  confirmPassword: string;
+  confirmPassword!: string;
 }

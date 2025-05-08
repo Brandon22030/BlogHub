@@ -150,7 +150,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     >
       <div className="flex items-start space-x-3">
         <Image
-          src={comment.author?.imageUrl || "/avatar.png"}
+          src={comment.author?.imageUrl || "/avatar.svg"}
           alt={comment.author?.name || "User"}
           width={depth > 0 ? 32 : 40}
           height={depth > 0 ? 32 : 40}

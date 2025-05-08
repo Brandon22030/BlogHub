@@ -186,7 +186,7 @@ export default function BlogPage() {
                               src={
                                 article.author.imageUrl?.startsWith("http")
                                   ? article.author.imageUrl
-                                  : "/avatar.png"
+                                  : "/avatar.svg"
                               }
                               alt={article.author.name}
                               width={36} 

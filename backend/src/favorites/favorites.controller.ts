@@ -30,8 +30,9 @@ export class FavoritesController {
   ) {
     // console.log('User ID in controller:', req.user?.userId); // Log temporaire
     // console.log('Article ID in controller:', articleId); // Log temporaire
-    if (!req.user?.userId) { // Vérification additionnelle
-      throw new Error('User ID is missing in request'); 
+    if (!req.user?.userId) {
+      // Vérification additionnelle
+      throw new Error('User ID is missing in request');
     }
     return this.favoritesService.isArticleFavorited(req.user.userId, articleId);
   }

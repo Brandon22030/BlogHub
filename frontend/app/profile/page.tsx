@@ -74,8 +74,8 @@ export default function Profile() {
           {/* User Infos */}
           <div className="flex gap-3 items-center">
             <Image
-              className="rounded-xl container"
-              src={user?.userImage || user?.imageUrl || "/avatar.png"}
+              className="rounded-xl w-12 h-12 object-cover"
+              src={user?.userImage || user?.imageUrl || "/avatar.svg"}
               alt="profile"
               width={75}
               height={75}
@@ -99,7 +99,7 @@ export default function Profile() {
                   ? "Marked"
                   : tab === "create"
                     ? "Send Post"
-                    : "Posts"}
+                    : "My Posts"}
               </button>
             ))}
           </div>

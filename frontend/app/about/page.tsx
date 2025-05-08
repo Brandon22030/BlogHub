@@ -5,12 +5,12 @@ import Breadcrumbs from "@/components/breadcrumbs";
 import Image from "next/image";
 
 const team = [
-  { name: "Brandon", role: "Lead Dev, UX/UI", img: "/avatar.png" },
-  { name: "Cassie Evans", role: "Développeuse", img: "/avatar.png" },
-  { name: "Louis Hoeberigts", role: "Marketing", img: "/avatar.png" },
-  { name: "Patricia", role: "Administratif", img: "/avatar.png" },
-  { name: "James Hoeberigts", role: "CEO", img: "/avatar.png" },
-  { name: "Jon Kantner", role: "Finance", img: "/avatar.png" },
+  { name: "Brandon", role: "Lead Dev, UX/UI", img: "/avatar.svg" },
+  { name: "Cassie Evans", role: "Développeuse", img: "/avatar.svg" },
+  { name: "Louis Hoeberigts", role: "Marketing", img: "/avatar.svg" },
+  { name: "Patricia", role: "Administratif", img: "/avatar.svg" },
+  { name: "James Hoeberigts", role: "CEO", img: "/avatar.svg" },
+  { name: "Jon Kantner", role: "Finance", img: "/avatar.svg" },
 ];
 
 export default function AboutPage() {

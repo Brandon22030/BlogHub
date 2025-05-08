@@ -177,7 +177,7 @@ export default function Banner() { // Renommé BlogSection en Banner pour corres
             By {currentArticle.author.name} - {new Date(currentArticle.createdAt).toLocaleDateString()}
           </p>
           <p className="text-md text-gray-300 line-clamp-3">
-            {truncateText(currentArticle.content, 150)} 
+            {truncateText(currentArticle.content.replace(/<[^>]+>/g, ''), 150)} 
           </p>
           
           <Link 

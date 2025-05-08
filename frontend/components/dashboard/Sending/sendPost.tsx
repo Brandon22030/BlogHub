@@ -43,7 +43,9 @@ export default function SendPost() {
       } else {
         // Optionnel: Gérer le cas où le profil n'est pas récupéré (par exemple, si le cookie n'est pas valide ou expiré)
         console.error("Failed to fetch user profile, status:", res.status);
-        setError("Impossible de récupérer le profil utilisateur. Veuillez vous reconnecter.");
+        setError(
+          "Impossible de récupérer le profil utilisateur. Veuillez vous reconnecter."
+        );
         // Potentiellement rediriger vers la page de connexion si res.status est 401 ou 403
         // if (res.status === 401 || res.status === 403) router.push('/login');
       }
@@ -82,10 +84,11 @@ export default function SendPost() {
         method: "POST",
         credentials: "include",
         body: formData,
-      },
+      }
     );
     if (uploadResponse.ok) {
       const uploadData = await uploadResponse.json();
+      console.log("Cloudinary uploadData:", uploadData);
       setImageUrl(uploadData.secure_url || uploadData.filePath);
     }
     setIsUploading(false);
@@ -169,9 +172,20 @@ export default function SendPost() {
     if (response.ok) {
       window.location.reload();
     } else {
-      const errorData = await response.json().catch(() => ({ message: "Erreur lors de la création de l'article, réponse non JSON." }));
-      console.error("Article creation failed, status:", response.status, "data:", errorData);
-      alert(`Erreur lors de la création de l'article: ${errorData.message || response.statusText}`);
+      const errorData = await response
+        .json()
+        .catch(() => ({
+          message: "Erreur lors de la création de l'article, réponse non JSON.",
+        }));
+      console.error(
+        "Article creation failed, status:",
+        response.status,
+        "data:",
+        errorData
+      );
+      alert(
+        `Erreur lors de la création de l'article: ${errorData.message || response.statusText}`
+      );
     }
   };
 
@@ -485,7 +499,7 @@ export default function SendPost() {
             ></p>
             {imageUrl && (
               <Image
-                src={`http://localhost:3001${imageUrl}`}
+                src={imageUrl}
                 width={420}
                 height={150}
                 alt="Aperçu"

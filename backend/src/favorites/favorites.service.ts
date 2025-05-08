@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service'; // Assurez-vous que le chemin est correct
 
 @Injectable()
@@ -63,32 +67,38 @@ export class FavoritesService {
     return this.prisma.favorite.findMany({
       where: { userId },
       include: {
-        article: { // Inclure les détails de l'article
+        article: {
+          // Inclure les détails de l'article
           include: {
-            author: { // Optionnel : inclure l'auteur de l'article
+            author: {
+              // Optionnel : inclure l'auteur de l'article
               select: {
                 id: true,
                 name: true,
                 imageUrl: true,
-              }
-            }, 
-            category: { // Optionnel : inclure la catégorie de l'article
+              },
+            },
+            category: {
+              // Optionnel : inclure la catégorie de l'article
               select: {
                 id: true,
                 name: true,
                 slug: true,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc', // Afficher les plus récents en premier
-      }
+      },
     });
   }
 
-  async isArticleFavorited(userId: string, articleId: string): Promise<{ isFavorited: boolean }> {
+  async isArticleFavorited(
+    userId: string,
+    articleId: string,
+  ): Promise<{ isFavorited: boolean }> {
     const favorite = await this.prisma.favorite.findUnique({
       where: {
         userId_articleId: {

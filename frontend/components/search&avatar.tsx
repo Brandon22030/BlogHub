@@ -75,7 +75,7 @@ export default function SearchAvatar() {
 
           <div ref={menuRef} className="relative flex items-center gap-2">
             <Image
-              src={user?.imageUrl || "/avatar.png"}
+              src={user?.imageUrl || "/avatar.svg"}
               alt="User"
               width={48}
               height={48}

@@ -56,7 +56,7 @@ export default function NewPosts() {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/articles?sortBy=createdAt&sortOrder=desc&limit=5&page=1` // Limité à 5 pour l'exemple
+          `${process.env.NEXT_PUBLIC_API_URL}/articles?sortBy=createdAt&sortOrder=desc&limit=6&page=1` // Limité à 5 pour l'exemple
         );
         if (!response.ok) {
           throw new Error(

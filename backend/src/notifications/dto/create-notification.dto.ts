@@ -10,19 +10,19 @@ export enum NotificationType {
 
 export class CreateNotificationDto {
   @IsString()
-  userId: string;
+  userId!: string;
 
   @IsString()
-  recipientId: string;
+  recipientId!: string;
 
   @IsString()
-  title: string;
+  title!: string;
 
   @IsString()
-  message: string;
+  message!: string;
 
   @IsEnum(NotificationType)
-  type: NotificationType;
+  type!: NotificationType;
 
   @IsString()
   @IsOptional()

@@ -168,7 +168,8 @@ export class AuthController {
   @ApiBody({ type: RequestPasswordResetDto })
   @ApiResponse({
     status: 200,
-    description: 'If email exists and is verified, a password reset link will be sent.',
+    description:
+      'If email exists and is verified, a password reset link will be sent.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @Post('request-password-reset')

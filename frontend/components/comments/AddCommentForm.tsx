@@ -95,7 +95,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       <div className="flex items-start space-x-3">
         {/* User Avatar */}
         <Image
-          src={user.imageUrl || "/avatar.png"} // Use a default avatar if none provided
+          src={user.imageUrl || "/avatar.svg"} // Use a default avatar if none provided
           alt={user.userName || "User"}
           width={40}
           height={40}

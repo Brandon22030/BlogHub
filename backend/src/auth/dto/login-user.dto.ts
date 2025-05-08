@@ -12,7 +12,7 @@ export class LogUserDto {
       message: 'Veuillez fournir une adresse email valide',
     },
   )
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'User password for login (at least 6 characters)',
@@ -23,5 +23,5 @@ export class LogUserDto {
   @MinLength(6, {
     message: 'Votre mot de passe doit faire plus de 8 charactère',
   })
-  password: string;
+  password!: string;
 }

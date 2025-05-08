@@ -271,7 +271,7 @@ export default function ArticlePage() {
                 {/* Left: Author Image */}
                 <div className="flex-shrink-0">
                   <Image
-                    src={article.author.imageUrl || "/avatar.png"}
+                    src={article.author.imageUrl || "/avatar.svg"}
                     alt={article.author.name || "Author"}
                     width={80}
                     height={80}
@@ -338,7 +338,7 @@ export default function ArticlePage() {
                   className="flex gap-3 items-center bg-gray-50 rounded-lg p-2 hover:bg-gray-100"
                 >
                   <Image
-                    src={rel.imageUrl || "/avatar.png"}
+                    src={rel.imageUrl || "/avatar.svg"}
                     alt={rel.title}
                     width={50}
                     height={50}

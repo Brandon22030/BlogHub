@@ -89,12 +89,16 @@ export class ArticlesService {
 
       // Si l'IP a déjà vu l'article, retourner l'article sans incrémenter
       return article;
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        "Erreur lors de l'incrémentation des vues",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (error: unknown) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      let errorMessage = "Erreur lors de l'incrémentation des vues";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('incrementView error:', error);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -157,11 +161,27 @@ export class ArticlesService {
         },
       });
       return article;
-    } catch {
-      throw new HttpException(
-        'Error creating article',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (error: unknown) {
+      let detailedMessage = 'Error creating article';
+      let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        detailedMessage = `Database error during article creation: Code ${error.code}`;
+        console.error(detailedMessage, error.meta, error.message);
+        // Vous pouvez mapper des codes d'erreur Prisma spécifiques à des HttpStatus si nécessaire
+        // Par exemple, si error.code === 'P2002' (unique constraint failed)
+        if (error.code === 'P2002') {
+          httpStatus = HttpStatus.CONFLICT;
+          detailedMessage = `Article creation failed due to a conflict: ${error.meta?.target}`;
+        } else {
+          httpStatus = HttpStatus.BAD_REQUEST;
+        }
+      } else if (error instanceof Error) {
+        detailedMessage = error.message;
+        console.error('Error creating article:', error);
+      } else {
+        console.error('Unknown error type during article creation:', error);
+      }
+      throw new HttpException(detailedMessage, httpStatus);
     }
   }
 
@@ -214,9 +234,25 @@ export class ArticlesService {
       searchTerm: searchTermRaw,
       category,
       author,
+      sortBy, // <-- Utiliser sortBy de query
+      sortOrder, // <-- Utiliser sortOrder de query
     } = query;
     const searchTerm = searchRaw || searchTermRaw;
     const skip = (page - 1) * limit;
+
+    // Déterminer la clause orderBy dynamiquement
+    let orderByClause: Prisma.ArticleOrderByWithRelationInput = {
+      createdAt: 'desc', // Tri par défaut
+    };
+
+    if (sortBy && sortOrder) {
+      // S'assurer que sortBy est un champ valide pour éviter les erreurs
+      // Vous pourriez vouloir une liste de champs autorisés pour le tri
+      const allowedSortByFields = ['createdAt', 'views', 'title', 'likes']; // Ajoutez d'autres champs si nécessaire
+      if (allowedSortByFields.includes(sortBy)) {
+        orderByClause = { [sortBy]: sortOrder };
+      }
+    }
 
     try {
       // Build where clause for search (insensible, sur titre, contenu, auteur)
@@ -226,7 +262,11 @@ export class ArticlesService {
           OR: [
             { title: { contains: searchTerm, mode: 'insensitive' } },
             { content: { contains: searchTerm, mode: 'insensitive' } },
-            { author: { name: { contains: searchTerm, mode: 'insensitive' } } },
+            {
+              author: {
+                name: { contains: searchTerm, mode: 'insensitive' },
+              },
+            },
           ],
         }),
         ...(category && { categoryId: category }),
@@ -263,9 +303,7 @@ export class ArticlesService {
         },
         skip,
         take: limit,
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: orderByClause, // <-- UTILISER LA CLAUSE DYNAMIQUE
       });
 
       // Retourne les articles paginés + infos de pagination
@@ -280,9 +318,16 @@ export class ArticlesService {
           hasPreviousPage: page > 1,
         },
       };
-    } catch {
+    } catch (error: unknown) {
+      let detailedMessage = 'Error retrieving articles';
+      if (error instanceof Error) {
+        detailedMessage = error.message;
+        console.error('Error retrieving articles:', error);
+      } else {
+        console.error('Unknown error type during article retrieval:', error);
+      }
       throw new HttpException(
-        'Error retrieving articles',
+        detailedMessage,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -314,11 +359,26 @@ export class ArticlesService {
           categoryId: updateArticleDto.categoryId,
         },
       });
-    } catch {
-      throw new HttpException(
-        "Erreur lors de la modification de l'article",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (error: unknown) {
+      let detailedMessage = "Erreur lors de la modification de l'article";
+      let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        detailedMessage = `Database error during article update: Code ${error.code}`;
+        console.error(detailedMessage, error.meta, error.message);
+        if (error.code === 'P2025') {
+          // Record to update not found
+          httpStatus = HttpStatus.NOT_FOUND;
+          detailedMessage = `Article with ID ${id} not found for update.`;
+        } else {
+          httpStatus = HttpStatus.BAD_REQUEST;
+        }
+      } else if (error instanceof Error) {
+        detailedMessage = error.message;
+        console.error('Error updating article:', error);
+      } else {
+        console.error('Unknown error type during article update:', error);
+      }
+      throw new HttpException(detailedMessage, httpStatus);
     }
   }
 }

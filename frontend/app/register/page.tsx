@@ -45,9 +45,9 @@ export default function SignUp() {
     } else if (form.password.length < 6) {
       newErrors.password =
         "Le mot de passe doit contenir au moins 6 caractères.";
-    } else if (!form.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)) {
+    } else if (!form.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[ \]{};':"\\|,.<>/?-]).*$/)) {
       newErrors.password =
-        "Le mot de passe doit contenir au moins une lettre et un chiffre.";
+        "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial";
     }
 
     if (form.password !== form.confirmPassword) {

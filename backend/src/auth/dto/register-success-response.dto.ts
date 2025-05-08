@@ -6,5 +6,5 @@ export class RegisterSuccessResponseDto {
     example:
       'Registration successful. Check your email to activate your account.',
   })
-  message: string;
+  message!: string;
 }

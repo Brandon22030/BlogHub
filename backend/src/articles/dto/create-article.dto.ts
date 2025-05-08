@@ -4,11 +4,11 @@ import { ArticleStatus } from '@prisma/client'; // L'énumération que vous avez
 export class CreateArticleDto {
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title!: string;
 
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 
   @IsOptional()
   @IsString()
@@ -16,7 +16,7 @@ export class CreateArticleDto {
 
   @IsString()
   @IsNotEmpty()
-  categoryId: string;
+  categoryId!: string;
 
   @IsEnum(ArticleStatus)
   @IsOptional()
