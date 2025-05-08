@@ -64,8 +64,9 @@ export default function Banner() { // Renommé BlogSection en Banner pour corres
         }
         const result: ApiResponse = await response.json();
         setArticles(result.data);
-      } catch (err: any) {
-        setError(err.message || "An unknown error occurred while fetching articles.");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "An unknown error occurred while fetching articles.";
+        setError(message);
         console.error("Error fetching articles:", err);
       } finally {
         setIsLoading(false);
@@ -162,8 +163,12 @@ export default function Banner() { // Renommé BlogSection en Banner pour corres
                 if (!res.ok) {
                   console.warn(`Failed to increment view count for article ${currentArticle.id}: ${res.status}`);
                 }
-              } catch (error: any) {
-                console.error('Error incrementing view count:', error);
+              } catch (error: unknown) {
+                if (error instanceof Error) {
+                  console.error('Error incrementing view count:', error.message);
+                } else {
+                  console.error('An unknown error occurred while incrementing view count:', error);
+                }
               }
               router.push(`/article/${currentArticle.id}`);
             }}
@@ -191,8 +196,12 @@ export default function Banner() { // Renommé BlogSection en Banner pour corres
                 if (!res.ok) {
                   console.warn(`Failed to increment view count for article ${currentArticle.id}: ${res.status}`);
                 }
-              } catch (error: any) {
-                console.error('Error incrementing view count:', error);
+              } catch (error: unknown) {
+                if (error instanceof Error) {
+                  console.error('Error incrementing view count:', error.message);
+                } else {
+                  console.error('An unknown error occurred while incrementing view count:', error);
+                }
               }
               router.push(`/article/${currentArticle.id}`);
             }}

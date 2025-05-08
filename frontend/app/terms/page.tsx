@@ -9,7 +9,7 @@ export default function TermsPage() {
       <Breadcrumbs />
       <main className="max-w-3xl mx-auto px-4 py-12 min-h-[70vh]">
         <h1 className="text-3xl font-bold text-[#FC4308] mb-8 text-center">
-          Conditions Générales d'Utilisation
+          Conditions Générales d&apos;Utilisation
         </h1>
         <section className="bg-white rounded-xl shadow p-6 border border-gray-100 space-y-6">
           <div>

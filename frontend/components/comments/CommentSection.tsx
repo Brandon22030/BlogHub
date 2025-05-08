@@ -40,7 +40,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId }) => {
     try {
       // Use fetch API
       const response = await fetch(
-        `http://localhost:3001/comments/article/${articleId}`
+        `https://bloghub-8ljb.onrender.com/comments/article/${articleId}`
       );
 
       if (!response.ok) {

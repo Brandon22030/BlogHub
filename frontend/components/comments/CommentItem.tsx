@@ -59,7 +59,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
     try {
       const response = await fetch(
-        `http://localhost:3001/comments/${comment.id}`,
+        `https://bloghub-8ljb.onrender.com/comments/${comment.id}`,
         {
           method: "PUT",
           headers: {
@@ -103,7 +103,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     setIsLikedByCurrentUser(!originalIsLiked);
     setOptimisticLikesCount(originalIsLiked ? originalLikesCount - 1 : originalLikesCount + 1);
 
-    const endpoint = `http://localhost:3001/comments/${comment.id}/${originalIsLiked ? 'unlike' : 'like'}`;
+    const endpoint = `https://bloghub-8ljb.onrender.com/comments/${comment.id}/${originalIsLiked ? 'unlike' : 'like'}`;
 
     try {
       const response = await fetch(endpoint, {

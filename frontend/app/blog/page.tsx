@@ -40,7 +40,7 @@ export default function BlogPage() {
         search,
         limit: "6",
       });
-      const res = await fetch(`http://localhost:3001/articles?${params}`);
+      const res = await fetch(`https://bloghub-8ljb.onrender.com/articles?${params}`);
       const data = await res.json();
 
       setArticles(data.data);
@@ -104,7 +104,7 @@ export default function BlogPage() {
                 e.preventDefault();
                 try {
                   const res = await fetch(
-                    `http://localhost:3001/articles/${articleId}/view`,
+                    `https://bloghub-8ljb.onrender.com/articles/${articleId}/view`,
                     {
                       method: "PATCH",
                     },

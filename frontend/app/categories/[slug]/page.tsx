@@ -59,7 +59,7 @@ function NotFoundCategory({ message }: { message: string }) {
         onClick={() => router.push("/")}
         className="mt-6 px-6 py-3 bg-[#FC4308] hover:bg-[#F81539] text-white font-bold rounded-lg transition-transform duration-200 hover:scale-110"
       >
-        Retour à l'accueil
+        Retour à l&apos;accueil
       </button>
       <style jsx>{`
         .glitch {
@@ -98,14 +98,14 @@ export default function CategoryPage() {
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
-    fetch(`http://localhost:3001/categories/slug/${slug}`)
+    fetch(`https://bloghub-8ljb.onrender.com/categories/slug/${slug}`)
       .then((res) => {
         if (!res.ok) throw new Error("Catégorie introuvable");
         return res.json();
       })
       .then((cat) => {
         setCategory(cat);
-        return fetch(`http://localhost:3001/articles?category=${cat.id}`)
+        return fetch(`https://bloghub-8ljb.onrender.com/articles?category=${cat.id}`)
           .then((res) => {
             if (!res.ok)
               throw new Error("Erreur lors du chargement des articles");
@@ -179,7 +179,7 @@ export default function CategoryPage() {
                         // Appel explicite pour incrémenter la vue
                         // Note: article.id est un nombre ici, l'API doit le gérer ou il faut convertir
                         const res = await fetch(
-                          `http://localhost:3001/articles/${article.id}/view`,
+                          `https://bloghub-8ljb.onrender.com/articles/${article.id}/view`,
                           {
                             method: "PATCH",
                           },

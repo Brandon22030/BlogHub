@@ -33,7 +33,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       setError(null);
 
       try {
-        const response = await fetch(`http://localhost:3001/comments`, {
+        const response = await fetch(`https://bloghub-8ljb.onrender.com/comments`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

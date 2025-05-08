@@ -1,29 +1,37 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, useRef } from "react";
 // JWT is managed by httpOnly cookie, no js-cookie needed.
 import Image from "next/image";
 import { SendPulse } from "./send";
 import Loader from "./Loader";
+
+// Définition des interfaces
+interface User {
+  id: string;
+  name?: string;
+  // Ajoutez d'autres champs si nécessaire, par exemple email, role
+}
+
+interface Category {
+  id: string;
+  name: string;
+  // Ajoutez d'autres champs si nécessaire
+}
 /**
  * SendPost component for BlogHub dashboard.
  * Provides a form for creating and submitting a new blog post, including image upload and category selection.
  * @returns JSX.Element - The post creation form and logic
  */
 export default function SendPost() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState(null);
-  const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [preview, setPreview] = useState(false);
-  const [thePreview, setThePreview] = useState(null);
-  const [status, setStatus] = useState("DRAFT");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
-  const router = useRouter();
+  const [title, setTitle] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [category, setCategory] = useState<string>("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [preview, setPreview] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const editorRef = useRef(null);
+  const editorRef = useRef<HTMLDivElement | null>(null);
 
   // No token needed, use credentials: 'include'.
 
@@ -31,7 +39,7 @@ export default function SendPost() {
     const fetchUserProfile = async () => {
       // if (!token) return; // Supprimé car le token est géré par httpOnly cookie
 
-      const res = await fetch("http://localhost:3001/user/profile", {
+      const res = await fetch("https://bloghub-8ljb.onrender.com/user/profile", {
         method: "GET",
         credentials: "include", // Assure l'envoi des cookies
       });
@@ -57,13 +65,13 @@ export default function SendPost() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3001/categories");
+        const response = await fetch("https://bloghub-8ljb.onrender.com/categories");
         if (!response.ok)
           throw new Error("Erreur de chargement des catégories");
         const data = await response.json();
         setCategories(data);
       } catch (err) {
-        setError(err.message);
+        if (err instanceof Error) { setError(err.message); } else { setError("An unknown error occurred while fetching categories"); }
       } finally {
         setLoading(false);
       }
@@ -74,12 +82,12 @@ export default function SendPost() {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleImageUpload = async (file) => {
+  const handleImageUpload = async (file: File) => {
     setIsUploading(true);
     const formData = new FormData();
     formData.append("file", file);
     const uploadResponse = await fetch(
-      "http://localhost:3001/articles/images/upload",
+      "https://bloghub-8ljb.onrender.com/articles/images/upload",
       {
         method: "POST",
         credentials: "include",
@@ -95,7 +103,7 @@ export default function SendPost() {
   };
 
   // Fonction pour gérer le drag and drop
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     const files = e.dataTransfer.files;
@@ -104,41 +112,43 @@ export default function SendPost() {
     }
   };
 
-  const formatText = (command) => {
+  const formatText = (command: string) => {
     if (command === "createLink") {
       insertLink();
     } else {
-      document.execCommand(command, false, null);
+      document.execCommand(command, false, undefined);
     }
   };
 
   const changeColor = () => {
     const color = prompt("Entrez une couleur (ex: red, #ff0000) :");
-    document.execCommand("foreColor", false, color);
+    document.execCommand("foreColor", false, color ?? undefined);
   };
 
   const insertLink = () => {
     const url = prompt("Entrez l'URL du lien :");
     if (url) {
       const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("target", "_blank");
-      link.style.textDecoration = "underline"; // Ajout du soulignement
-      link.style.transition = "color 0.3s"; // Transition pour l'effet de survol
-      link.innerText = selection.toString();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("target", "_blank");
+        link.style.textDecoration = "underline"; // Ajout du soulignement
+        link.style.transition = "color 0.3s"; // Transition pour l'effet de survol
+        link.innerText = selection.toString();
 
-      range.deleteContents(); // Supprime le texte sélectionné
-      range.insertNode(link); // Insère le lien à la place du texte sélectionné    }
+        range.deleteContents(); // Supprime le texte sélectionné
+        range.insertNode(link); // Insère le lien à la place du texte sélectionné
+      }
     }
   };
 
-  const alignText = (alignment) => {
-    document.execCommand(alignment, false, null);
+  const alignText = (alignment: string) => {
+    document.execCommand(alignment, false, undefined);
   };
 
-  const handleSubmit = async (status) => {
+  const handleSubmit = async (status: string) => {
     if (!user) return;
 
     console.log("Contenu envoyé :", editorRef.current?.innerHTML);
@@ -159,7 +169,7 @@ export default function SendPost() {
       imageUrl,
     };
 
-    const response = await fetch("http://localhost:3001/articles", {
+    const response = await fetch("https://bloghub-8ljb.onrender.com/articles", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -351,7 +361,7 @@ export default function SendPost() {
                     src={
                       imageUrl?.startsWith("http")
                         ? imageUrl
-                        : `http://localhost:3001${imageUrl}`
+                        : `https://bloghub-8ljb.onrender.com${imageUrl}`
                     }
                     alt="Preview"
                     layout="fill"
@@ -494,7 +504,7 @@ export default function SendPost() {
             <p
               className="text-gray-700"
               dangerouslySetInnerHTML={{
-                __html: editorRef.current?.innerHTML,
+                __html: editorRef.current?.innerHTML || "",
               }}
             ></p>
             {imageUrl && (

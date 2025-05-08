@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import Image from "next/image";
 import Breadcrumbs from "@/components/breadcrumbs";
 import { NavBar } from "@/components/navBar";
@@ -11,6 +8,7 @@ import Marked from "@/components/dashboard/marked";
 import Send from "@/components/dashboard/send";
 import MyPosts from "@/components/dashboard/myPosts";
 import { useUser } from "@/context/UserContext";
+import { useState } from "react";
 
 // type UserProfile = {
 //   name: string;
@@ -20,10 +18,6 @@ import { useUser } from "@/context/UserContext";
 export default function Profile() {
   const { user } = useUser();
   const [activeTab, setActiveTab] = useState("marked");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const router = useRouter();
-  const token = Cookies.get("token");
 
   const renderTab = () => {
     switch (activeTab) {
@@ -38,13 +32,6 @@ export default function Profile() {
     }
   };
 
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <span className="text-red-600 font-bold text-lg">{error}</span>
-      </div>
-    );
-  }
 
   if (!user) {
     return (
@@ -75,7 +62,7 @@ export default function Profile() {
           <div className="flex gap-3 items-center">
             <Image
               className="rounded-xl w-12 h-12 object-cover"
-              src={user?.userImage || user?.imageUrl || "/avatar.svg"}
+              src={user?.imageUrl || "/avatar.svg"}
               alt="profile"
               width={75}
               height={75}

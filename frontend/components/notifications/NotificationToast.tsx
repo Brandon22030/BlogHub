@@ -26,10 +26,13 @@ export default function NotificationToast({
     if (visible) {
       setShouldRender(true);
     } else {
-      const timeout = setTimeout(() => setShouldRender(false), 400);
+      const timeout = setTimeout(() => {
+        setShouldRender(false);
+        onClose(); // Appeler onClose ici
+      }, 400);
       return () => clearTimeout(timeout);
     }
-  }, [visible]);
+  }, [visible, onClose]);
   const color =
     type === "success"
       ? "bg-green-50 border-green-400 text-green-800"

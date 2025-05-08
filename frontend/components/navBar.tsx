@@ -1,5 +1,6 @@
 "use client";
 
+import { User } from "@/context/UserContext";
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
@@ -7,14 +8,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SearchAvatar from "./search&avatar";
 import Mega_categories from "./mega_categories";
-import Pages from "./pages";
+import Pages, { PagesProps } from "./pages";
 import { motion, AnimatePresence } from "framer-motion";
 // JWT is managed by httpOnly cookie, no js-cookie needed.
-import NotificationBell from "./notifications/NotificationBell";
 
 export function NavBar() {
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = (id: number) => {
@@ -41,7 +41,7 @@ export function NavBar() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:3001/user/profile", {
+        const res = await fetch("https://bloghub-8ljb.onrender.com/user/profile", {
           credentials: "include",
         });
         if (res.ok) {
@@ -67,7 +67,7 @@ export function NavBar() {
     {
       id: 1,
       name: "Pages",
-      SubmenuComponent: (props: any) => <Pages {...props} />,
+      SubmenuComponent: (props: PagesProps) => <Pages {...props} />,
     },
     { id: 2, name: "Contact us", href: "/contact", SubmenuComponent: null },
     { id: 3, name: "About Us", href: "/about", SubmenuComponent: null },

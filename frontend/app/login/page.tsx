@@ -6,11 +6,13 @@ import { Loader } from "@/components/loading";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 type FormData = { email: string; password: string };
 type FormErrors = { email?: string; password?: string; general?: string };
 
 export default function Login() {
+  const { refreshUser } = useUser();
   const router = useRouter();
   const [form, setForm] = useState<FormData>({ email: "", password: "" });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -54,7 +56,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3001/auth/login", {
+      const res = await fetch("https://bloghub-8ljb.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -67,13 +69,7 @@ export default function Login() {
         Cookies.set("token", data.access_token, { expires: 7 });
         // Rafraîchir le contexte utilisateur AVANT de rediriger
         if (typeof window !== "undefined") {
-          const { refreshUser } = require("@/context/UserContext");
-          if (refreshUser) {
-            const maybePromise = refreshUser();
-            if (maybePromise && typeof maybePromise.then === "function") {
-              await maybePromise;
-            }
-          }
+          await refreshUser();
         }
         router.push("/");
       } else {
@@ -85,7 +81,7 @@ export default function Login() {
           setErrors({ general: "Erreur inconnue." });
         }
       }
-    } catch (error) {
+    } catch {
       setErrors({ general: "Erreur lors de la connexion au serveur." });
     } finally {
       setIsLoading(false);

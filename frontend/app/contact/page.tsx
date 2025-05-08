@@ -21,7 +21,6 @@ export default function ContactPage() {
   const [preview, setPreview] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState<string | null>(null);
-  const [sending, setSending] = useState(false);
 
   // Simule l'upload (remplace par API si besoin)
   const handleImageUpload = async (file: File) => {
@@ -57,7 +56,6 @@ export default function ContactPage() {
       setErrors(newErrors);
       return;
     }
-    setSending(true);
     // Envoi réel (remplace l’URL par ton endpoint réel si besoin)
     try {
       const res = await fetch("/api/contact", {
@@ -82,11 +80,10 @@ export default function ContactPage() {
         setSuccess(null);
         setErrors({ global: "Error sending message. Please try again." });
       }
-    } catch (err) {
+    } catch {
       setSuccess(null);
       setErrors({ global: "Network error. Please try again." });
     } finally {
-      setSending(false);
     }
   };
 

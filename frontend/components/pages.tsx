@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion"; // Ajout de Framer Motion
 
 const navPages = [
   {
@@ -32,7 +30,7 @@ const navPages = [
   },
 ];
 
-interface PagesProps {
+export interface PagesProps {
   current?: string;
 }
 

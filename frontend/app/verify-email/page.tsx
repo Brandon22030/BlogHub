@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react"; // Ajout de Suspense
 import { useSearchParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-export default function VerifyEmailPage() {
+// Le contenu original de la page est déplacé dans ce composant
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [message, setMessage] = useState("");
@@ -19,25 +20,28 @@ export default function VerifyEmailPage() {
         return;
       }
 
+            let apiResponse: globalThis.Response | null = null; // Déclarer response ici
       try {
-        const response = await fetch(
-          `http://localhost:3001/auth/verify-email?token=${token}`,
+        apiResponse = await fetch( // Assigner la réponse ici
+          `https://bloghub-8ljb.onrender.com/auth/verify-email?token=${token}`,
         );
-        const data = await response.json();
+        const data = await apiResponse.json();
         setMessage(data.message);
-        setIsSuccess(response.ok);
-      } catch (error) {
+        setIsSuccess(apiResponse.ok);
+      } catch {
         setMessage("Une erreur est survenue. Veuillez réessayer plus tard.");
       } finally {
         setIsLoading(false);
-        if (isSuccess) {
+        if (apiResponse && apiResponse.ok) { // Maintenant 'response' est accessible
           setTimeout(() => router.push("/login"), 3000);
         }
       }
     };
 
     verifyEmail();
-  }, [searchParams, router, isSuccess]);
+    // Retrait de isSuccess des dépendances pour éviter des re-render infinis potentiels
+    // ou des comportements inattendus liés à sa mise à jour dans le finally.
+  }, [searchParams, router]); 
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -75,5 +79,25 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Nouveau composant de page qui utilise Suspense
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={ // Fallback pour Suspense
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="max-w-lg w-full p-8 bg-white rounded-2xl shadow-xl">
+          <div className="flex flex-col items-center">
+            <Loader2 className="animate-spin h-12 w-12 text-[#FC4308]" />
+            <h1 className="mt-6 text-xl font-semibold text-gray-700">
+              Chargement...
+            </h1>
+          </div>
+        </div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

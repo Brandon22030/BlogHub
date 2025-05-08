@@ -9,13 +9,6 @@ import FavoriteButton from "@/components/FavoriteButton"; // Importer FavoriteBu
 import CommentSection from "@/components/comments/CommentSection"; // Import CommentSection
 import { NavBar } from "@/components/navBar";
 
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  imageUrl?: string;
-}
-
 interface Author {
   id: string;
   name: string;
@@ -74,7 +67,7 @@ export default function ArticlePage() {
         console.log(
           `Incrementing view for ${id} as it's not in sessionStorage.`
         );
-        fetch(`http://localhost:3001/articles/${id}/view`, { method: "PATCH" })
+        fetch(`https://bloghub-8ljb.onrender.com/articles/${id}/view`, { method: "PATCH" })
           .then((response) => {
             if (response.ok) {
               console.log(
@@ -100,14 +93,14 @@ export default function ArticlePage() {
     }
 
     // Fetch article data (ceci doit toujours s'exécuter si id change)
-    fetch(`http://localhost:3001/articles/${id}`)
+    fetch(`https://bloghub-8ljb.onrender.com/articles/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setArticle(data);
         setLoading(false);
       });
     // Fetch related articles (example endpoint)
-    fetch(`http://localhost:3001/articles/related/${id}`)
+    fetch(`https://bloghub-8ljb.onrender.com/articles/related/${id}`)
       .then((res) => res.json())
       .then((data) => {
         // Defensive: handle both array and object (e.g. { data: [...] })
@@ -121,7 +114,7 @@ export default function ArticlePage() {
       });
 
     // Fetch categories
-    fetch(`http://localhost:3001/categories`)
+    fetch(`https://bloghub-8ljb.onrender.com/categories`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -241,7 +234,8 @@ export default function ArticlePage() {
             <div className="flex items-center">
               {/* Likes - Utilisation du composant LikeButton */}
               {article.id && (
-                <LikeButton articleId={article.id} initialLikes={article.likes ?? 0} />
+                <LikeButton articleId={article.id} initialLikes={article.likes ?? 0}
+                initialLiked={false} />
               )}
               {/* Bouton Favori */}
               {article.id && <FavoriteButton articleId={article.id} />}

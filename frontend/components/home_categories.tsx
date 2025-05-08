@@ -3,8 +3,15 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  imageUrl?: string;
+}
+
 const fetchCategories = async () => {
-  const res = await fetch("http://localhost:3001/categories");
+  const res = await fetch("https://bloghub-8ljb.onrender.com/categories");
   if (!res.ok) throw new Error("Failed to fetch categories");
   return res.json();
 };
@@ -18,7 +25,7 @@ export default function Home_Categories() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(true);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -96,7 +103,7 @@ export default function Home_Categories() {
             {/* Image */}
             <div className="w-[200px] h-[60px] overflow-hidden">
               <Image
-                src={category.imageUrl}
+                src={category.imageUrl || "/placeholder-category.svg"}
                 alt={category.name}
                 width={200}
                 height={150}

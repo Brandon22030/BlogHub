@@ -12,7 +12,7 @@ interface Category {
 }
 
 const fetchCategories = async (): Promise<Category[]> => {
-  const res = await fetch("http://localhost:3001/categories");
+  const res = await fetch("https://bloghub-8ljb.onrender.com/categories");
   if (!res.ok) throw new Error("Failed to fetch categories");
   return res.json();
 };

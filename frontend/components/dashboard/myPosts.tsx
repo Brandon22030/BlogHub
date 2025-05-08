@@ -12,15 +12,43 @@ import { LoadingMarked } from "./Sending/send";
 import { useUser } from "@/context/UserContext";
 import LikeButton from "@/components/LikeButton";
 
+interface Author {
+  id?: string;
+  userId?: string;
+  name: string;
+  imageUrl?: string;
+  userImage?: string;
+}
+
+interface Article {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  author?: Author;
+  category?: { name?: string };
+  createdAt: string;
+  slug?: string;
+  likesCount?: number;
+  isPublished?: boolean;
+  views?: number;
+  likes?: number;
+}
+
+interface ApiResponse {
+  data: Article[];
+  // Ajoutez ici d'autres champs si votre API retourne plus que 'data' (ex: pagination)
+}
+
 function stripHtml(html: string): string {
   if (!html) return "";
   return html.replace(/<[^>]+>/g, "");
 }
 
-const fetchArticles = async () => {
-  const res = await fetch("http://localhost:3001/articles");
+const fetchArticles = async (): Promise<ApiResponse> => {
+  const res = await fetch("https://bloghub-8ljb.onrender.com/articles");
   if (!res.ok) throw new Error("Failed to fetch articles");
-  return res.json();
+  return res.json() as Promise<ApiResponse>;
 };
 
 const formatDate = (dateString: string) => {
@@ -35,32 +63,27 @@ const formatDate = (dateString: string) => {
 export default function MyPosts() {
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
-  interface Article {
-    id: string;
-    title: string;
-    content: string;
-    imageUrl?: string;
-    author: { name: string; imageUrl?: string; userId?: string };
-    createdAt: string;
-    authorId?: string;
-    views?: number;
-    likes?: number;
-  }
+  // L'interface Article locale a été supprimée. L'interface définie au niveau du module est utilisée.
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
     async function loadArticles() {
       try {
-        const data = await fetchArticles();
+        const response = await fetchArticles(); // Supposons que fetchArticles retourne { data: any[] } ou similaire
+        const fetchedData = response.data; // Le type est maintenant correctement inféré depuis fetchArticles
+
         // Filtre les articles écrits par l'utilisateur connecté
-        console.log("ARTICLES DEBUG", data.data);
-        const myArticles = data.data.filter(
-          (article: Article) =>
-            article.author?.userId === user?.userId ||
-            article.author?.id === user?.userId, // fallback si backend renvoie id
-        );
+        console.log("ARTICLES DEBUG", fetchedData);
+        const myArticles = fetchedData.filter((article: Article) => {
+          // S'assurer que user et user.userId existent
+          if (!user?.userId) return false;
+          // Vérifier author.userId puis author.id comme fallback
+          return (
+            article.author?.userId === user.userId || (article.author as Author | undefined)?.id === user.userId
+          );
+        });
         setArticles(myArticles);
-      } catch (error) {
+      } catch { // Error object not used, so no variable needed
         setArticles([]);
       } finally {
         setLoading(false);
@@ -80,7 +103,7 @@ export default function MyPosts() {
   if (articles.length === 0)
     return (
       <p className="text-[#3E3232] font-semibold">
-        Vous n'avez pas encore publié d'article.
+        Vous n&apos;avez pas encore publié d&apos;article.
       </p>
     );
 

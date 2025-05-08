@@ -72,7 +72,7 @@ export default function AboutPage() {
         {/* Section contact + map */}
         <section className="max-w-5xl mx-auto flex flex-col md:flex-row gap-8 mt-10 items-start">
           <div className="flex-1 min-w-[250px] bg-white rounded-2xl shadow p-4">
-            <img
+            <Image
               src="https://maps.googleapis.com/maps/api/staticmap?center=Paris,France&zoom=13&size=400x200&key=AIzaSyD..."
               width={400}
               height={200}

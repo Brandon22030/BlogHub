@@ -1,5 +1,5 @@
 import { useState } from "react";
-import BellIcon from "@heroicons/react/24/outline";
+import { BellIcon } from "@heroicons/react/24/outline";
 import { useNotifications } from "../../hooks/useNotifications";
 import NotificationList from "./NotificationList";
 

@@ -22,7 +22,7 @@ export default function LikeButton({
     setLoading(true);
     const status = liked ? 0 : 1;
     const res = await fetch(
-      `http://localhost:3001/articles/${articleId}/like`,
+      `https://bloghub-8ljb.onrender.com/articles/${articleId}/like`,
       {
         method: "PATCH",
         credentials: "include",

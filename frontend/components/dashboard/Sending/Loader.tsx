@@ -24,7 +24,7 @@ export default function Loader() {
         />
       </svg>
       <span className="text-[#F81539] font-semibold">
-        Chargement de l'image...
+        Chargement de l&apos;image...
       </span>
     </div>
   );

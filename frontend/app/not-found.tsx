@@ -30,7 +30,7 @@ export default function NotFound() {
           showText ? "opacity-100" : "opacity-0"
         }`}
       >
-        Oops! Cette page n'existe pas.
+        Oops! Cette page n&apos;existe pas.
       </p>
 
       {/* Bouton animé */}
@@ -38,7 +38,7 @@ export default function NotFound() {
         onClick={() => router.push("/")}
         className="mt-6 px-6 py-3 bg-[#FC4308] hover:bg-[#F81539] text-white font-bold rounded-lg transition-transform duration-200 hover:scale-110"
       >
-        Retour à l'accueil
+        Retour à l&apos;accueil
       </button>
 
       {/* Styles pour l'effet glitch */}

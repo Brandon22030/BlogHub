@@ -15,6 +15,22 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]+>/g, "");
 }
 
+// Définition basique de l'interface Article
+interface Article {
+  id: string;
+  title: string;
+  content: string; // Rendu obligatoire
+  imageUrl?: string;
+  author: { name: string; imageUrl?: string }; // Ajusté pour correspondre
+  category?: { name?: string }; // Ajuster selon la structure réelle
+  createdAt: string; // ou Date si c'est un objet Date
+  slug?: string;
+  likesCount?: number;
+  isPublished?: boolean;
+  views: number;
+  likes: number; // Changé en number et rendu obligatoire
+}
+
 // L'API /favorites retourne un tableau de { id, userId, articleId, article: ArticleDetails }
 interface FavoriteEntry {
   id: string;
@@ -111,8 +127,8 @@ export default function Marked() {
     return (
       <div className="w-full">
         <div className="mx-20 my-10 text-center">
-          <p className="text-xl text-gray-700">Vous n'avez aucun article en favori pour le moment.</p>
-          <p className="text-md text-gray-500 mt-2">Cliquez sur l'icône ❤️ sur un article pour l'ajouter à vos favoris.</p>
+          <p className="text-xl text-gray-700">Vous n&apos;avez aucun article en favori pour le moment.</p>
+          <p className="text-md text-gray-500 mt-2">Cliquez sur l&apos;icône ❤️ sur un article pour l&apos;ajouter à vos favoris.</p>
         </div>
       </div>
     );
@@ -131,7 +147,7 @@ export default function Marked() {
               onClick={async (e) => {
                 e.preventDefault();
                 await fetch(
-                  `http://localhost:3001/articles/${article.id}/view`,
+                  `https://bloghub-8ljb.onrender.com/articles/${article.id}/view`,
                   {
                     method: "PATCH",
                   },

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import Image from 'next/image';
@@ -14,7 +13,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ articleId }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const isAuthenticated = () => !!user;
+  const isAuthenticated = useCallback(() => !!user, [user]);
 
   const fetchFavoriteStatus = useCallback(async () => {
     // Condition modifiée: on vérifie juste si l'utilisateur est authentifié (user object existe)
@@ -54,7 +53,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ articleId }) => {
       setIsLoading(false);
       console.log(`[FavoriteButton ${articleId}] fetchFavoriteStatus: Done.`);
     }
-  }, [articleId, user]); // user est toujours une dépendance pour savoir si l'on est authentifié // Ajouter user aux dépendances de useCallback
+  }, [articleId, isAuthenticated]); // user est toujours une dépendance pour savoir si l'on est authentifié // Ajouter user aux dépendances de useCallback
 
   useEffect(() => {
     if (user) { // Seulement fetch si l'utilisateur est chargé

@@ -14,7 +14,7 @@ export default function FAQPage() {
         <div className="space-y-7">
           <div className="bg-white rounded-xl shadow p-5 border border-gray-100">
             <h2 className="font-semibold text-lg text-[#FC4308] mb-2">
-              Qu'est-ce que BlogHub&nbsp;?
+              Qu&apos;est-ce que BlogHub&nbsp;?
             </h2>
             <p className="text-gray-700">
               BlogHub est une plateforme moderne pour créer, partager et
@@ -27,7 +27,7 @@ export default function FAQPage() {
               Comment puis-je publier un article&nbsp;?
             </h2>
             <p className="text-gray-700">
-              Inscrivez-vous, connectez-vous puis accédez à la section "Publier"
+              Inscrivez-vous, connectez-vous puis accédez à la section &quot;Publier&quot;
               du tableau de bord pour rédiger et publier vos articles avec
               l’éditeur riche.
             </p>

@@ -4,8 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader } from "@/components/loading";
-import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react";
+
+
+interface RegisterFormErrors {
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  general?: string;
+}
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -15,8 +23,7 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,12 +32,12 @@ export default function SignUp() {
 
   const router = useRouter();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: RegisterFormErrors = {};
 
     if (!form.name) newErrors.name = "Le nom est requis.";
 
@@ -57,7 +64,7 @@ export default function SignUp() {
     return newErrors;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formErrors = validateForm();
 
@@ -68,7 +75,7 @@ export default function SignUp() {
 
     try {
       setIsLoading(true);
-      const res = await fetch("http://localhost:3001/auth/register", {
+      const res = await fetch("https://bloghub-8ljb.onrender.com/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -84,19 +91,22 @@ export default function SignUp() {
         setErrors({ email: "Cet email est déjà utilisé." });
       } else if (data.message) {
         const errObj = Array.isArray(data.message)
-          ? data.message.reduce((acc, msg) => {
+          ? data.message.reduce((acc: RegisterFormErrors, msg: string) => {
               const [field, msgText] = msg.split(":");
-              if (field && msgText) acc[field.trim()] = msgText.trim();
+              if (field && msgText) {
+                const key = field.trim() as keyof RegisterFormErrors;
+                acc[key] = msgText.trim();
+              }
               return acc;
-            }, {})
+            }, {} as RegisterFormErrors)
           : { general: data.message };
         setErrors(errObj);
       } else {
-        setError("Une erreur est survenue.");
+        setErrors({ general: "Une erreur est survenue." });
       }
     } catch (err) {
       console.error("Erreur:", err);
-      setError("Erreur lors de la connexion au serveur.");
+      setErrors({ general: "Erreur lors de la connexion au serveur." });
     } finally {
       setIsLoading(false);
     }
@@ -117,9 +127,6 @@ export default function SignUp() {
               <p className="text-white bg-green-500 p-2 rounded-md mb-2 text-center text-sm">
                 {message}
               </p>
-            )}
-            {error && (
-              <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
             )}
             {errors.general && (
               <p className="text-red-500 mb-4 text-sm text-center">

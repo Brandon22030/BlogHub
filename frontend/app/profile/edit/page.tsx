@@ -25,7 +25,7 @@ export default function EditProfile() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const res = await fetch("http://localhost:3001/user/profile", {
+        const res = await fetch("https://bloghub-8ljb.onrender.com/user/profile", {
           method: "GET",
           credentials: "include",
         });
@@ -35,8 +35,12 @@ export default function EditProfile() {
         setUserName(data.userName || data.name || "");
         setEmail(data.email || "");
         setImageUrl(data.imageUrl || "");
-      } catch (err: any) {
-        setError(err.message || "Erreur inconnue");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Erreur inconnue lors de la récupération du profil.");
+        }
       } finally {
         setLoading(false);
       }
@@ -57,7 +61,7 @@ export default function EditProfile() {
       if (imageFile) {
         formData.append("image", imageFile);
       }
-      const res = await fetch("http://localhost:3001/user/profile", {
+      const res = await fetch("https://bloghub-8ljb.onrender.com/user/profile", {
         method: "PUT",
         credentials: "include",
         body: formData,
@@ -78,8 +82,12 @@ export default function EditProfile() {
       refreshUser(); // Mets à jour le contexte utilisateur global
       setSuccess("Profil mis à jour avec succès !");
       setTimeout(() => router.push("/profile"), 1200);
-    } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Une erreur inconnue est survenue lors de la mise à jour du profil.");
+      }
     }
   };
 

@@ -2,7 +2,6 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useUser } from "@/context/UserContext";
-import { FaSearch, FaEllipsisV } from "react-icons/fa";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -23,7 +22,7 @@ export default function SearchAvatar() {
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
-    await fetch("http://localhost:3001/auth/logout", {
+    await fetch("https://bloghub-8ljb.onrender.com/auth/logout", {
       method: "POST",
       credentials: "include",
     });
@@ -157,7 +156,7 @@ export default function SearchAvatar() {
             href="/register"
             className="p-2 text-sm bg-[#FC4308] text-white font-semibold rounded-md ml-1 transition-all duration-200 ease-in-out hover:bg-[#FF5A1F] hover:text-black hover:scale-105"
           >
-            S'enregistrer
+            S&apos;enregistrer
           </Link>
         </div>
       )}

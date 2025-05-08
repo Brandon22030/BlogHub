@@ -10,6 +10,7 @@ interface ServerToClientEvents {
   }) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ClientToServerEvents {
   // Add any client-to-server events here if needed
 }

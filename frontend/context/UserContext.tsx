@@ -31,7 +31,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchUserProfile = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/user/profile`,
+        `${process.env.NEXT_PUBLIC_API_URL || "https://bloghub-8ljb.onrender.com"}/user/profile`,
         {
           credentials: "include",
         },

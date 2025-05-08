@@ -3,12 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 // import { usePathname } from "next/navigation";
 import ClientLayoutWrapper from "./ClientLayoutWrapper";
 import "./globals.css";
-import Breadcrumbs from "@/components/breadcrumbs";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./globals.css";
-import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +17,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 
 export const metadata: Metadata = {
   title: "BlogHub",
@@ -35,11 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Include Material Icons Outlined */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined&display=swap"
-          rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
