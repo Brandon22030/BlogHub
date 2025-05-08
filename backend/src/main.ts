@@ -82,12 +82,12 @@ async function bootstrap() {
   await app.listen(port);
 
   // Logs améliorés
-  logger.log(`Application is running on: http://localhost:${port}`);
-  logger.log(
-    `OpenAPI specification (JSON) available at: http://localhost:${port}/api-spec.json`,
-  );
-  logger.log(
-    `Scalar API Documentation available at: http://localhost:${port}/api-docs`,
-  );
+//   logger.log(`Application is running on: http://localhost:${port}`);
+//   logger.log(
+//     `OpenAPI specification (JSON) available at: http://localhost:${port}/api-spec.json`,
+//   );
+//   logger.log(
+//     `Scalar API Documentation available at: http://localhost:${port}/api-docs`,
+//   );
 }
 bootstrap();

@@ -269,7 +269,7 @@ export default function ArticlePage() {
                     alt={article.author.name || "Author"}
                     width={80}
                     height={80}
-                    className="rounded-md w-full h-full object-cover"
+                    className="rounded-md w-12 h-12 object-cover"
                   />
                 </div>
                 {/* Right: Author Info */}
