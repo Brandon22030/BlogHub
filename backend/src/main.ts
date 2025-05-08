@@ -70,7 +70,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: 'https://bloghub-8ljb.onrender.com',
+    origin: 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -82,12 +82,12 @@ async function bootstrap() {
   await app.listen(port);
 
   // Logs améliorés
-  // logger.log(`Application is running on: http://localhost:${port}`);
-  // logger.log(
-  //   `OpenAPI specification (JSON) available at: http://localhost:${port}/api-spec.json`,
-  // );
-  // logger.log(
-  //   `Scalar API Documentation available at: http://localhost:${port}/api-docs`,
-  // );
+  logger.log(`Application is running on: http://localhost:${port}`);
+  logger.log(
+    `OpenAPI specification (JSON) available at: http://localhost:${port}/api-spec.json`,
+  );
+  logger.log(
+    `Scalar API Documentation available at: http://localhost:${port}/api-docs`,
+  );
 }
 bootstrap();
