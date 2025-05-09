@@ -208,7 +208,7 @@ export default function Banner() { // Renommé BlogSection en Banner pour corres
             passHref
           >
              <span className="mt-3 inline-block text-indigo-300 hover:text-indigo-100 font-semibold hover:underline cursor-pointer">
-                Read more &rarr;
+                Lire plus &rarr;
             </span>
           </Link>
         </div>

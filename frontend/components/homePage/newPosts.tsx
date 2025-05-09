@@ -255,7 +255,7 @@ export default function NewPosts() {
                     passHref
                   >
                     <span className="text-[#F81539] hover:underline cursor-pointer font-medium">
-                      Read more &rarr;
+                      Lire plus &rarr;
                     </span>
                   </Link>
                 </div>

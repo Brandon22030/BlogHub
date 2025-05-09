@@ -83,10 +83,10 @@ export default function Profile() {
                 }`}
               >
                 {tab === "marked"
-                  ? "Marked"
+                  ? "Favoris"
                   : tab === "create"
-                    ? "Send Post"
-                    : "My Posts"}
+                    ? "Créer un article"
+                    : "Mes articles"}
               </button>
             ))}
           </div>
