@@ -16,24 +16,18 @@ import { AnimatePresence, motion } from "framer-motion";
  */
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, setUser } = useUser(); // Récupérer setUser depuis le contexte
+  const [isCliqued, setIsCliqued] = useState(false);
+  const { user } = useUser();
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
-    try {
-      await fetch("https://bloghub-8ljb.onrender.com/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      // Mettre à jour l'état de l'utilisateur dans le contexte à null
-      setUser(null); 
-      router.push("/login");
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
-      // Optionnel : vous pourriez aussi vouloir mettre setUser(null) ici
-      // en cas d'erreur de l'appel API, pour forcer la déconnexion côté client
-    }
-  }, [router, setUser]); // Ajouter setUser aux dépendances de useCallback
+    await fetch("https://bloghub-8ljb.onrender.com/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    router.push("/login");
+  }, [router]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -57,7 +51,7 @@ export default function SearchAvatar() {
     ...(user?.role?.toLowerCase() === "admin"
       ? [{ label: "Administration", href: "/admin", onClick: null }]
       : []),
-    { label: "Déconnexion", href: "#", onClick: handleLogout },
+    { label: "Logout", href: "#", onClick: handleLogout },
   ];
 
   return (
@@ -81,7 +75,7 @@ export default function SearchAvatar() {
           <div ref={menuRef} className="relative flex items-center gap-2">
             <Image
               src={user?.imageUrl || "/avatar.svg"}
-              alt="Avatar de l'utilisateur"
+              alt="User"
               width={48}
               height={48}
               className="w-10 h-10 rounded-md object-cover cursor-pointer"
@@ -138,6 +132,17 @@ export default function SearchAvatar() {
               </AnimatePresence>
             </div>
           </div>
+
+          <button className="p-2" onClick={() => setIsCliqued(!isCliqued)}>
+            <Image
+              src={isCliqued ? "/signet_open.svg" : "/signet.svg"}
+              alt="Bookmark"
+              className="font-bold"
+              width={48}
+              height={48}
+              priority
+            />
+          </button>
         </div>
       ) : (
         <div className="flex gap-10 w-[18rem]">
