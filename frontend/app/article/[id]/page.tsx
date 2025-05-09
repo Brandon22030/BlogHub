@@ -318,35 +318,6 @@ export default function ArticlePage() {
               </ul>
             </div>
           )}
-
-          {/* Related Articles */}
-          <div>
-            <h3 className="font-bold text-lg mb-3 text-gray-800">
-              Similar Articles
-            </h3>
-            <div className="flex flex-col gap-4">
-              {related.map((rel) => (
-                <Link
-                  key={rel.id}
-                  href={`/article/${rel.id}`}
-                  className="flex gap-3 items-center bg-gray-50 rounded-lg p-2 hover:bg-gray-100"
-                >
-                  <Image
-                    src={rel.imageUrl || "/avatar.svg"}
-                    alt={rel.title}
-                    width={50}
-                    height={50}
-                    className="rounded-lg object-cover"
-                  />
-                  <div className="flex-1">
-                    <div className="font-semibold text-sm text-gray-900 line-clamp-2">
-                      {rel.title}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </>
