@@ -16,18 +16,26 @@ import { AnimatePresence, motion } from "framer-motion";
  */
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isCliqued, setIsCliqued] = useState(false);
-  const { user } = useUser();
+  const { user, setUser } = useUser(); // Récupérer setUser depuis le contexte
   const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
-    await fetch("https://bloghub-8ljb.onrender.com/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    router.push("/login");
-  }, [router]);
+    try {
+      await fetch("https://bloghub-8ljb.onrender.com/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      // Mettre à jour l'état de l'utilisateur dans le contexte à null
+      setUser(null); 
+      router.push("/login");
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion:", error);
+      // Optionnel : vous pourriez aussi vouloir mettre setUser(null) ici
+      // en cas d'erreur de l'appel API, pour forcer la déconnexion côté client
+      setUser(null);
+    }
+  }, [router, setUser]); // Ajouter setUser aux dépendances de useCallback
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -51,7 +59,7 @@ export default function SearchAvatar() {
     ...(user?.role?.toLowerCase() === "admin"
       ? [{ label: "Administration", href: "/admin", onClick: null }]
       : []),
-    { label: "Logout", href: "#", onClick: handleLogout },
+    { label: "Déconnexion", href: "#", onClick: handleLogout },
   ];
 
   return (
@@ -133,16 +141,6 @@ export default function SearchAvatar() {
             </div>
           </div>
 
-          <button className="p-2" onClick={() => setIsCliqued(!isCliqued)}>
-            <Image
-              src={isCliqued ? "/signet_open.svg" : "/signet.svg"}
-              alt="Bookmark"
-              className="font-bold"
-              width={48}
-              height={48}
-              priority
-            />
-          </button>
         </div>
       ) : (
         <div className="flex gap-10 w-[18rem]">

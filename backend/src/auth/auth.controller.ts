@@ -88,8 +88,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Log out the current user' }) // Ajouté
   @ApiResponse({ status: 200, description: 'Logout successful' }) // Ajouté
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('access_token');
+  logout(@Res({ passthrough: true }) res: Response) {
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' as boolean | "lax" | "strict" | "none",
+      path: '/', // Assuming cookie was set with path: '/'
+    };
+    res.clearCookie('access_token', cookieOptions);
     return { message: 'Logged out successfully.' };
   }
 
