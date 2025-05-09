@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import FavoriteButton from "@/components/FavoriteButton"; // Importer le bouton
 
 interface Author {
