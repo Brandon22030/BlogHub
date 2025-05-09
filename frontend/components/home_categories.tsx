@@ -12,7 +12,7 @@ interface Category {
 
 const fetchCategories = async () => {
   const res = await fetch("https://bloghub-8ljb.onrender.com/categories");
-  if (!res.ok) throw new Error("Failed to fetch categories");
+  if (!res.ok) throw new Error("Échec de la récupération des catégories");
   return res.json();
 };
 
@@ -48,7 +48,7 @@ export default function Home_Categories() {
         const data = await fetchCategories();
         setCategories(data);
       } catch (error) {
-        console.error("Error fetching categories", error);
+        console.error("Erreur lors de la récupération des catégories", error);
       } finally {
         setLoading(false);
       }

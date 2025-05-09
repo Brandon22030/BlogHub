@@ -11,7 +11,7 @@ const Breadcrumbs = () => {
       <ul className="flex items-center space-x-2">
         <li>
           <Link href="/" className="text-black font-bold">
-            Home
+            Accueil
           </Link>
         </li>
         {pathSegments.map((segment, index) => {

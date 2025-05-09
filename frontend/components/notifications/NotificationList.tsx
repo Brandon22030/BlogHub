@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useNotifications } from "../../hooks/useNotifications";
+import { fr } from "date-fns/locale/fr";
 import { formatDistanceToNow } from "date-fns";
 import { Notification } from "../../types/notification";
 
@@ -48,7 +49,7 @@ export default function NotificationList({ onClose }: NotificationListProps) {
 
   if (notifications.length === 0) {
     return (
-      <div className="p-6 text-center text-gray-500">No notifications yet</div>
+      <div className="p-6 text-center text-gray-500">Aucune notification pour le moment</div>
     );
   }
 
@@ -60,7 +61,7 @@ export default function NotificationList({ onClose }: NotificationListProps) {
           onClick={markAllAsRead}
           className="text-sm text-indigo-600 hover:text-indigo-900"
         >
-          Mark all as read
+          Tout marquer comme lu
         </button>
       </div>
       <div className="divide-y divide-gray-100">
@@ -83,6 +84,7 @@ export default function NotificationList({ onClose }: NotificationListProps) {
                 <p className="mt-1 text-xs text-gray-400">
                   {formatDistanceToNow(new Date(notification.createdAt), {
                     addSuffix: true,
+                    locale: fr,
                   })}
                 </p>
               </div>

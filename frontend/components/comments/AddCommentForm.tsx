@@ -63,7 +63,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       } catch (err) {
         console.error("Error posting comment:", err);
         const typedError =
-          err instanceof Error ? err : new Error("Failed to post comment.");
+          err instanceof Error ? err : new Error("Échec de la publication du commentaire.");
         setError(typedError.message);
       } finally {
         setIsSubmitting(false);
@@ -76,11 +76,11 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
   if (!user) {
     return (
       <div className="mb-6 p-4 border rounded-lg bg-white shadow-sm text-center text-gray-600">
-        Please{" "}
+        Veuillez{" "}
         <a href="/login" className="text-blue-600 hover:underline">
-          log in
+          vous connecter
         </a>{" "}
-        to post a comment.
+        pour publier un commentaire.
         {/* TODO: Link to login page or show login modal */}
       </div>
     );
@@ -96,7 +96,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
         {/* User Avatar */}
         <Image
           src={user.imageUrl || "/avatar.svg"} // Use a default avatar if none provided
-          alt={user.userName || "User"}
+          alt={user.userName || "Utilisateur"}
           width={40}
           height={40}
           className="rounded-full"
@@ -107,8 +107,8 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
             onChange={(e) => setNewComment(e.target.value)}
             placeholder={
               isReplyForm
-                ? `Replying to ${replyingToAuthorName || "comment"}...`
-                : `Commenting as ${user.userName}... What are your thoughts?`
+                ? `Réponse à ${replyingToAuthorName || "commentaire"}...`
+                : `Commenter en tant que ${user.userName}... Qu'en pensez-vous ?`
             }
             rows={isReplyForm ? 2 : 3} // Smaller textarea for replies
             className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm text-gray-800 ${isReplyForm ? "text-xs" : ""}`}
@@ -122,7 +122,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
               disabled={isSubmitting || !newComment.trim()}
               className={`px-4 py-2 bg-[#FC4308] text-white rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out ${isSubmitting || !newComment.trim() ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
             >
-              {isSubmitting ? "Posting..." : "Post Comment"}
+              {isSubmitting ? "Publication..." : "Publier le commentaire"}
             </button>
           </div>
         </div>

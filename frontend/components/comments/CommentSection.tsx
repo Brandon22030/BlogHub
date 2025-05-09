@@ -60,8 +60,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId }) => {
     } catch (err) {
       console.error("Error fetching comments:", err);
       const error =
-        err instanceof Error ? err : new Error("An unknown error occurred");
-      setError(error.message || "Failed to load comments.");
+        err instanceof Error ? err : new Error("Une erreur inconnue s'est produite");
+      setError(error.message || "Échec du chargement des commentaires.");
     } finally {
       setIsLoading(false);
     }
@@ -78,19 +78,19 @@ const CommentSection: React.FC<CommentSectionProps> = ({ articleId }) => {
       <div className="flex gap-[6px] items-center mb-5">
         <Image src="/red_ops.svg" alt="reed_ops" width={4} height={4} />
         <h2 className="text-xl font-semibold* text-gray-700">
-          Comments ({comments.length})
+          Commentaires ({comments.length})
         </h2>
       </div>
 
       {/* Add Comment Form */}
       <AddCommentForm articleId={articleId} onCommentPosted={fetchComments} />
 
-      {isLoading && <p className="text-gray-600">Loading comments...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {isLoading && <p className="text-gray-600">Chargement des commentaires...</p>}
+      {error && <p className="text-red-500">Erreur : {error}</p>}
 
       {!isLoading && !error && comments.length === 0 && (
         <p className="text-gray-500">
-          No comments yet. Be the first to comment!
+          Aucun commentaire pour le moment. Soyez le premier à commenter !
         </p>
       )}
 

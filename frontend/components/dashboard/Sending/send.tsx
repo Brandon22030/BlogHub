@@ -50,14 +50,14 @@ export const SendPulse = () => {
                     <div className="text-gray-400 mb-2">
                       <Image
                         src="/dragndrop.svg"
-                        alt="Preview"
+                        alt="Aperçu"
                         width={96}
                         height={96}
                         className="rounded-lg"
                       />
                     </div>
                     <p className="text-[#3E3232] text-opacity-75 font-medium mt-9 mb-6 text-sm">
-                      Drop image here, paste or
+                      Déposez l&apos;image ici, collez ou
                     </p>
                     <label className="border group hover:bg-[#F81539] hover:text-[#F81539] hover:bg-opacity-10 flex items-center gap-2 mt-2 px-4 py-2 rounded-xl shadow-sm text-gray-600 transition duration-300 ease-in-out cursor-pointer">
                       <div className="relative w-4 h-4">
@@ -76,7 +76,7 @@ export const SendPulse = () => {
                           className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                         />
                       </div>
-                      <span className="font-semibold">Select</span>
+                      <span className="font-semibold">Sélectionner</span>
                       <input type="file" className="hidden" />
                     </label>
                   </div>
@@ -105,7 +105,7 @@ export const SendPulse = () => {
                       className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
                   </div>
-                  <span className="font-semibold text-opacity-75">Draft</span>
+                  <span className="font-semibold text-opacity-75">Brouillon</span>
                 </button>
 
                 {/* PREVIEW BUTTON */}
@@ -128,7 +128,7 @@ export const SendPulse = () => {
                       className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
                   </div>
-                  <span className="font-semibold text-opacity-75">Preview</span>
+                  <span className="font-semibold text-opacity-75">Aperçu</span>
                 </button>
 
                 {/* PUBLIC BUTTON */}
@@ -140,7 +140,7 @@ export const SendPulse = () => {
                     height={16}
                     className="hover:text-white transition-colors duration-300"
                   />
-                  <span>Public</span>
+                  <span>Publier</span>
                 </button>
               </div>
             </div>
@@ -166,7 +166,7 @@ export const LoadingMarked = () => {
               <div className="text-gray-400 mb-2">
                 <Image
                   src="/dragndrop.svg"
-                  alt="Preview"
+                  alt="Aperçu"
                   width={400}
                   height={200}
                   className="w-full h-48 rounded-xl "
@@ -193,7 +193,7 @@ export const LoadingMarked = () => {
               <div className="text-gray-400 mb-2">
                 <Image
                   src="/dragndrop.svg"
-                  alt="Preview"
+                  alt="Aperçu"
                   width={400}
                   height={200}
                   className="w-full h-48 rounded-xl "
@@ -220,7 +220,7 @@ export const LoadingMarked = () => {
               <div className="text-gray-400 mb-2">
                 <Image
                   src="/dragndrop.svg"
-                  alt="Preview"
+                  alt="Aperçu"
                   width={400}
                   height={200}
                   className="w-full h-48 rounded-xl "

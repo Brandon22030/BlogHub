@@ -47,13 +47,13 @@ function stripHtml(html: string): string {
 
 const fetchArticles = async (): Promise<ApiResponse> => {
   const res = await fetch("https://bloghub-8ljb.onrender.com/articles");
-  if (!res.ok) throw new Error("Failed to fetch articles");
+  if (!res.ok) throw new Error("Échec de la récupération des articles");
   return res.json() as Promise<ApiResponse>;
 };
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("fr-FR", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -136,7 +136,7 @@ export default function MyPosts() {
                     <div className="text-gray-400 mb-2">
                       <Image
                         src="/dragndrop.svg"
-                        alt="Preview"
+                        alt="Aperçu"
                         width={400}
                         height={200}
                         className="w-full h-48 rounded-xl "
@@ -189,7 +189,7 @@ export default function MyPosts() {
                             <div className="text-gray-400 mb-2">
                               <Image
                                 src="/dragndrop.svg"
-                                alt="Preview"
+                                alt="Aperçu"
                                 width={30}
                                 height={30}
                                 className="w-11 h-11 rounded-xl cover"

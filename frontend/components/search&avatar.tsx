@@ -50,7 +50,7 @@ export default function SearchAvatar() {
     ...(user?.role?.toLowerCase() === "admin"
       ? [{ label: "Administration", href: "/admin", onClick: null }]
       : []),
-    { label: "Logout", href: "#", onClick: handleLogout },
+    { label: "Déconnexion", href: "#", onClick: handleLogout },
   ];
 
   return (
@@ -74,7 +74,7 @@ export default function SearchAvatar() {
           <div ref={menuRef} className="relative flex items-center gap-2">
             <Image
               src={user?.imageUrl || "/avatar.svg"}
-              alt="User"
+              alt="Avatar de l'utilisateur"
               width={48}
               height={48}
               className="w-10 h-10 rounded-md object-cover cursor-pointer"

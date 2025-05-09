@@ -40,7 +40,7 @@ interface FavoriteEntry {
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("fr-FR", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -83,27 +83,25 @@ export default function Marked() {
         );
         if (response.status === 401) {
           // Gérer le cas où l'utilisateur n'est pas authentifié ou session expirée
-          console.warn("User not authenticated to fetch favorites.");
+          console.warn("Utilisateur non authentifié pour récupérer les favoris.");
           setArticles([]);
           setLoading(false); // Assurer que loading est mis à jour
           // Optionnel: afficher un message à l'utilisateur
         } else if (!response.ok) {
           setLoading(false); // Assurer que loading est mis à jour
-          throw new Error(
-            `Failed to fetch favorite articles: ${response.status}`
-          );
+          throw new Error(`Échec de la récupération des articles favoris : ${response.status}`);
         } else {
           const result: FavoriteEntry[] = await response.json();
           setArticles(result.map((fav) => fav.article));
           setLoading(false); // Assurer que loading est mis à jour
         }
       } catch (error) {
-        console.error("Error loading favorite articles:", error);
+        console.error("Erreur lors du chargement des articles favoris:", error);
         setArticles([]); // Optionnel, réinitialiser en cas d'erreur
         setLoading(false); // Assurer que loading est mis à jour dans le catch aussi
       }
     }
-    console.log("User object in Marked component's useEffect:", user);
+    console.log("Objet utilisateur dans useEffect du composant Marked:", user);
     loadFavoriteArticles(); // Appeler la fonction de chargement des favoris
   }, [user]); // Ajout de user comme dépendance
 
@@ -179,7 +177,7 @@ export default function Marked() {
                   <div className="text-gray-400 mb-2">
                     <Image
                       src="/dragndrop.svg"
-                      alt="Preview"
+                      alt="Aperçu"
                       width={400}
                       height={200}
                       className="w-full h-48 rounded-xl "
@@ -212,7 +210,7 @@ export default function Marked() {
                           <div className="text-gray-400 mb-2">
                             <Image
                               src="/dragndrop.svg"
-                              alt="Preview"
+                              alt="Aperçu"
                               width={30}
                               height={30}
                               className="w-11 h-11 rounded-xl cover"

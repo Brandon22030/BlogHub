@@ -63,14 +63,14 @@ export function NavBar() {
   }, []);
 
   const menus = [
-    { id: 0, name: "Categories", SubmenuComponent: Mega_categories },
+    { id: 0, name: "Catégories", SubmenuComponent: Mega_categories },
     {
       id: 1,
       name: "Pages",
       SubmenuComponent: (props: PagesProps) => <Pages {...props} />,
     },
-    { id: 2, name: "Contact us", href: "/contact", SubmenuComponent: null },
-    { id: 3, name: "About Us", href: "/about", SubmenuComponent: null },
+    { id: 2, name: "Contactez-nous", href: "/contact", SubmenuComponent: null },
+    { id: 3, name: "À propos", href: "/about", SubmenuComponent: null },
   ];
 
   const pathname = usePathname();

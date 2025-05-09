@@ -84,14 +84,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
       setIsEditing(false);
     } catch (err) {
       const typedError =
-        err instanceof Error ? err : new Error("Failed to update comment.");
+        err instanceof Error ? err : new Error("Échec de la mise à jour du commentaire.");
       setEditError(typedError.message);
     }
   };
 
   const handleLikeUnlike = async () => {
     if (!currentUser) {
-      setLikeError("You must be logged in to like a comment.");
+      setLikeError("Vous devez être connecté pour aimer un commentaire.");
       return;
     }
     setLikeError(null);
@@ -124,7 +124,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       onCommentPosted(); 
     } catch (err) {
       const typedError =
-        err instanceof Error ? err : new Error("Failed to like/unlike comment.");
+        err instanceof Error ? err : new Error("Échec de l'action J'aime/Je n'aime plus sur le commentaire.");
       setLikeError(typedError.message);
       // Rollback optimistic update on error
       setIsLikedByCurrentUser(originalIsLiked);
@@ -151,7 +151,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       <div className="flex items-start space-x-3">
         <Image
           src={comment.author?.imageUrl || "/avatar.svg"}
-          alt={comment.author?.name || "User"}
+          alt={comment.author?.name || "Utilisateur"}
           width={depth > 0 ? 32 : 40}
           height={depth > 0 ? 32 : 40}
           className="rounded-full flex-shrink-0 mt-1"
@@ -160,7 +160,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center mb-1">
             <span className="font-semibold mr-2 text-sm text-gray-900 truncate">
-              {comment.author?.name || "Anonymous"}
+              {comment.author?.name || "Anonyme"}
             </span>
             <span className="text-xs text-gray-500 flex items-center">
               <span
@@ -199,13 +199,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   }}
                   className="px-3 py-1 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-100"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
                   className="px-3 py-1 text-xs font-medium text-white bg-[#FC4308] rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FC4308]"
                 >
-                  Save Changes
+                  Enregistrer les modifications
                 </button>
               </div>
             </form>
@@ -230,13 +230,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   >
                     {isLikedByCurrentUser ? 'favorite' : 'favorite_border'}
                   </span>
-                  {optimisticLikesCount} {isLikedByCurrentUser ? "Liked" : "Like"}
+                  {optimisticLikesCount} J&apos;aime
                 </button>
               )}
               {!currentUser && (
                  <div className="flex items-center text-xs text-gray-500 py-1 px-2">
                     <span className="material-icons-outlined mr-1" style={{ fontSize: "1rem" }}>favorite_border</span>
-                    {optimisticLikesCount} Like
+                    {optimisticLikesCount} J&apos;aime
                  </div>
               )}
 
@@ -247,7 +247,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   onClick={() => setShowReplyForm(!showReplyForm)}
                   className="text-xs py-1 px-2 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-md transition-colors duration-150"
                 >
-                  {showReplyForm ? "Cancel" : "Reply"}
+                  {showReplyForm ? "Annuler" : "Répondre"}
                 </button>
               )}
               {/* Edit Button */}
@@ -260,7 +260,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   }}
                   className="text-xs text-green-600 hover:underline"
                 >
-                  Edit
+                  Modifier
                 </button>
               )}
             </div>

@@ -30,13 +30,13 @@ export default function ResetPasswordPage() {
     setError('');
 
     if (newPassword !== confirmNewPassword) {
-      setError('Passwords do not match.');
+      setError('Les mots de passe ne correspondent pas.');
       setIsLoading(false);
       return;
     }
 
     if (!token) {
-      setError('Token is missing. Please request a new password reset link.');
+      setError('Le jeton est manquant. Veuillez demander un nouveau lien de réinitialisation de mot de passe.');
       setIsLoading(false);
       return;
     }
@@ -53,10 +53,10 @@ export default function ResetPasswordPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong while resetting your password.');
+        throw new Error(data.message || 'Un problème est survenu lors de la réinitialisation de votre mot de passe.');
       }
 
-      setMessage(data.message || 'Your password has been reset successfully. You can now log in with your new password.');
+      setMessage(data.message || 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.');
       setNewPassword('');
       setConfirmNewPassword('');
       // Optionally redirect to login page after a delay
@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Failed to reset password. Please try again or request a new link.");
+        setError("Échec de la réinitialisation du mot de passe. Veuillez réessayer ou demander un nouveau lien.");
       }
     }
     setIsLoading(false);
@@ -79,17 +79,17 @@ export default function ResetPasswordPage() {
     // We show a more generic message or a loader if params.token exists but token state isn't set yet.
     let content = (
       <>
-        <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">Invalid or Missing Token</h2>
-        <p className="text-gray-700 dark:text-gray-300">The password reset token is missing or invalid. Please request a new password reset link.</p>
+        <h2 className="text-2xl font-bold text-red-600 dark:text-red-400">Jeton invalide ou manquant</h2>
+        <p className="text-gray-700 dark:text-gray-300">Le jeton de réinitialisation du mot de passe est manquant ou invalide. Veuillez demander un nouveau lien de réinitialisation.</p>
         <Link href="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
-          Request a new link
+          Demander un nouveau lien
         </Link>
       </>
     );
 
     if (params?.token && !token) {
         // If params.token exists, it means token is likely being set. Show loading or a specific message.
-        content = <p className="text-gray-700 dark:text-gray-300">Loading token...</p>;
+        content = <p className="text-gray-700 dark:text-gray-300">Chargement du jeton...</p>;
     }
 
     return (
@@ -106,17 +106,17 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Reset Your Password
+            Réinitialiser votre mot de passe
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Enter your new password below.
+            Entrez votre nouveau mot de passe ci-dessous.
           </p>
         </div>
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm space-y-4">
             <div>
               <label htmlFor="new-password" className="sr-only">
-                New Password
+                Nouveau mot de passe
               </label>
               <div className="relative">
                 <input
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm pr-10"
-                  placeholder="New Password"
+                  placeholder="Nouveau mot de passe"
                 />
                 <button
                   type="button"
@@ -140,7 +140,7 @@ export default function ResetPasswordPage() {
             </div>
             <div>
               <label htmlFor="confirm-new-password" className="sr-only">
-                Confirm New Password
+                Confirmer le nouveau mot de passe
               </label>
               <div className="relative">
                 <input
@@ -151,7 +151,7 @@ export default function ResetPasswordPage() {
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
                   className="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm pr-10"
-                  placeholder="Confirm New Password"
+                  placeholder="Confirmer le nouveau mot de passe"
                 />
                 <button
                   type="button"
@@ -187,7 +187,7 @@ export default function ResetPasswordPage() {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               ) : (
-                'Reset Password'
+                'Réinitialiser le mot de passe'
               )}
             </button>
           </div>
@@ -196,7 +196,7 @@ export default function ResetPasswordPage() {
             <div className="mt-6 text-center">
                 <p className="text-sm">
                     <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
-                        Back to Login
+                        Retour à la connexion
                     </Link>
                 </p>
             </div>

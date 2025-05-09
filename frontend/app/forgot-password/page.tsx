@@ -28,13 +28,13 @@ export default function ForgotPasswordPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong while requesting password reset.');
+        throw new Error(data.message || 'Un problème est survenu lors de la demande de réinitialisation du mot de passe.');
       }
 
-      setMessage(data.message || 'If an account with that email exists, a password reset link has been sent.');
+      setMessage(data.message || 'Si un compte avec cet e-mail existe, un lien de réinitialisation de mot de passe a été envoyé.');
       setEmail(''); // Clear email field on success
     } catch (err: unknown) {
-      let errorMessage = 'Failed to send password reset email. Please try again.';
+      let errorMessage = 'Échec de l\'envoi de l\'e-mail de réinitialisation du mot de passe. Veuillez réessayer.';
       if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'string') {
@@ -52,17 +52,17 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Forgot Your Password?
+            Mot de passe oublié ?
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            No problem! Enter your email address below and we&apos;ll send you a link to reset your password.
+            Pas de problème ! Entrez votre adresse e-mail ci-dessous et nous vous enverrons un lien pour réinitialiser votre mot de passe.
           </p>
         </div>
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">
-                Email address
+                Adresse e-mail
               </label>
               <input
                 id="email-address"
@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-[#FC4308] focus:border-[#FC4308] focus:z-10 sm:text-sm"
-                placeholder="Enter your email address"
+                placeholder="Entrez votre adresse e-mail"
               />
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               ) : (
-                'Send Password Reset Email'
+                'Envoyer l\'e-mail de réinitialisation'
               )}
             </button>
           </div>
@@ -109,7 +109,7 @@ export default function ForgotPasswordPage() {
         <div className="mt-6 text-center">
           <p className="text-sm">
             <Link href="/login" className="font-medium text-black hover:text-[#FC4308] dark:text-indigo-400 dark:hover:text-indigo-300">
-              Remember your password? Sign in
+              Vous vous souvenez de votre mot de passe ? Se connecter
             </Link>
           </p>
         </div>

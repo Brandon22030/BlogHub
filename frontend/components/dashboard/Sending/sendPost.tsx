@@ -71,7 +71,7 @@ export default function SendPost() {
         const data = await response.json();
         setCategories(data);
       } catch (err) {
-        if (err instanceof Error) { setError(err.message); } else { setError("An unknown error occurred while fetching categories"); }
+        if (err instanceof Error) { setError(err.message); } else { setError("Une erreur inconnue s'est produite lors du chargement des catégories"); }
       } finally {
         setLoading(false);
       }
@@ -245,7 +245,7 @@ export default function SendPost() {
 
           {/* TOOLBAR */}
           <div>
-            <p className="font-semibold">Explanation</p>
+            <p className="font-semibold">Contenu de l&apos;article</p>
             <div className="shadow-lg p-5 rounded-xl border border-opacity-5">
               <div className="flex gap-2 mb-2">
                 <button
@@ -282,7 +282,7 @@ export default function SendPost() {
                       className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
                   </div>
-                  <span className="font-semibold text-opacity-75">Color</span>
+                  <span className="font-semibold text-opacity-75">Couleur</span>
                 </button>
                 <button
                   onClick={insertLink}
@@ -306,7 +306,7 @@ export default function SendPost() {
                       className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
                   </div>
-                  <span className="font-semibold text-opacity-75">Link</span>
+                  <span className="font-semibold text-opacity-75">Lien</span>
                 </button>
                 <button
                   onClick={() => alignText("justifyLeft")}
@@ -338,7 +338,7 @@ export default function SendPost() {
 
         {/* SECOND PART */}
         <div className="flex-auto">
-          <p className="font-semibold mb-4">Add Image</p>
+          <p className="font-semibold mb-4">Ajouter une image</p>
           {/* Zone de Dropzone */}
           <div className="p-3 bg-[#F5F5F5] rounded-xl items-center mb-7">
             <div
@@ -363,7 +363,7 @@ export default function SendPost() {
                         ? imageUrl
                         : `https://bloghub-8ljb.onrender.com${imageUrl}`
                     }
-                    alt="Preview"
+                    alt="Aperçu"
                     layout="fill"
                     objectFit="cover"
                     className="rounded-lg"
@@ -380,14 +380,14 @@ export default function SendPost() {
                   <div className="text-gray-400 mb-2">
                     <Image
                       src="/dragndrop.svg"
-                      alt="Preview"
+                      alt="Aperçu"
                       width={96}
                       height={96}
                       className="rounded-lg"
                     />
                   </div>
                   <p className="text-[#3E3232] text-opacity-75 font-medium mt-9 mb-6 text-sm">
-                    Drop Image here, paste or
+                    Déposez l&apos;image ici, collez ou
                   </p>
 
                   <label className="border group hover:bg-[#F81539] hover:text-[#F81539] hover:bg-opacity-10 flex items-center gap-2 mt-2 px-4 py-2 rounded-xl shadow-sm text-gray-600 transition duration-300 ease-in-out cursor-pointer">
@@ -407,7 +407,7 @@ export default function SendPost() {
                         className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                       />
                     </div>
-                    <span className="font-semibold">Choose Image</span>
+                    <span className="font-semibold">Choisir une image</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -449,7 +449,7 @@ export default function SendPost() {
                   className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 />
               </div>
-              <span className="font-semibold text-opacity-75">Draft</span>
+              <span className="font-semibold text-opacity-75">Brouillon</span>
             </button>
 
             {/* PREVIEW BUTTON */}
@@ -475,7 +475,7 @@ export default function SendPost() {
                   className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 />
               </div>
-              <span className="font-semibold text-opacity-75">Preview</span>
+              <span className="font-semibold text-opacity-75">Aperçu</span>
             </button>
 
             {/* PUBLIC BUTTON */}
@@ -490,7 +490,7 @@ export default function SendPost() {
                 height={16}
                 className="hover:text-white transition-colors duration-300"
               />
-              <span>Public</span>
+              <span>Publier</span>
             </button>
           </div>
         </div>

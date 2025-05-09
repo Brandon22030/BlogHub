@@ -76,7 +76,7 @@ export default function LikeButton({
           <path d="M8 14s6-4.35 6-7.5A3.5 3.5 0 0 0 8 4.5 3.5 3.5 0 0 0 2 6.5C2 9.65 8 14 8 14z" />
         </svg>
       )}
-      {likes} like{likes !== 1 ? "s" : ""}
+      {likes} J&apos;aime
     </button>
   );
 }
