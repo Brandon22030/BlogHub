@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Link from 'next/link';
+import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa";
 import FavoriteButton from "@/components/FavoriteButton"; // Importer le bouton
 
@@ -21,7 +21,7 @@ interface Article {
   author: Author;
   categoryId: string;
   status: string;
-  createdAt: string; 
+  createdAt: string;
   views: number;
   likes: number;
 }
@@ -45,7 +45,7 @@ const truncateText = (text: string, maxLength: number): string => {
 
 export default function NewPosts() {
   const router = useRouter(); // Instance de useRouter
-  
+
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,8 +65,12 @@ export default function NewPosts() {
         }
         const result: ApiResponse = await response.json();
         setArticles(result.data);
-      } catch (err: unknown) { // Type Error pour une meilleure gestion
-        const message = err instanceof Error ? err.message : "An unknown error occurred while fetching articles.";
+      } catch (err: unknown) {
+        // Type Error pour une meilleure gestion
+        const message =
+          err instanceof Error
+            ? err.message
+            : "An unknown error occurred while fetching articles.";
         setError(message);
         console.error("Error fetching new articles:", err);
       } finally {
@@ -81,65 +85,78 @@ export default function NewPosts() {
   // const handleShowAll = () => { console.log("Show all new posts"); };
 
   return (
-    <div className="mt-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> {/* Ajout d'un conteneur avec max-width et padding */} 
+    <div className="mt-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {" "}
+      {/* Ajout d'un conteneur avec max-width et padding */}
       <div className="flex items-center mb-5 justify-between">
         <div className="flex gap-[6px] items-center text-black">
           <Image src="/red_ops.svg" alt="new_posts_icon" width={4} height={4} />
           <p className="font-semibold text-md">New Posts</p>
         </div>
-        <div 
-          // onClick={handleShowAll} // Fonctionnalité à implémenter
-          className="hover:scale-105 transition-transform cursor-pointer p-2 flex text-[#3E3232] rounded-lg items-center justify-center bg-[#F5F5F5] space-x-2"
-          aria-label="Show all new posts"
-        >
-          <p className="text-xs">Show All</p>
-          <button className="text-xs" aria-label="Show all new posts icon">
-            <FaChevronRight />
-          </button>
-        </div>
+        <Link href={"/blog"}>
+          <div
+            // onClick={handleShowAll} // Fonctionnalité à implémenter
+            className="hover:scale-105 transition-transform cursor-pointer p-2 flex text-[#3E3232] rounded-lg items-center justify-center bg-[#F5F5F5] space-x-2"
+            aria-label="Show all new posts"
+          >
+            <p className="text-xs">Show All</p>
+            <button className="text-xs" aria-label="Show all new posts icon">
+              <FaChevronRight />
+            </button>
+          </div>
+        </Link>
       </div>
-
       {isLoading && (
         <div className="flex justify-center items-center h-40">
           <p className="text-gray-500">Loading new posts...</p>
         </div>
       )}
-
       {error && (
         <div className="bg-red-100 p-4 rounded-lg text-red-700">
           <p className="font-semibold">Error loading new posts:</p>
           <p>{error}</p>
         </div>
       )}
-
       {!isLoading && !error && articles.length === 0 && (
         <div className="text-center text-gray-500 py-5">
           <p>No new posts to display at the moment.</p>
         </div>
       )}
-
       {!isLoading && !error && articles.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
-            <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 ease-in-out">
+            <div
+              key={article.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 ease-in-out"
+            >
               {article.imageUrl && (
-                
-                <Link 
-                  href={`/article/${article.id}`} 
+                <Link
+                  href={`/article/${article.id}`}
                   onClick={async (e) => {
                     e.preventDefault();
                     try {
-                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}/view`, {
-                        method: "PATCH",
-                      });
+                      const res = await fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}/view`,
+                        {
+                          method: "PATCH",
+                        }
+                      );
                       if (!res.ok) {
-                        console.warn(`Failed to increment view count for article ${article.id}: ${res.status}`);
+                        console.warn(
+                          `Failed to increment view count for article ${article.id}: ${res.status}`
+                        );
                       }
                     } catch (error: unknown) {
                       if (error instanceof Error) {
-                        console.error('Error incrementing view count:', error.message);
+                        console.error(
+                          "Error incrementing view count:",
+                          error.message
+                        );
                       } else {
-                        console.error('An unknown error occurred while incrementing view count:', error);
+                        console.error(
+                          "An unknown error occurred while incrementing view count:",
+                          error
+                        );
                       }
                     }
                     router.push(`/article/${article.id}`);
@@ -147,7 +164,7 @@ export default function NewPosts() {
                   passHref
                 >
                   <div className="relative w-full h-48 cursor-pointer">
-                    <Image 
+                    <Image
                       src={article.imageUrl}
                       alt={article.title}
                       fill
@@ -157,23 +174,33 @@ export default function NewPosts() {
                 </Link>
               )}
               <div className="p-4">
-                
-                <Link 
-                  href={`/article/${article.id}`} 
+                <Link
+                  href={`/article/${article.id}`}
                   onClick={async (e) => {
                     e.preventDefault();
                     try {
-                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}/view`, {
-                        method: "PATCH",
-                      });
+                      const res = await fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}/view`,
+                        {
+                          method: "PATCH",
+                        }
+                      );
                       if (!res.ok) {
-                        console.warn(`Failed to increment view count for article ${article.id}: ${res.status}`);
+                        console.warn(
+                          `Failed to increment view count for article ${article.id}: ${res.status}`
+                        );
                       }
                     } catch (error: unknown) {
                       if (error instanceof Error) {
-                        console.error('Error incrementing view count:', error.message);
+                        console.error(
+                          "Error incrementing view count:",
+                          error.message
+                        );
                       } else {
-                        console.error('An unknown error occurred while incrementing view count:', error);
+                        console.error(
+                          "An unknown error occurred while incrementing view count:",
+                          error
+                        );
                       }
                     }
                     router.push(`/article/${article.id}`);
@@ -185,30 +212,41 @@ export default function NewPosts() {
                   </h3>
                 </Link>
                 <p className="text-xs text-gray-500 mb-1">
-                  By {article.author.name} - {new Date(article.createdAt).toLocaleDateString()}
+                  By {article.author.name} -{" "}
+                  {new Date(article.createdAt).toLocaleDateString()}
                 </p>
                 <p className="text-sm text-gray-600 line-clamp-3">
-                  {truncateText(article.content.replace(/<[^>]+>/g, ''), 100)}
+                  {truncateText(article.content.replace(/<[^>]+>/g, ""), 100)}
                 </p>
                 <div className="mt-3 flex justify-between items-center">
-                  <span className="text-xs text-gray-500">{new Date(article.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span> 
-                  <FavoriteButton articleId={article.id} /> 
-                  
-                  <Link 
-                    href={`/article/${article.id}`} 
+                  <span className="text-xs text-gray-500">
+                    {new Date(article.createdAt).toLocaleDateString("fr-FR", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </span>
+                  <FavoriteButton articleId={article.id} />
+
+                  <Link
+                    href={`/article/${article.id}`}
                     onClick={async (e) => {
                       e.preventDefault();
                       try {
-                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}/view`, {
-                          method: "PATCH",
-                        });
+                        const res = await fetch(
+                          `${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}/view`,
+                          {
+                            method: "PATCH",
+                          }
+                        );
                         if (!res.ok) {
-                          console.warn(`Failed to increment view count for article ${article.id}: ${res.status}`);
+                          console.warn(
+                            `Failed to increment view count for article ${article.id}: ${res.status}`
+                          );
                         }
                       } catch (error: unknown) {
-                        let errorMessage = 'Error incrementing view count';
+                        let errorMessage = "Error incrementing view count";
                         if (error instanceof Error) {
-                          errorMessage += ': ' + error.message;
+                          errorMessage += ": " + error.message;
                         }
                         console.error(errorMessage, error);
                       }
@@ -216,8 +254,8 @@ export default function NewPosts() {
                     }}
                     passHref
                   >
-                     <span className="text-[#F81539] hover:underline cursor-pointer font-medium">
-                       Read more &rarr;
+                    <span className="text-[#F81539] hover:underline cursor-pointer font-medium">
+                      Read more &rarr;
                     </span>
                   </Link>
                 </div>

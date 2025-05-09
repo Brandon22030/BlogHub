@@ -91,15 +91,6 @@ export default function PopularPosts() {
           <Image src="/red_ops.svg" alt="popular_icon" width={4} height={4} />
           <p className="font-semibold text-md">Popular Posts</p>
         </div>
-        {/* Les boutons de navigation sont conservés visuellement mais non fonctionnels pour l'instant */}
-        <div className="space-x-6">
-          <button className="p-2 bg-[#F5F5F5] text-black rounded-lg " aria-label="Previous popular posts">
-            <FaChevronLeft />
-          </button>
-          <button className="p-2 bg-[#F5F5F5] text-black rounded-lg " aria-label="Next popular posts">
-            <FaChevronRight />
-          </button>
-        </div>
       </div>
 
       {isLoading && (
