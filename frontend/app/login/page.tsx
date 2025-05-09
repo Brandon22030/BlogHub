@@ -3,7 +3,6 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import { Loader } from "@/components/loading";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@/context/UserContext";

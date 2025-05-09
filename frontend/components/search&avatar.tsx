@@ -16,7 +16,6 @@ import { AnimatePresence, motion } from "framer-motion";
  */
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isCliqued, setIsCliqued] = useState(false);
   const { user } = useUser();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
