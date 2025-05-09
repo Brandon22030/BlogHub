@@ -91,15 +91,15 @@ export default function NewPosts() {
       <div className="flex items-center mb-5 justify-between">
         <div className="flex gap-[6px] items-center text-black">
           <Image src="/red_ops.svg" alt="new_posts_icon" width={4} height={4} />
-          <p className="font-semibold text-md">New Posts</p>
+          <p className="font-semibold text-md">Nouveaux Articles</p>
         </div>
         <Link href={"/blog"}>
           <div
             // onClick={handleShowAll} // Fonctionnalité à implémenter
-            className="hover:scale-105 transition-transform cursor-pointer p-2 flex text-[#3E3232] rounded-lg items-center justify-center bg-[#F5F5F5] space-x-2"
+            className="hover:scale-105 transition-transform cursor-pointer p-2 flex text-white rounded-lg items-center justify-center bg-[#FC4308] space-x-2"
             aria-label="Show all new posts"
           >
-            <p className="text-xs">Show All</p>
+            <p className="text-xs">Voir tout</p>
             <button className="text-xs" aria-label="Show all new posts icon">
               <FaChevronRight />
             </button>
@@ -108,7 +108,7 @@ export default function NewPosts() {
       </div>
       {isLoading && (
         <div className="flex justify-center items-center h-40">
-          <p className="text-gray-500">Loading new posts...</p>
+          <p className="text-gray-500">Chargement des nouveaux posts...</p>
         </div>
       )}
       {error && (

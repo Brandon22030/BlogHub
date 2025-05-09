@@ -88,13 +88,13 @@ export default function PopularPosts() {
       <div className="flex items-center mb-5 justify-between">
         <div className="flex gap-[6px] items-center text-black">
           <Image src="/red_ops.svg" alt="popular_icon" width={4} height={4} />
-          <p className="font-semibold text-md">Popular Posts</p>
+          <p className="font-semibold text-md">Articles Populaires</p>
         </div>
       </div>
 
       {isLoading && (
         <div className="flex justify-center items-center h-40">
-          <p className="text-gray-500">Loading popular posts...</p>
+          <p className="text-gray-500">Chargement des articles populaires...</p>
           {/* Vous pouvez ajouter un spinner ici */}
         </div>
       )}
