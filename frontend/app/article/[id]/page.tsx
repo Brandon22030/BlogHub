@@ -318,6 +318,30 @@ export default function ArticlePage() {
               </ul>
             </div>
           )}
+
+          {/* Related Articles Card */}
+          {related && related.length > 0 && (
+            <div className="bg-white rounded-xl shadow p-4 mt-8">
+              <div className="flex gap-[6px] items-center mb-5">
+                <Image src="/red_ops.svg" alt="related_icon" width={4} height={4} />
+                <h3 className="font-bold text-lg text-gray-800">
+                  Articles similaires
+                </h3>
+              </div>
+              <ul className="space-y-2">
+                {related.map((relatedArticle) => (
+                  <li key={relatedArticle.id}>
+                    <Link
+                      href={`/article/${relatedArticle.id}`}
+                      className="text-sm text-gray-700 hover:text-[#FC4308] hover:underline transition-colors duration-150 block"
+                    >
+                      {relatedArticle.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </>
