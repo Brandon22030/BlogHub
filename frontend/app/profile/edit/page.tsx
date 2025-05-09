@@ -3,17 +3,19 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react"; // AJOUTÉ
 // JWT is managed by httpOnly cookie, no js-cookie needed.
 import Image from "next/image";
 import Breadcrumbs from "@/components/breadcrumbs";
 import { NavBar } from "@/components/navBar";
 
 export default function EditProfile() {
-  // Champs utilisateur simplifiés
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState(""); // RENOMMÉ password en newPassword
+  const [showOldPassword, setShowOldPassword] = useState(false); // AJOUTÉ
+  const [showNewPassword, setShowNewPassword] = useState(false); // AJOUTÉ
   const [imageUrl, setImageUrl] = useState(""); // Pour prévisualisation
   const [imageFile, setImageFile] = useState<File | null>(null); // Pour upload
   const [loading, setLoading] = useState(true);
@@ -57,7 +59,7 @@ export default function EditProfile() {
       formData.append("userName", userName);
       formData.append("email", email);
       formData.append("oldPassword", oldPassword);
-      formData.append("password", password);
+      formData.append("password", newPassword); // RENOMMÉ password en newPassword
       if (imageFile) {
         formData.append("image", imageFile);
       }
@@ -146,24 +148,42 @@ export default function EditProfile() {
             <label className="block mb-1 font-semibold text-black">
               Old Password
             </label>
-            <input
-              className="border rounded-lg p-2 w-full text-black"
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                className="border rounded-lg p-2 w-full text-black pr-10" // AJOUTÉ pr-10 pour l'icône
+                type={showOldPassword ? "text" : "password"}
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600"
+                onClick={() => setShowOldPassword(!showOldPassword)}
+              >
+                {showOldPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div>
             <label className="block mb-1 font-semibold text-black">
-              Password
+              New Password
             </label>
-            <input
-              className="border rounded-lg p-2 w-full text-black"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <input
+                className="border rounded-lg p-2 w-full text-black pr-10" // AJOUTÉ pr-10 pour l'icône
+                type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+              >
+                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
         </div>
         <div className="mb-4">

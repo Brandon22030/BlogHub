@@ -112,42 +112,6 @@ export default function SendPost() {
     }
   };
 
-  const formatText = (command: string) => {
-    if (command === "createLink") {
-      insertLink();
-    } else {
-      document.execCommand(command, false, undefined);
-    }
-  };
-
-  const changeColor = () => {
-    const color = prompt("Entrez une couleur (ex: red, #ff0000) :");
-    document.execCommand("foreColor", false, color ?? undefined);
-  };
-
-  const insertLink = () => {
-    const url = prompt("Entrez l'URL du lien :");
-    if (url) {
-      const selection = window.getSelection();
-      if (selection && selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("target", "_blank");
-        link.style.textDecoration = "underline"; // Ajout du soulignement
-        link.style.transition = "color 0.3s"; // Transition pour l'effet de survol
-        link.innerText = selection.toString();
-
-        range.deleteContents(); // Supprime le texte sélectionné
-        range.insertNode(link); // Insère le lien à la place du texte sélectionné
-      }
-    }
-  };
-
-  const alignText = (alignment: string) => {
-    document.execCommand(alignment, false, undefined);
-  };
-
   const handleSubmit = async (status: string) => {
     if (!user) return;
 
@@ -246,87 +210,7 @@ export default function SendPost() {
           {/* TOOLBAR */}
           <div>
             <p className="font-semibold">Contenu de l&apos;article</p>
-            <div className="shadow-lg p-5 rounded-xl border border-opacity-5">
-              <div className="flex gap-2 mb-2">
-                <button
-                  onClick={() => formatText("bold")}
-                  className="hover:bg-[#F81539] hover:text-white font-semibold transition duration-300 ease-in-out py-3 px-4 bg-gray-200 flex justify-center items-center gap-2 rounded-xl"
-                >
-                  B
-                </button>
-                <button
-                  onClick={() => formatText("italic")}
-                  className="hover:bg-[#F81539] hover:text-white font-semibold transition duration-300 ease-in-out py-3 px-4 bg-gray-200 flex justify-center items-center gap-2 rounded-xl"
-                >
-                  I
-                </button>
-                <button
-                  onClick={changeColor}
-                  className="group hover:bg-[#F81539] text-[#3E3232] hover:text-white font-semibold transition duration-300 ease-in-out py-3 px-4 bg-gray-200 flex justify-center items-center gap-2 rounded-xl"
-                >
-                  <div className="relative w-4 h-4">
-                    {/* Icône normale */}
-                    <Image
-                      src="/color.svg"
-                      alt="color"
-                      width={16}
-                      height={16}
-                      className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
-                    />
-                    {/* Icône au survol */}
-                    <Image
-                      src="/color-hover.svg"
-                      alt="color hover"
-                      width={16}
-                      height={16}
-                      className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                    />
-                  </div>
-                  <span className="font-semibold text-opacity-75">Couleur</span>
-                </button>
-                <button
-                  onClick={insertLink}
-                  className="group hover:bg-[#F81539] text-[#3E3232] hover:text-white font-semibold transition duration-300 ease-in-out py-3 px-4 bg-gray-200 flex justify-center items-center gap-2 rounded-xl"
-                >
-                  <div className="relative w-4 h-4">
-                    {/* Icône normale */}
-                    <Image
-                      src="/link.svg"
-                      alt="link"
-                      width={16}
-                      height={16}
-                      className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
-                    />
-                    {/* Icône au survol */}
-                    <Image
-                      src="/link-hover.svg"
-                      alt="link hover"
-                      width={16}
-                      height={16}
-                      className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                    />
-                  </div>
-                  <span className="font-semibold text-opacity-75">Lien</span>
-                </button>
-                <button
-                  onClick={() => alignText("justifyLeft")}
-                  className="hover:bg-[#F81539] hover:text-white font-semibold transition duration-300 ease-in-out py-3 px-4 bg-gray-200 flex justify-center items-center gap-2 rounded-xl"
-                >
-                  Aligné à gauche
-                </button>
-                <button
-                  onClick={() => alignText("justifyCenter")}
-                  className="hover:bg-[#F81539] hover:text-white font-semibold transition duration-300 ease-in-out py-3 px-4 bg-gray-200 flex justify-center items-center gap-2 rounded-xl"
-                >
-                  Centré
-                </button>
-                <button
-                  onClick={() => alignText("justifyRight")}
-                  className="hover:bg-[#F81539] hover:text-white font-semibold transition duration-300 ease-in-out py-3 px-4 bg-gray-200 flex justify-center items-center gap-2 rounded-xl"
-                >
-                  Aligné à droite
-                </button>
-              </div>
+            <div className="shadow-lg p-5 rounded-xl border border-opacity-5">
               <div
                 ref={editorRef}
                 contentEditable
