@@ -16,17 +16,24 @@ import { AnimatePresence, motion } from "framer-motion";
  */
 export default function SearchAvatar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useUser();
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const { user, setUser } = useUser(); // Récupérer setUser depuis le contexte
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
-    await fetch("https://bloghub-8ljb.onrender.com/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    router.push("/login");
-  }, [router]);
+    try {
+      await fetch("https://bloghub-8ljb.onrender.com/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      // Mettre à jour l'état de l'utilisateur dans le contexte à null
+      setUser(null); 
+      router.push("/login");
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion:", error);
+      // Optionnel : vous pourriez aussi vouloir mettre setUser(null) ici
+      // en cas d'erreur de l'appel API, pour forcer la déconnexion côté client
+    }
+  }, [router, setUser]); // Ajouter setUser aux dépendances de useCallback
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
