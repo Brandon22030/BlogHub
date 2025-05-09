@@ -2,7 +2,6 @@ import { NavBar } from "../../components/navBar";
 
 // import Pages from "../../components/pages";
 import Breadcrumbs from "@/components/breadcrumbs";
-import Image from "next/image";
 
 export default function AboutPage() {
   return (
